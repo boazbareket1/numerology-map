@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מפת המספרים</title>
+<meta name="description" content="ניתוח נומרולוגי מלא בעברית: שביל החיים, מספרי השם בגימטריה ובשיטה הפיתגוראית, מחזורי חיים, טבלת לידה, שנה אישית והתאמה זוגית.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Cormorant+Garamond:wght@500;600&family=Frank+Ruhl+Libre:wght@500;700&display=swap">
+<style>
+/* Layout: a single reading column; input panel, then a strip of core numerals, then chapters with a brass medallion beside each reading. */
+:root{
+  --bg:#eef1ee; --panel:#ffffff; --panel2:#f6f8f6; --line:#d3dbd6;
+  --fg:#16262a; --muted:#566763; --brass:#946a1a; --brass-soft:rgba(148,106,26,.12);
+  --rose:#a2513c; --rose-soft:rgba(162,81,60,.1); --teal:#2f6f6a;
+  --f-display:"Frank Ruhl Libre","David","Times New Roman",serif;
+  --f-body:"Assistant","Arial Hebrew","Segoe UI",Arial,sans-serif;
+  --f-num:"Cormorant Garamond","Georgia",serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e191b; --panel:#152427; --panel2:#11201f; --line:#26393c;
+  --fg:#e3e7dd; --muted:#97a8a2; --brass:#d4a853; --brass-soft:rgba(212,168,83,.13);
+  --rose:#d98a72; --rose-soft:rgba(217,138,114,.12); --teal:#7cc2b8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e191b; --panel:#152427; --panel2:#11201f; --line:#26393c;
+  --fg:#e3e7dd; --muted:#97a8a2; --brass:#d4a853; --brass-soft:rgba(212,168,83,.13);
+  --rose:#d98a72; --rose-soft:rgba(217,138,114,.12); --teal:#7cc2b8; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.7;direction:rtl;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:900px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;font-weight:700;line-height:1.25}
+header.top{padding-block:40px 20px;display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap;justify-content:space-between}
+header.top h1{font-size:clamp(2rem,6vw,3.1rem)}
+header.top p{margin:6px 0 0;color:var(--muted);max-width:52ch}
+.sigil{font-family:var(--f-num);font-size:1.05rem;color:var(--brass);letter-spacing:.35em;direction:ltr}
+
+/* form */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+.form h2{font-size:1.25rem;margin-bottom:4px}
+.form .hint{color:var(--muted);font-size:.92rem;margin:0 0 16px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px 18px}
+label.f{display:flex;flex-direction:column;gap:5px;font-weight:600;font-size:.92rem;min-width:0}
+label.f small{font-weight:400;color:var(--muted)}
+input[type=text],input[type=date],select{font:inherit;color:var(--fg);background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible,.seg label:focus-within{outline:2px solid var(--brass);outline-offset:2px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg label{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer;font-size:.93rem;background:var(--panel2)}
+.seg input{accent-color:var(--brass)}
+.seg label:has(input:checked){border-color:var(--brass);background:var(--brass-soft)}
+fieldset{border:0;padding:0;margin:0;min-width:0}
+legend{font-weight:600;font-size:.92rem;margin-bottom:6px}
+.sep{border-top:1px dashed var(--line);margin:18px 0}
+.row-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px}
+button.go{font:inherit;font-weight:700;background:var(--brass);color:var(--bg);border:0;border-radius:10px;padding:11px 26px;cursor:pointer}
+button.ghost{font:inherit;background:none;border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:10px 16px;cursor:pointer}
+.err{color:var(--rose);font-weight:600}
+.example{background:var(--brass-soft);border-radius:10px;padding:10px 14px;font-size:.93rem;margin-bottom:16px}
+.toggle{display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer}
+.toggle input{accent-color:var(--brass);width:18px;height:18px}
+
+/* nav */
+nav.chapters{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);margin-top:28px;padding-block:10px;border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap}
+nav.chapters a{display:inline-block;color:var(--muted);text-decoration:none;font-size:.92rem;padding:4px 11px;border-radius:999px}
+nav.chapters a:hover{color:var(--fg);background:var(--brass-soft)}
+
+/* core strip */
+.core{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;margin-top:22px}
+.tile{border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center;background:var(--panel)}
+.tile .n{font-family:var(--f-num);font-size:2.6rem;line-height:1;color:var(--brass);font-weight:600}
+.tile .c{display:block;font-size:.78rem;color:var(--muted);direction:ltr;font-variant-numeric:tabular-nums;min-height:1.2em}
+.tile .l{font-size:.85rem;font-weight:600;margin-top:4px}
+
+section.ch{margin-top:46px;scroll-margin-top:70px}
+section.ch > h2{font-size:clamp(1.5rem,4vw,2rem);display:flex;align-items:baseline;gap:12px}
+section.ch > h2 .k{font-family:var(--f-num);color:var(--brass);font-size:.9em}
+section.ch > .lead{color:var(--muted);margin:6px 0 18px;max-width:65ch}
+
+.reading{display:grid;grid-template-columns:auto 1fr;gap:18px;padding:20px 0;border-top:1px solid var(--line)}
+.reading:first-of-type{border-top:0}
+.med{width:78px;height:78px;border-radius:50%;border:1.5px solid var(--brass);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;background:var(--brass-soft)}
+.med::after{content:"";position:absolute;inset:5px;border-radius:50%;border:1px solid var(--brass);opacity:.35}
+.med .n{font-family:var(--f-num);font-size:2.3rem;line-height:1;font-weight:600;color:var(--brass)}
+.med .c{font-size:.7rem;color:var(--muted);direction:ltr}
+.med.rose{border-color:var(--rose);background:var(--rose-soft)}
+.med.rose .n{color:var(--rose)}.med.rose::after{border-color:var(--rose)}
+.rbody{min-width:0}
+.rbody h3{font-size:1.25rem}
+.rbody .sub{color:var(--muted);font-size:.9rem;margin-bottom:6px}
+.rbody p{margin:6px 0;max-width:68ch}
+.trace{display:inline-block;direction:ltr;font-variant-numeric:tabular-nums;font-size:.82rem;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 8px;margin-top:6px;max-width:100%;overflow-x:auto;white-space:nowrap}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:10px}
+.two > div{min-width:0}
+.two h4{margin:0 0 4px;font-size:.88rem;letter-spacing:.02em;color:var(--teal)}
+.two h4.neg{color:var(--rose)}
+ul.plain{margin:0;padding-inline-start:18px}
+ul.plain li{margin:2px 0}
+.facets{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:12px}
+.facet{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.facet b{display:block;font-family:var(--f-display);font-size:1.02rem;margin-bottom:2px}
+.facet p{margin:0;font-size:.95rem}
+
+.letters{display:flex;flex-wrap:wrap;gap:14px;margin:8px 0 4px}
+.word{display:flex;gap:3px}
+.lt{display:flex;flex-direction:column;align-items:center;min-width:24px;border-radius:6px;padding:3px 2px;background:var(--panel2);border:1px solid var(--line)}
+.lt .ch{font-weight:700;font-size:1.05rem}
+.lt .v{font-family:var(--f-num);font-size:1rem;color:var(--muted);font-weight:600}
+.lt.vow{background:var(--brass-soft);border-color:var(--brass)}
+.lt.vow .v{color:var(--brass)}
+.legend{font-size:.82rem;color:var(--muted)}
+
+.tablewrap{overflow-x:auto;margin-top:10px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:.95rem}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{font-size:.82rem;color:var(--muted);font-weight:600}
+td.num{font-family:var(--f-num);font-size:1.5rem;color:var(--brass);font-weight:600;white-space:nowrap}
+td.num.rose{color:var(--rose)}
+tr.now td{background:var(--brass-soft)}
+.pill{display:inline-block;font-size:.75rem;font-weight:700;padding:1px 9px;border-radius:999px;background:var(--brass);color:var(--bg);margin-inline-start:6px;vertical-align:middle}
+.pill.r{background:var(--rose)}
+.pill.t{background:var(--teal)}
+
+.gridbox{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.gridbox svg{width:230px;max-width:100%;flex:none}
+.arrows{flex:1;min-width:240px}
+.arrow{padding:8px 0;border-bottom:1px solid var(--line)}
+.arrow b{font-family:var(--f-display)}
+
+.years{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-top:10px}
+.yr{flex:1 0 76px;text-align:center;border:1px solid var(--line);border-radius:10px;padding:8px 4px;background:var(--panel)}
+.yr .y{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.yr .n{font-family:var(--f-num);font-size:1.8rem;color:var(--brass);line-height:1.1;font-weight:600}
+.yr .w{font-size:.78rem}
+.yr.now{border-color:var(--brass);background:var(--brass-soft)}
+
+.compat{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;text-align:center;margin:12px 0}
+.compat .who{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel);min-width:0}
+.compat .who .n{font-family:var(--f-num);font-size:2.4rem;color:var(--brass);line-height:1;font-weight:600}
+.compat .mid{font-family:var(--f-display);font-size:.95rem}
+.meter{display:flex;gap:4px;justify-content:center;margin-top:4px}
+.meter i{width:16px;height:6px;border-radius:3px;background:var(--line)}
+.meter i.on{background:var(--brass)}
+
+.synth{font-size:1.08rem;line-height:1.85}
+.synth p{max-width:68ch;margin:0 0 12px}
+.note{font-size:.85rem;color:var(--muted);margin-top:40px;border-top:1px solid var(--line);padding-top:14px;max-width:70ch}
+.def{font-size:.9rem;color:var(--teal);margin:2px 0 6px;max-width:68ch}
+.def span{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;border:1px solid var(--teal);border-radius:999px;padding:0 8px;margin-inline-end:7px;vertical-align:1px}
+.eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.06em;color:var(--teal);margin-bottom:4px}
+.guide{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:24px}
+.guide h2{font-size:clamp(1.4rem,4vw,1.8rem)}
+.sentence{font-family:var(--f-display);font-size:clamp(1.1rem,3vw,1.3rem);line-height:1.7;margin:14px 0 18px;padding:14px 18px;border-radius:12px;background:var(--brass-soft);max-width:72ch}
+.sentence b{color:var(--brass)}
+ol.steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;counter-reset:st}
+ol.steps li{counter-increment:st;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel2);min-width:0}
+ol.steps li::before{content:counter(st);display:block;font-family:var(--f-num);font-size:1.7rem;line-height:1;color:var(--brass);font-weight:600;margin-bottom:4px}
+ol.steps b{display:block;font-family:var(--f-display)}
+.tips{margin:16px 0 0;padding-inline-start:18px;max-width:72ch}
+.tips li{margin:4px 0}
+.layer{margin-top:22px}
+.layer h3{font-size:1.1rem;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.layer h3 .ln{font-family:var(--f-num);color:var(--brass);font-size:1.4rem}
+.layer h3 small{font-family:var(--f-body);font-weight:400;color:var(--muted);font-size:.88rem}
+.mi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:8px}
+a.mi{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center;text-decoration:none;color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--panel2);min-width:0}
+a.mi:hover,a.mi:focus-visible{border-color:var(--brass);background:var(--brass-soft)}
+a.mi .v{grid-row:span 2;font-family:var(--f-num);font-size:1.6rem;font-weight:600;color:var(--brass);min-width:1.6em;text-align:center;line-height:1}
+a.mi .t{font-weight:700;font-size:.92rem}
+a.mi .d{font-size:.8rem;color:var(--muted);line-height:1.35}
+a.mi.off{opacity:.55}
+a.mi.off .v{color:var(--muted)}
+details.gloss{margin-top:22px;border-top:1px solid var(--line);padding-top:12px}
+details.gloss summary{cursor:pointer;font-family:var(--f-display);font-weight:700;font-size:1.1rem}
+details.gloss dl{display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:8px 16px;margin:12px 0 0}
+details.gloss dt{font-weight:700}
+details.gloss dd{margin:0;color:var(--muted);min-width:0}
+.fab{position:fixed;left:calc(max(16px,env(safe-area-inset-left,0px)) + 0px);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:8;font:inherit;font-weight:700;background:var(--fg);color:var(--bg);border-radius:999px;padding:9px 16px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+@media (max-width:520px){details.gloss dl{grid-template-columns:1fr}details.gloss dd{margin-bottom:6px}}
+@media (max-width:520px){.reading{grid-template-columns:1fr}.med{width:66px;height:66px}.compat{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.tile,.med{transition:transform .2s}.tile:hover{transform:translateY(-2px)}}
+
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="top">
+  <div>
+    <div class="sigil">1 · 2 · 3 · 4 · 5 · 6 · 7 · 8 · 9</div>
+    <h1>מפת המספרים</h1>
+    <p>ניתוח נומרולוגי מלא לפי תאריך הלידה והשם: שביל החיים, מספרי השם, מחזורי החיים, טבלת הלידה, השנה האישית והתאמה זוגית.</p>
+  </div>
+</header>
+
+<form class="panel form" id="frm" novalidate>
+  <div class="example" id="exampleNote">מוצגת דוגמה. הזינו את הפרטים שלכם ולחצו "נתחו".</div>
+  <h2>הפרטים שלך</h2>
+  <p class="hint">השם המלא כפי שניתן בלידה, כולל שמות אמצעיים ושם המשפחה מהלידה. אפשר להזין ניקוד, הוא מסונן אוטומטית.</p>
+
+  <fieldset>
+    <legend>שיטת החישוב לשם</legend>
+    <div class="seg" id="sysSeg">
+      <label><input type="radio" name="sys" value="he" id="sysHe"> גימטריה עברית</label>
+      <label><input type="radio" name="sys" value="la" id="sysLa"> פיתגוראית (לועזית)</label>
+      <label><input type="radio" name="sys" value="both" id="sysBoth" checked> השוואה בין השתיים</label>
+    </div>
+  </fieldset>
+
+  <div class="grid2" style="margin-top:14px">
+    <label class="f" id="heWrap">שם מלא מהלידה, בעברית<input type="text" id="heName" autocomplete="off"></label>
+    <label class="f" id="laWrap">שם מלא מהלידה, באותיות לועזיות<input type="text" id="laName" autocomplete="off" dir="ltr"></label>
+    <label class="f">תאריך לידה<input type="date" id="bdate"></label>
+    <label class="f">השם שבו את/ה משתמש/ת היום <small>אופציונלי: כינוי, שם אחרי נישואין או שם שהוחלף</small><input type="text" id="curName" autocomplete="off"></label>
+  </div>
+
+  <div class="sep"></div>
+  <div class="grid2">
+    <label class="f">מיקוד הניתוח<select id="focus">
+      <option value="none">תמונה כללית</option>
+      <option value="love">אהבה וזוגיות</option>
+      <option value="career">קריירה ושליחות</option>
+      <option value="money">כסף ושפע</option>
+      <option value="growth">צמיחה רוחנית</option>
+    </select></label>
+    <label class="f">תאריך יעד לתחזית <small>ברירת המחדל: היום</small><input type="date" id="tdate"></label>
+  </div>
+
+  <div class="sep"></div>
+  <label class="toggle"><input type="checkbox" id="partnerOn"> הוספת בן/בת זוג להתאמה זוגית</label>
+  <div class="grid2" id="partnerBox" style="margin-top:12px">
+    <label class="f">שם מלא של בן/בת הזוג <small>בעברית או בלועזית</small><input type="text" id="pName" autocomplete="off"></label>
+    <label class="f">תאריך הלידה של בן/בת הזוג<input type="date" id="pDate"></label>
+  </div>
+
+  <div class="row-actions">
+    <button class="go" type="submit">נתחו</button>
+    <button class="ghost" type="button" id="clearBtn">ניקוי</button>
+    <span class="err" id="err" role="alert"></span>
+  </div>
+</form>
+
+<div id="out"></div>
+<p class="note">הניתוח מבוסס על הנומרולוגיה הפיתגוראית המודרנית ועל גימטריה עברית בשיטת המספר הקטן (א=1 … ט=9, י=1 … צ=9, ק=1 … ת=4). בגימטריה העברית האותיות א, ה, ו, י משמשות כתנועות לחישוב מספר דחף הנשמה. זהו כלי להתבוננות עצמית ולשיחה, לא אבחון.</p>
+</div>
+
+<script>
+/* ---------- data ---------- */
+const N={
+1:{title:"המוביל/ה",kw:"עצמאות, יוזמה ומנהיגות",gift:"אומץ ליזום",
+essence:"מספר 1 הוא הניצוץ הראשון: אנרגיה של התחלה, עצמאות ורצון לסלול דרך משלך. יש בך דחף פנימי להוביל, להחליט ולהיות מקורי/ת. הלמידה המרכזית היא לעמוד על שלך בלי לסגור את הלב לאחרים.",
+strengths:["אומץ ויוזמה","מקוריות","כוח רצון ונחישות","יכולת לפעול לבד"],
+shadow:["עקשנות ושתלטנות","חוסר סבלנות","קושי לבקש עזרה","ספק עצמי שמוסתר מאחורי ביטחון"],
+career:"תחומים שיש בהם חופש החלטה: יזמות, ניהול, עבודה עצמאית, חלוציות בתחום חדש. קשה לך במקומות שבהם מכתיבים לך כל צעד.",
+love:"דרוש לך בן/בת זוג שמכבד/ת את העצמאות שלך ולא מתחרה בה. הלמידה בזוגיות היא להקשיב ולתת מקום, לא רק להוביל.",
+money:"כסף מגיע ממהלכים יזומים ומעבודה עצמאית. כדאי להיזהר מהחלטות פזיזות.",
+growth:"לתרגל שיתוף פעולה ולגלות שתלות הדדית אינה חולשה.",
+soul:"בפנים את/ה רוצה להיות ראשון/ה, להשאיר חותם ולהיות אדון/ת לחייך. מה שמזין אותך הוא תחושת עצמאות והישג אישי.",
+persona:"אחרים רואים בך אדם בטוח, ישיר ונמרץ, לפעמים מעט מאיים. הרושם הראשון הוא של מי שיודע לאן הוא הולך.",
+expr:"הכישרון שלך הוא ליזום ולהוביל. נועדת לפתוח דרכים, ליצור דברים חדשים ולהיות מקור השראה בזכות האומץ שלך.",
+year:"שנת התחלות. זמן לשתול זרעים, להתחיל פרויקטים, לקבל החלטות אמיצות ולשים את עצמך במרכז. מה שמתחיל עכשיו ילווה אותך במחזור של תשע שנים.",
+pm:"חודש של התחלות ויוזמה.",
+pinnacle:"תקופה של עמידה על הרגליים, פיתוח עצמאות ונטילת אחריות על החיים. נדרשים אומץ ויוזמה.",
+challenge:"האתגר הוא לבסס ביטחון עצמי בלי לגלוש לשתלטנות, ולפעול גם כשאין אישור מבחוץ.",
+lesson:"שיעור של עצמאות ועמידה על דעתך. ייתכן שקשה לך לקבל החלטות לבד או להציב את עצמך במקום הראשון.",
+passion:"תשוקה לעצמאות, להובלה ולמקוריות."},
+2:{title:"המגשר/ת",kw:"שיתוף, רגישות ודיפלומטיה",gift:"רגישות דקה לאנשים ולמצבים",
+essence:"מספר 2 הוא אנרגיה של חיבור. יש בך רגישות עמוקה לאנשים ולאווירה, יכולת להקשיב ולגשר בין עמדות. כוחך בעדינות, בסבלנות ובשותפות. הלמידה היא לא לוותר על עצמך כדי לשמור על השקט.",
+strengths:["אמפתיה והקשבה","דיפלומטיה ויכולת גישור","סבלנות ותשומת לב לפרטים","נאמנות ושותפות"],
+shadow:["רגישות יתר ונטייה להיעלב","ריצוי וקושי לומר לא","היסוס וחוסר החלטיות","תלות באישור מבחוץ"],
+career:"תחומים של קשר ותיווך: ייעוץ, טיפול, הוראה, גישור, עבודת צוות, ומוזיקה או אמנות שמשלבות הקשבה. את/ה פורח/ת לצד שותף/ה ולא בהכרח בקדמת הבמה.",
+love:"הזוגיות חשובה לך מאוד, ואת/ה מביא/ה אליה מסירות ועדינות. חשוב לבחור מי שמעריך/ה את הרגישות ולא מנצל/ת אותה, ולזכור לבטא צרכים בקול.",
+money:"כסף מגיע דרך שיתופי פעולה ושותפויות. חשוב לתמחר את עצמך בהגינות ולא להמעיט בערך העבודה השקטה שלך.",
+growth:"לתרגל גבולות. \"לא\" שנאמר ברכות הוא גם מעשה של אהבה.",
+soul:"בפנים את/ה כמה/ה להרמוניה, לשלום ולקשר קרוב. מה שמזין אותך הוא תחושה שאת/ה חלק משלם ושאוהבים אותך.",
+persona:"אחרים רואים בך אדם נעים, עדין ונגיש, שקל לפתוח בפניו את הלב.",
+expr:"הכישרון שלך הוא לחבר. נועדת לגשר, ללוות, לתמוך ולהביא שיתוף פעולה לכל מקום שאליו את/ה מגיע/ה.",
+year:"שנת סבלנות ושותפויות. הזרעים שנשתלו בשנה הקודמת צומחים לאט. זמן לטפח קשרים, לשתף פעולה ולהקשיב, ולא לדחוק בדברים.",
+pm:"חודש של הקשבה ושיתוף פעולה.",
+pinnacle:"תקופה שבה קשרים ושותפויות במרכז. לומדים סבלנות, דיפלומטיה ורגישות לאחרים.",
+challenge:"האתגר הוא רגישות יתר: לא לתת לפחד מדחייה או מביקורת לשתק, ולמצוא את הקול הפנימי בתוך הקשר.",
+lesson:"שיעור של סבלנות, שיתוף ותשומת לב לפרטים. ייתכן קושי לעבוד עם אחרים או לחכות.",
+passion:"תשוקה לקשר, לשותפות ולהרמוניה."},
+3:{title:"היוצר/ת",kw:"ביטוי עצמי, יצירה ושמחה",gift:"כושר ביטוי והשראה",
+essence:"מספר 3 הוא אנרגיה של ביטוי. מילים, צלילים, צבעים והומור זורמים דרכך. יש בך אופטימיות מדבקת ויכולת להאיר חדר. הלמידה היא לתעל את הכישרון הרב למשהו מתמשך ולא להתפזר.",
+strengths:["יצירתיות ודמיון","כושר ביטוי בדיבור ובכתיבה","חוש הומור ושמחת חיים","חברותיות וכריזמה"],
+shadow:["פיזור ובזבוז אנרגיה","בריחה מכאב אל החגיגה","ביקורתיות כשדברים לא מתנהלים","מצבי רוח משתנים"],
+career:"אמנות, מוזיקה, כתיבה, משחק, הוראה, שיווק ותקשורת. כל מקום שבו הביטוי העצמי הוא חלק מהעבודה.",
+love:"את/ה מביא/ה לזוגיות קלילות, רומנטיקה ושמחה. חשוב לך קשר שיש בו שיחה, צחוק והשראה. הלמידה היא להישאר גם כשהקסם הראשוני מתחלף בשגרה.",
+money:"כסף מגיע מכישרונות יצירתיים ומחשיפה. דרושה משמעת כדי שההכנסה לא תהיה תנודתית.",
+growth:"לסיים את מה שמתחילים. לבחור ערוץ עיקרי אחד ולהעמיק בו.",
+soul:"בפנים את/ה רוצה להתבטא, ליצור ולשמח. מה שמזין אותך הוא חופש יצירתי וקהל שמגיב.",
+persona:"אחרים רואים בך אדם חם, שנון ומלא חיים, שמעניין להיות לידו.",
+expr:"הכישרון שלך הוא הביטוי. נועדת לספר, לנגן, לכתוב ולהעניק השראה ושמחה דרך היצירה.",
+year:"שנת יצירה וחברה. זמן לבטא את עצמך, ליצור, להיפגש עם אנשים וליהנות. כדאי להיזהר מלהתפזר על יותר מדי כיוונים.",
+pm:"חודש של יצירה, מפגשים וביטוי עצמי.",
+pinnacle:"תקופה של פריחה יצירתית וחברתית. הכישרונות מבקשים לצאת החוצה.",
+challenge:"האתגר הוא ביטוי עצמי: להתגבר על פחד מביקורת או מבוכה, ולהעז להשמיע את הקול האמיתי בלי להתפזר.",
+lesson:"שיעור של ביטוי עצמי ושמחה. ייתכן קושי לשתף רגשות או להאמין ביכולת היצירתית.",
+passion:"תשוקה ליצירה, לביטוי ולבמה."},
+4:{title:"הבונה",kw:"יציבות, סדר והתמדה",gift:"יסודיות ואמינות",
+essence:"מספר 4 הוא אנרגיה של יסודות. את/ה בונה דברים שעומדים לאורך זמן, בעבודה שיטתית, ביושר ובנאמנות. אנשים סומכים עליך. הלמידה היא להשאיר מקום לגמישות ולהנאה בתוך המבנה.",
+strengths:["אמינות ויושר","כושר עבודה והתמדה","חשיבה מעשית ומאורגנת","נאמנות למשפחה ולערכים"],
+shadow:["נוקשות ועקשנות","התנגדות לשינוי","עבודה יתר ושחיקה","ראייה צרה ושיפוטיות"],
+career:"הנדסה, בנייה, ניהול תפעול, חשבונאות, טכנולוגיה ומלאכת יד. כל תחום שבו בונים צעד אחר צעד ונמדדים בתוצאה מוחשית.",
+love:"את/ה בן/בת זוג נאמן/ה ויציב/ה, שמבטא/ת אהבה במעשים יותר מבמילים. חשוב לזכור גם ספונטניות, רומנטיקה ומילה טובה.",
+money:"כסף נבנה לאט ובבטחה: חיסכון, תכנון ונכסים. הימורים פיננסיים מתאימים לך פחות.",
+growth:"להרפות. לא כל דבר צריך להיות מושלם ומתוכנן כדי להיות טוב.",
+soul:"בפנים את/ה כמה/ה לביטחון, לסדר ולתחושה שהקרקע יציבה מתחת לרגליים.",
+persona:"אחרים רואים בך אדם רציני, אחראי ואמין, שאפשר לסמוך עליו.",
+expr:"הכישרון שלך הוא להפוך רעיונות למציאות. נועדת לבנות מבנים, מערכות ומסגרות שאחרים יכולים להישען עליהן.",
+year:"שנת עבודה ובנייה. זמן להניח יסודות, לסדר, לתכנן ולהשקיע מאמץ. העבודה הקשה עכשיו תשתלם בהמשך.",
+pm:"חודש של סדר, עבודה ממוקדת וטיפול בפרטים.",
+pinnacle:"תקופה של עבודה קשה ובניית בסיס: בית, קריירה ויציבות כלכלית.",
+challenge:"האתגר הוא משמעת בלי נוקשות: להתמיד גם כשמשעמם, ובו בזמן לא להיתקע בשיטה אחת.",
+lesson:"שיעור של סדר, משמעת והתמדה. ייתכן קושי לסיים משימות או לבנות שגרה.",
+passion:"תשוקה לסדר, לבנייה ולביטחון."},
+5:{title:"ההרפתקן/ית",kw:"חופש, שינוי וחוויה",gift:"הסתגלות מהירה וסקרנות",
+essence:"מספר 5 הוא אנרגיה של תנועה. את/ה סקרן/ית, מסתגל/ת במהירות ונמשך/ת לחוויות, למקומות ולאנשים חדשים. החיים שלך עשירים בתפניות. הלמידה היא חופש עם אחריות: לבחור לעומק ולא רק לרוחב.",
+strengths:["גמישות והסתגלות","סקרנות ואהבת למידה","כושר שכנוע ותקשורת","אומץ לשנות"],
+shadow:["חוסר מנוחה ושעמום מהיר","קושי במחויבות","נטייה להגזמה ולהתמכרויות","פזיזות"],
+career:"מכירות, תקשורת, תיירות, יזמות, עיתונאות, הדרכה ואמנויות הבמה. כל עבודה מגוונת עם תנועה ואנשים חדשים.",
+love:"דרוש לך בן/בת זוג שהוא/היא גם שותף/ה להרפתקה ושנותן/ת מרחב. מחויבות אפשרית כשהיא לא מרגישה כמו כלוב.",
+money:"כסף מגיע ממגוון מקורות ובגלים. כדאי לבנות כרית ביטחון לתקופות השקטות.",
+growth:"לגלות את החופש שבמחויבות. לעומק יש טעם שאין לרוחב.",
+soul:"בפנים את/ה כמה/ה לחופש, לגיוון ולטעום מכל מה שהחיים מציעים.",
+persona:"אחרים רואים בך אדם תוסס, מסקרן ומלא אנרגיה, לפעמים בלתי צפוי.",
+expr:"הכישרון שלך הוא לחבר בין עולמות. נועדת להביא שינוי, רעננות ותנועה, ולהפיץ רעיונות.",
+year:"שנת שינויים. צפויות תנועה, הפתעות והזדמנויות חדשות. זמן להיות גמיש/ה, לטייל, ללמוד ולשחרר את מה שכבר לא מתאים.",
+pm:"חודש של תנועה, הפתעות והזדמנויות.",
+pinnacle:"תקופה של שינויים, נסיעות וחוויות מגוונות. לומדים להסתגל ולבחור.",
+challenge:"האתגר הוא חופש מאוזן: לא לברוח מכל מסגרת, ומצד שני לא לפחד משינוי.",
+lesson:"שיעור של גמישות והתנסות. ייתכן חשש משינוי או מיציאה מאזור הנוחות.",
+passion:"תשוקה לחופש, לגיוון ולחוויה."},
+6:{title:"המטפל/ת",kw:"אחריות, אהבה ובית",gift:"חום ואכפתיות",
+essence:"מספר 6 הוא אנרגיה של אכפתיות. משפחה, קהילה ויופי חשובים לך. את/ה מטפל/ת, מלמד/ת ומרפא/ה, ונושא/ת באחריות לאחרים באופן טבעי. הלמידה היא לתת בלי לשלוט, ולזכור לטפל גם בעצמך.",
+strengths:["אכפתיות ונדיבות","חוש אחריות","חוש אסתטי והרמוני","יכולת ריפוי והוראה"],
+shadow:["התערבות ושליטה מתוך דאגה","פרפקציוניזם","הקרבה עצמית ותחושת אשמה","קושי לקבל"],
+career:"טיפול, רפואה, חינוך, ייעוץ, עיצוב, אמנות ועבודה קהילתית. כל מקום שבו דואגים לאחרים או יוצרים יופי.",
+love:"את/ה בן/בת זוג מסור/ה ואוהב/ת שבונה בית חם. הלמידה היא לאהוב בלי לנסות \"לתקן\" את האחר, ולאפשר לעצמך גם לקבל.",
+money:"כסף מגיע משירות ומאחריות. כדאי להיזהר מלתת יותר ממה שאפשר להרשות לעצמך.",
+growth:"לטפל בעצמך באותה מסירות שבה את/ה מטפל/ת באחרים.",
+soul:"בפנים את/ה כמה/ה לאהוב ולהיות נאהב/ת, לבית הרמוני ולתחושה שאת/ה נחוץ/ה.",
+persona:"אחרים רואים בך אדם חם, מגונן ואמין, שפונים אליו לעצה ולתמיכה.",
+expr:"הכישרון שלך הוא לטפח. נועדת לרפא, לחנך, ליצור הרמוניה ויופי, ולהחזיק קהילה.",
+year:"שנת משפחה ואחריות. נושאי בית, זוגיות וקהילה במרכז. זמן לטפל ביחסים, לתת וגם לקבל.",
+pm:"חודש של משפחה, בית ואחריות כלפי אחרים.",
+pinnacle:"תקופה של אחריות משפחתית וקהילתית. בונים בית, מטפלים ומלמדים.",
+challenge:"האתגר הוא אידיאליזם: לא לדרוש שלמות מעצמך ומאחרים, ולתת בלי להעמיס על עצמך את כל העולם.",
+lesson:"שיעור של אחריות ונתינה. ייתכן קושי להתחייב לבית, למשפחה או לקהילה.",
+passion:"תשוקה לאהבה, לבית ולשירות."},
+7:{title:"החוקר/ת",kw:"עומק, חכמה ורוחניות",gift:"תובנה ואינטואיציה חדה",
+essence:"מספר 7 הוא אנרגיה של חיפוש. את/ה שואל/ת שאלות עמוקות, לא מסתפק/ת בתשובות שטחיות, ומחפש/ת את האמת שמאחורי הדברים, בשכל וברוח. הלמידה היא לבטוח, ולא להסתגר בתוך העולם הפנימי.",
+strengths:["חשיבה אנליטית ועמוקה","אינטואיציה","עצמאות מחשבתית","חיבור לרוחניות ולחכמה"],
+shadow:["הסתגרות ובדידות","חשדנות וציניות","ביקורתיות","קושי לשתף רגשות"],
+career:"מחקר, מדע, פילוסופיה, טכנולוגיה, כתיבה, הנחיה רוחנית ומוזיקה מעמיקה. עבודה שמאפשרת שקט, ריכוז ועומק.",
+love:"דרוש לך בן/בת זוג שמכבד/ת את המרחב הפנימי שלך ושאפשר לשוחח איתו/ה לעומק. האמון נבנה לאט, אבל הוא עמוק.",
+money:"כסף מגיע מהמומחיות. כסף מניע אותך פחות, ולכן חשוב לא להזניח את הצד המעשי.",
+growth:"לפתוח את הלב, לא רק את המחשבה. לשתף גם לפני שהכול מובן עד הסוף.",
+soul:"בפנים את/ה כמה/ה להבין, לדעת ולהתחבר למשהו גדול ונסתר.",
+persona:"אחרים רואים בך אדם שקט, מסתורי ועמוק, לפעמים מרוחק.",
+expr:"הכישרון שלך הוא להעמיק. נועדת לחקור, לנתח, לגלות חכמה ולהעביר אותה הלאה.",
+year:"שנת התבוננות. זמן ללמוד, להעמיק, לנוח, להתבודד ולהתחבר פנימה. פחות זמן לדחוף קדימה בעולם החיצוני.",
+pm:"חודש של התבוננות, לימוד ומנוחה.",
+pinnacle:"תקופה של העמקה, לימוד וחיפוש רוחני. לעתים כרוכה בבדידות שמולידה חכמה.",
+challenge:"האתגר הוא אמון: להתגבר על ספקנות והסתגרות, ולתת לאחרים להיכנס.",
+lesson:"שיעור של העמקה ואמונה. ייתכן קושי להתבונן פנימה או לבטוח בתהליכים.",
+passion:"תשוקה לידע, לאמת ולעומק."},
+8:{title:"המממש/ת",kw:"עוצמה, הישג ושפע",gift:"כושר ניהול ומימוש",
+essence:"מספר 8 הוא אנרגיה של כוח בעולם החומרי. יש בך יכולת ניהול, שאפתנות ותבונה מעשית לייצר תוצאות, כסף והשפעה. הלמידה היא לאזן בין חומר לרוח ולהשתמש בכוח לטובה.",
+strengths:["ראייה אסטרטגית","כושר ניהול וארגון","שאפתנות ונחישות","חוסן מול קשיים"],
+shadow:["שתלטנות ומאבקי כוח","עבודה בלי הפסקה","מדידת ערך עצמי לפי הצלחה","קשיחות רגשית"],
+career:"ניהול, עסקים, פיננסים, משפטים, נדל\"ן והפקה. כל תפקיד שבו מובילים מערכות ומגייסים משאבים.",
+love:"את/ה בן/בת זוג מגונן/ת ומחויב/ת. חשוב להביא הביתה גם רכות, ולא רק את ראש העבודה.",
+money:"כאן המספר בביתו: יכולת גבוהה לייצר שפע, לצד תנודות. ההצלחה החומרית יציבה כשהיא נשענת על יושר.",
+growth:"לזכור שהערך שלך אינו תלוי בהישגים. כוח אמיתי כולל גם פגיעות.",
+soul:"בפנים את/ה כמה/ה להצליח, להשפיע ולהגיע לעצמאות כלכלית ולהכרה.",
+persona:"אחרים רואים בך אדם סמכותי, בטוח ובעל נוכחות, שמנהל את העניינים.",
+expr:"הכישרון שלך הוא לממש. נועדת לנהל, לבנות מערכות גדולות ולהביא שפע לעולם.",
+year:"שנת קציר והישגים. זמן לקדם קריירה, כסף ומעמד, ולקצור את פירות המאמץ. נדרשים איזון ויושר.",
+pm:"חודש של עשייה, החלטות כלכליות והתקדמות.",
+pinnacle:"תקופה של הישגים חומריים, ניהול וכוח. לומדים להשתמש בסמכות בתבונה.",
+challenge:"האתגר הוא היחס לכוח ולכסף: לא להיבלע בחומריות, וגם לא לפחד מהצלחה.",
+lesson:"שיעור של ניהול כספים וכוח אישי. ייתכן קושי לעמוד על ערכך או לנהל משאבים.",
+passion:"תשוקה להישג, להשפעה ולשפע."},
+9:{title:"ההומניסט/ית",kw:"חמלה, נתינה והשלמה",gift:"ראייה רחבה וחמלה",
+essence:"מספר 9 הוא אנרגיה של סיום ושלמות. הוא מכיל את כל המספרים שלפניו, ולכן יש בך חכמה רחבה, חמלה ורצון לתרום לעולם. הלמידה היא לשחרר אנשים, עבר וציפיות, ולתת מתוך שפע ולא מתוך הקרבה.",
+strengths:["חמלה ונדיבות","ראייה רחבה ואוניברסלית","יצירתיות והשראה","סובלנות"],
+shadow:["קושי לשחרר","אכזבה מהעולם","נתינה שהופכת להקרבה","ריחוק רגשי"],
+career:"עבודה חברתית, אמנות, חינוך, רפואה וארגונים ללא מטרות רווח. כל עבודה שיש בה שליחות גדולה ממך.",
+love:"את/ה אוהב/ת בעומק ובנדיבות, ולעתים נמשך/ת לאנשים שצריכים \"הצלה\". הלמידה היא אהבה בגובה העיניים.",
+money:"כסף זורם כשהעבודה משרתת מטרה גדולה. מלחמה בכסף או זלזול בו פוגעים בשליחות עצמה.",
+growth:"לשחרר את מה שהסתיים, ולסמוך שמקום ריק יתמלא בטוב.",
+soul:"בפנים את/ה כמה/ה לעולם טוב יותר, לתת ולהיות חלק ממשהו משמעותי.",
+persona:"אחרים רואים בך אדם רחב לב, אצילי ומעורר השראה.",
+expr:"הכישרון שלך הוא לתת השראה ולרפא. נועדת לשרת אנשים דרך אמנות, חינוך או חמלה.",
+year:"שנת סיומים. מחזור של תשע שנים נסגר. זמן לשחרר, לסכם, לסלוח ולפנות מקום לחדש שיגיע בשנה הבאה.",
+pm:"חודש של סיכומים, שחרור וסגירת מעגלים.",
+pinnacle:"תקופה של נתינה, השלמה ושחרור. החיים מזמינים לראות את התמונה הגדולה.",
+challenge:"האתגר הוא שחרור: לסיים פרקים בלי מרירות, ולאזן בין נתינה לעולם לבין הצרכים שלך.",
+lesson:"שיעור של חמלה וראייה רחבה. ייתכן קושי לסלוח או לראות מעבר לטובתך האישית.",
+passion:"תשוקה לתרום, לרפא ולהעניק."},
+11:{title:"המאיר/ה",kw:"אינטואיציה, השראה והארה",gift:"אינטואיציה והשראה",
+essence:"11 הוא מספר מאסטר: אנרגיית ה-2 בעוצמה כפולה. יש בך רגישות גבוהה, אינטואיציה חזקה ויכולת להעניק השראה לאחרים. את/ה מעין אנטנה שקולטת את מה שאחרים לא רואים. המתח הפנימי גבוה, בין חזון גדול לבין פחד וחרדה. הלמידה היא לבטוח בקול הפנימי ולקרקע אותו.",
+strengths:["אינטואיציה חדה","כושר השראה","רגישות רוחנית","חזון"],
+shadow:["חרדה ועצבנות","רגישות יתר","חוסר מעשיות","ספק עצמי עמוק"],
+career:"הוראה רוחנית, טיפול, אמנות, מוזיקה וכתיבה מעוררת השראה. כל תחום שבו מעבירים מסר.",
+love:"קשר עמוק ורוחני חשוב לך. דרוש/ה לך בן/בת זוג יציב/ה שיכול/ה להכיל את עוצמת הרגש.",
+money:"כסף מגיע כשהשליחות מקבלת צורה מעשית. בלי קרקוע, הרעיונות נשארים באוויר.",
+growth:"לקרקע: שגרה, גוף ותנועה מעגנים את עוצמת ההשראה.",
+soul:"בפנים את/ה כמה/ה להאיר ולעורר אחרים, ולחיות לפי אמת פנימית גבוהה.",
+persona:"אחרים רואים בך אדם מיוחד, רגיש ומעורר השראה, עם נוכחות שקשה להגדיר.",
+expr:"הכישרון שלך הוא להעביר השראה. נועדת להיות גשר בין העולם הרוחני לעולם היומיומי.",
+pinnacle:"תקופה של התעוררות רוחנית והשראה, ואפשרות להפוך למורה או למקור השראה."},
+22:{title:"הבונה הגדול/ה",kw:"חזון מעשי בקנה מידה גדול",gift:"יכולת להגשים חזון",
+essence:"22 הוא מספר מאסטר, \"הבונה הגדול\": החזון של 11 יחד עם המעשיות של 4. יש בך פוטנציאל לבנות דברים גדולים שמשפיעים על אנשים רבים, והלחץ גבוה בהתאם. הלמידה היא לא להיבהל מגודל הפוטנציאל, ולבנות אותו לבנה אחר לבנה.",
+strengths:["חזון יחד עם ביצוע","כושר ארגון גבוה","מנהיגות שקטה","התמדה"],
+shadow:["לחץ פנימי עצום","פחד מכישלון","נוקשות","שחיקה"],
+career:"יזמות רחבת היקף, אדריכלות, ניהול ארגונים, הקמת מוסדות ומיזמים חברתיים.",
+love:"את/ה מחפש/ת שותפות יציבה ונאמנה שתומכת בחזון. חשוב להשאיר זמן לזוגיות ולא רק לפרויקט.",
+money:"פוטנציאל לשפע רב כשמשתמשים בו כדי לבנות משהו שמשרת רבים.",
+growth:"לפרק את החזון הגדול לצעדים קטנים ולסמוך על התהליך.",
+soul:"בפנים את/ה כמה/ה להשאיר אחריך משהו מוחשי ומשמעותי לעולם.",
+persona:"אחרים רואים בך אדם יציב, רציני וחזק, שמעורר אמון.",
+expr:"הכישרון שלך הוא להגשים חזונות גדולים. נועדת לבנות מבנים ומערכות שמשרתים רבים.",
+pinnacle:"תקופה של בנייה גדולה ואפשרות להגשים חזון רחב השפעה."},
+33:{title:"המורה המרפא/ה",kw:"אהבה, ריפוי ושירות",gift:"אהבה מרפאת",
+essence:"33 הוא הנדיר במספרי המאסטר, \"המורה המרפא\". יש בו את האחריות של 6 בעוצמה רוחנית. הפוטנציאל הוא נתינה, ריפוי והוראה מתוך אהבה ללא תנאים. הלמידה היא לא לשאת את כל העולם על הכתפיים.",
+strengths:["חמלה עמוקה","יכולת ריפוי","הוראה מתוך דוגמה אישית","מסירות"],
+shadow:["הקרבה עצמית","תחושת אחריות מוגזמת","ביקורתיות כלפי עצמך","תחושת קורבן"],
+career:"טיפול, ריפוי, חינוך, הנחיה רוחנית ואמנות מרפאת.",
+love:"אהבה גדולה ומכילה. חשוב לבחור קשר הדדי, שבו גם את/ה מקבל/ת.",
+money:"כסף מגיע מתוך שירות. חשוב לא להתבייש לקבל תמורה.",
+growth:"לרפא קודם את עצמך. אהבה עצמית היא הבסיס לאהבה לאחרים.",
+soul:"בפנים את/ה כמה/ה לרפא ולהעניק אהבה בלי תנאים.",
+persona:"אחרים רואים בך אדם חם, מכיל ומרגיע, שאפשר להישען עליו.",
+expr:"הכישרון שלך הוא לרפא וללמד. נועדת להעלות את התודעה של הסובבים דרך אהבה.",
+pinnacle:"תקופה של שירות, ריפוי והוראה."}
+};
+const CH0="אתגר האפס: אין אתגר מוגדר אחד. כל האפשרויות פתוחות, והמשימה היא לבחור. זה יכול להעיד על חופש גדול או על קושי למצוא כיוון.";
+const DEBT={
+13:"חוב 13/4, חוב של עבודה. לפי המסורת הנומרולוגית הוא מצביע על נטייה לקיצורי דרך. בחיים האלה נדרשים התמדה, סדר ועבודה עקבית, וההצלחה מגיעה דווקא בזכות מאמץ שיטתי.",
+14:"חוב 14/5, חוב של חירות. מצביע על שימוש לא מאוזן בחופש. הלמידה היא מתינות ואיפוק, והתמודדות עם שינויים בלי לברוח לקיצוניות או להתמכרויות.",
+16:"חוב 16/7, חוב של אגו. החיים מזמנים פירוק של מבנים שנבנו על גאווה או אשליה, כדי לפתוח מקום לענווה ולקשר רוחני אמיתי.",
+19:"חוב 19/1, חוב של כוח. מצביע על שימוש אנוכי בעצמאות. הלמידה היא עצמאות שאינה מתנשאת, והיכולת לבקש עזרה כשצריך."};
+const YKW={1:"התחלה",2:"שותפות",3:"ביטוי",4:"בנייה",5:"שינוי",6:"אחריות",7:"התבוננות",8:"קציר",9:"סיום"};
+const ARROWS=[
+{n:[1,2,3],p:"חץ התכנון",pt:"יכולת טבעית לתכנן, לארגן ולראות צעד אחד קדימה.",a:"היעדר חץ התכנון",at:"נטייה לאלתר במקום לתכנן. כדאי לאמץ כלים פשוטים של תכנון."},
+{n:[4,5,6],p:"חץ כוח הרצון",pt:"נחישות ויכולת להתמיד מול קשיים. כשמחליטים, מגיעים.",a:"חץ התסכול",at:"רגישות לאכזבות כשהמציאות לא מתאימה לציפיות. הלמידה היא גמישות בציפיות."},
+{n:[7,8,9],p:"חץ הפעילות",pt:"אנרגיה של עשייה ופעולה. קשה לך לשבת בלי לעשות.",a:"היעדר חץ הפעילות",at:"נטייה לחשוב הרבה לפני שפועלים. צעד קטן אחד עדיף על עוד תכנון."},
+{n:[3,6,9],p:"חץ האינטלקט",pt:"זיכרון טוב, חשיבה חדה ויכולת ניתוח.",a:"חץ הזיכרון החלש",at:"כדאי לחזק את הזיכרון והריכוז בכתיבה, ברשימות ובחזרה."},
+{n:[2,5,8],p:"חץ האיזון הרגשי",pt:"יציבות רגשית ויכולת להחזיק רגשות בלי להיסחף.",a:"חץ הרגישות היתרה",at:"רגישות גבוהה לפגיעה, שלעתים מוסתרת מאחורי מעטה של ריחוק."},
+{n:[1,4,7],p:"חץ המעשיות",pt:"ידיים טובות, כושר ביצוע ויכולת להתמודד עם העולם החומרי.",a:"חץ חוסר הסדר",at:"קושי בפרטים המעשיים ובסדר. כדאי לפשט ולמסד הרגלים."},
+{n:[1,5,9],p:"חץ הנחישות",pt:"התמדה ועקשנות חיובית לראות דברים עד הסוף.",a:"חץ הדחיינות",at:"נטייה לדחות דברים. מועדים קבועים ושותף/ה לדרך עוזרים."},
+{n:[3,5,7],p:"חץ הרוחניות",pt:"חמלה, אמונה וחיבור טבעי לממד הרוחני.",a:"חץ הספקנות",at:"צורך בהוכחות לפני אמונה. הלמידה היא לתת מקום גם לחוויה הבלתי מוסברת."}];
+const PLANES={phys:{l:"מישור הגוף",ch:"EWDM",t:"חוויה דרך החושים והעשייה. נוח לך עם מה שמוחשי ומעשי."},ment:{l:"מישור השכל",ch:"AHJNPGL",t:"חשיבה, ניתוח והיגיון. את/ה מעבד/ת חוויות דרך הראש."},emo:{l:"מישור הרגש",ch:"IORZBSTX",t:"רגשות, יצירה ודמיון. את/ה חווה את העולם דרך הלב."},intu:{l:"מישור האינטואיציה",ch:"KFQUYCV",t:"תחושות בטן וקליטה רוחנית. את/ה יודע/ת דברים בלי לדעת איך."}};
+const HEB={'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':1,'כ':2,'ך':2,'ל':3,'מ':4,'ם':4,'נ':5,'ן':5,'ס':6,'ע':7,'פ':8,'ף':8,'צ':9,'ץ':9,'ק':1,'ר':2,'ש':3,'ת':4};
+const HEBV="אהוי", LATV="AEIOU", MASTER=[11,22,33], DEBTS=[13,14,16,19];
+const COMPAT=new Set(["1-3","1-9","2-6","2-9","3-5","4-6","4-7","5-9","6-8","2-3"]);
+
+/* ---------- math ---------- */
+const dsum=n=>String(n).split('').reduce((a,b)=>a+(+b),0);
+function red(n,keep=true){const ch=[n];while(n>9&&!(keep&&MASTER.includes(n))){n=dsum(n);ch.push(n);}return{v:n,ch};}
+const rv=(n,k=true)=>red(n,k).v, single=n=>rv(n,false);
+const debtIn=n=>red(n).ch.find(x=>DEBTS.includes(x));
+const comp=(c,v)=>(c>9&&c!==v)?`${c}/${v}`:"";
+function get(n,f){if(N[n]&&N[n][f]!==undefined)return N[n][f];const s=single(n);return N[s]?N[s][f]:"";}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const grp=n=>{n=single(n);return [1,5,7].includes(n)?0:[2,4,8].includes(n)?1:2;};
+const GRP=["משולש העצמאות והמחשבה (1, 5, 7)","משולש החומר והעשייה (2, 4, 8)","משולש הרגש והיצירה (3, 6, 9)"];
+function relation(a,b){a=single(a);b=single(b);if(a===b)return 4;if(grp(a)===grp(b))return 3;const k=[a,b].sort().join('-');return COMPAT.has(k)?2:1;}
+const scriptOf=s=>/[א-ת]/.test(s)?"he":"la";
+
+function analyzeName(raw,sys){
+  const parts=raw.trim().split(/[\s\-־'"׳״.]+/).filter(Boolean);
+  const words=[];const counts=Array(10).fill(0);
+  for(const p of parts){
+    const letters=[];
+    if(sys==="he"){
+      const w=p.replace(/[֑-ׇ]/g,'').replace(/[^א-ת]/g,'');
+      for(const ch of w){if(HEB[ch])letters.push({ch,val:HEB[ch],vow:HEBV.includes(ch)});}
+    }else{
+      const w=p.toUpperCase().replace(/[^A-Z]/g,'');
+      [...w].forEach((ch,i)=>{const val=((ch.charCodeAt(0)-65)%9)+1;let vow=LATV.includes(ch);
+        if(ch==="Y"){const pr=w[i-1],nx=w[i+1];vow=!(pr&&LATV.includes(pr))&&!(nx&&LATV.includes(nx));}
+        letters.push({ch,val,vow});});
+    }
+    if(!letters.length)continue;
+    const sum=letters.reduce((a,l)=>a+l.val,0),vs=letters.filter(l=>l.vow).reduce((a,l)=>a+l.val,0),cs=sum-vs;
+    letters.forEach(l=>counts[l.val]++);
+    words.push({letters,sum,vs,cs});
+  }
+  if(!words.length)return null;
+  const mk=key=>{const c=words.reduce((a,w)=>a+rv(w[key]),0);return{c,v:rv(c),trace:words.map(w=>`${w[key]}→${rv(w[key])}`).join(" + ")+` = ${c}`+(c>9?` → ${rv(c)}`:"")};};
+  const expr=mk("sum"),soul=mk("vs"),pers=mk("cs");
+  const initials=words.reduce((a,w)=>a+w.letters[0].val,0);
+  const max=Math.max(...counts.slice(1));
+  const passion=max>0?counts.map((c,i)=>i&&c===max?i:0).filter(Boolean):[];
+  const lessons=[1,2,3,4,5,6,7,8,9].filter(i=>!counts[i]);
+  let planes=null;
+  if(sys==="la"){planes={};for(const k in PLANES){planes[k]=words.reduce((a,w)=>a+w.letters.filter(l=>PLANES[k].ch.includes(l.ch)).length,0);}}
+  const debts=[["ביטוי",expr.c],["דחף הנשמה",soul.c],["אישיות",pers.c]].map(([l,c])=>[l,debtIn(c)]).filter(x=>x[1]);
+  return{sys,raw,words,expr,soul,pers,balance:{c:initials,v:single(initials)},counts,passion,lessons,sub:9-lessons.length,planes,debts};
+}
+
+function birth(dateStr){
+  const [y,m,d]=dateStr.split('-').map(Number);
+  const dR=rv(d),mR=rv(m),yR=rv(dsum(y));
+  const c=dR+mR+yR,LP=rv(c);
+  return{y,m,d,dR,mR,yR,c,LP,trace:`${d}→${dR} + ${m}→${mR} + ${y}→${yR} = ${c}`+(c>9?` → ${LP}`:""),debt:debtIn(c)};
+}
+function ageAt(b,t){let a=t.y-b.y;if(t.m<b.m||(t.m===b.m&&t.d<b.d))a--;return a;}
+
+/* ---------- render helpers ---------- */
+const med=(n,c,rose)=>`<div class="med${rose?' rose':''}" aria-hidden="true"><span class="n">${n}</span>${c?`<span class="c">${c}</span>`:""}</div>`;
+const tr=t=>t?`<div class="trace">${esc(t)}</div>`:"";
+const DEFS=[
+["שביל החיים","lp","המספר החשוב ביותר במפה. מחושב מתאריך הלידה המלא ומתאר את הדרך ואת השיעור המרכזי של החיים."],
+["יום הלידה","bday","מחושב מהיום בחודש שבו נולדת בלבד. מתאר כישרון מיוחד שעומד לרשותך."],
+["מספר הגישה","att","סכום היום והחודש של הלידה. מתאר את התגובה הראשונית והספונטנית שלך למצבים חדשים."],
+["הבגרות","mat","סכום שביל החיים ומספר הביטוי. מתאר את המטרה שמתבהרת בחצי השני של החיים."],
+["חוב קרמתי","debt","המספרים 13, 14, 16 ו-19 כשהם מופיעים בדרך החישוב. במסורת הנומרולוגית הם מסמנים שיעור שנשאר פתוח."],
+["מספר הביטוי","expr","נקרא גם מספר הגורל. סכום כל אותיות השם, ומתאר את הכישרונות והכלים שאיתם נולדת."],
+["דחף הנשמה","soul","סכום התנועות בשם. מתאר את הרצונות העמוקים, מה שמניע אותך כשאף אחד לא רואה."],
+["מספר האישיות","pers","סכום העיצורים בשם. מתאר את הרושם החיצוני, הצד שאת/ה מראה לעולם."],
+["מספר האיזון","bal","סכום האותיות הראשונות של כל מילה בשם. מתאר איך לחזור לשקט ברגעי משבר."],
+["התשוקה הנסתרת","pas","המספר שחוזר הכי הרבה פעמים בין אותיות השם. מתאר דחף או כישרון שקיים אצלך בשפע."],
+["שיעורים קרמתיים","les","מספרים שלא מופיעים כלל באותיות השם. מתארים תחומים שבהם הכלים פחות מולדים וצריך ללמוד אותם."],
+["העצמי התת-מודע","sub","9 פחות מספר השיעורים הקרמתיים. מודד כמה כלים פנימיים זמינים לך במצבי לחץ."],
+["שנה אישית","py","מחושבת מיום וחודש הלידה ומהשנה הקלנדרית. כל שנה היא שלב במחזור של תשע שנים, מהתחלה (1) ועד סיום (9)."],
+["חודש אישי","pm","השנה האישית ועוד מספר החודש. מתאר את הגוון של החודש בתוך השנה."],
+["יום אישי","pd","החודש האישי ועוד היום בחודש. מתאר את האנרגיה של יום מסוים."]];
+let seenIds={};
+const defLine=t=>`<div class="def"><span>מה זה</span>${t}</div>`;
+function reading(n,c,title,sub,body,trace,rose){
+  const d=DEFS.find(x=>title.includes(x[0]));let id="";
+  if(d){id="r-"+d[1];seenIds[id]=(seenIds[id]||0)+1;if(seenIds[id]>1)id+="-"+seenIds[id];}
+  return `<div class="reading"${id?` id="${id}"`:""}>${med(n,c,rose)}<div class="rbody"><h3>${title}</h3>${d?defLine(d[2]):""}${sub?`<div class="sub">${sub}</div>`:""}${body}${tr(trace)}</div></div>`;}
+const ul=a=>`<ul class="plain">${a.map(x=>`<li>${x}</li>`).join("")}</ul>`;
+const tile=(n,c,l)=>`<div class="tile"><span class="n">${n}</span><span class="c">${c||"&nbsp;"}</span><div class="l">${l}</div></div>`;
+function lettersHTML(an){
+  const dir=an.sys==="he"?"rtl":"ltr";
+  return `<div class="letters" dir="${dir}">${an.words.map(w=>`<div class="word">${w.letters.map(l=>`<div class="lt${l.vow?' vow':''}"><span class="ch">${l.ch}</span><span class="v">${l.val}</span></div>`).join("")}</div>`).join("")}</div><div class="legend">אותיות מודגשות הן תנועות, ומהן מחושב דחף הנשמה. השאר עיצורים, ומהם מחושב מספר האישיות.</div>`;
+}
+
+/* ---------- main ---------- */
+function analyze(inp){
+  const B=birth(inp.bdate);
+  const td=inp.tdate?inp.tdate.split('-').map(Number):null;const T=td?{y:td[0],m:td[1],d:td[2]}:(()=>{const x=new Date();return{y:x.getFullYear(),m:x.getMonth()+1,d:x.getDate()};})();
+  const names=[];
+  if((inp.sys==="he"||inp.sys==="both")&&inp.heName.trim()){const a=analyzeName(inp.heName,"he");if(a)names.push(a);}
+  if((inp.sys==="la"||inp.sys==="both")&&inp.laName.trim()){const a=analyzeName(inp.laName,"la");if(a)names.push(a);}
+  const P=names[0]||null;
+  const age=ageAt(B,T);
+  const birthday=rv(B.d), attitude=rv(B.d+B.m);
+  const maturity=P?rv(B.LP+P.expr.v):null;
+  // cycles
+  const m1=single(B.m),d1=single(B.d),y1=single(dsum(B.y));
+  const p1=rv(m1+d1),p2=rv(d1+y1),p3=rv(single(p1)+single(p2)),p4=rv(m1+y1);
+  const c1=Math.abs(m1-d1),c2=Math.abs(d1-y1),c3=Math.abs(c1-c2),c4=Math.abs(m1-y1);
+  const e1=36-single(B.LP);
+  const periods=[[0,e1,p1,c1,`${m1}+${d1}`,`|${m1}−${d1}|`],[e1+1,e1+9,p2,c2,`${d1}+${y1}`,`|${d1}−${y1}|`],[e1+10,e1+18,p3,c3,`${single(p1)}+${single(p2)}`,`|${c1}−${c2}|`],[e1+19,null,p4,c4,`${m1}+${y1}`,`|${m1}−${y1}|`]];
+  const curIdx=periods.findIndex(p=>age>=p[0]&&(p[1]===null||age<=p[1]));
+  // personal year
+  const py=single(single(B.d)+single(B.m)+single(dsum(T.y))),pm=single(py+T.m),pd=single(pm+T.d);
+  // grid
+  const digits=(String(B.d)+String(B.m)+String(B.y)).split('').map(Number).filter(x=>x>0);
+  const gc=Array(10).fill(0);digits.forEach(x=>gc[x]++);
+  // partner
+  let PT=null;
+  if(inp.partnerOn&&inp.pDate){PT={B:birth(inp.pDate),an:inp.pName.trim()?analyzeName(inp.pName,scriptOf(inp.pName)):null,name:inp.pName.trim()};}
+  // current name
+  let CUR=null;
+  if(inp.curName.trim()){const s=scriptOf(inp.curName);const an=analyzeName(inp.curName,s);const base=names.find(x=>x.sys===s)||null;if(an)CUR={an,base};}
+
+  let h="";const S={};seenIds={};
+  const chapters=[["map","מפה ומדריך"],["overview","תמונה כוללת"],["core","שביל החיים"],P?["name","מספרי השם"]:null,["grid","טבלת הלידה"],["cycles","מחזורי חיים"],["year","השנה האישית"],CUR?["change","שם נוכחי"]:null,PT?["love","התאמה זוגית"]:null,inp.focus!=="none"?["focus","מיקוד"]:null].filter(Boolean);
+  h+=`<nav class="chapters" aria-label="פרקים">${chapters.map(c=>`<a href="#${c[0]}">${c[1]}</a>`).join("")}</nav>`;
+
+  /* overview */
+  const coreTiles=[tile(B.LP,comp(B.c,B.LP),"שביל החיים")];
+  if(P){coreTiles.push(tile(P.expr.v,comp(P.expr.c,P.expr.v),"ביטוי / גורל"),tile(P.soul.v||"—",comp(P.soul.c,P.soul.v),"דחף הנשמה"),tile(P.pers.v||"—",comp(P.pers.c,P.pers.v),"אישיות"));}
+  coreTiles.push(tile(birthday,comp(B.d,birthday),"יום הלידה"));
+  if(P)coreTiles.push(tile(maturity,"","בגרות"));
+  coreTiles.push(tile(py,"",`שנה אישית ${T.y}`));
+  // synthesis
+  const syn=[];
+  syn.push(`במרכז המפה עומד <b>שביל החיים ${B.LP}</b>, ${get(B.LP,"title")}: ${get(B.LP,"kw")}. זה הכיוון הכללי של חייך, מה שבאת ללמוד ולהגשים.`);
+  if(P){
+    syn.push(`השם שקיבלת בלידה נותן לך את הכלים: מספר הביטוי <b>${P.expr.v}</b> (${get(P.expr.v,"kw")}). הלב מונע על ידי דחף נשמה <b>${P.soul.v||"—"}</b>${P.soul.v?` (${get(P.soul.v,"kw")})`:""}, ואחרים פוגשים קודם את מספר האישיות <b>${P.pers.v||"—"}</b>${P.pers.v?` (${get(P.pers.v,"kw")})`:""}.`);
+    const r=relation(B.LP,P.expr.v);
+    syn.push(r>=3?"שביל החיים ומספר הביטוי שייכים לאותה משפחת מספרים. יש הלימה בין מה שבאת ללמוד לבין הכלים שקיבלת, והדרך מרגישה טבעית.":r===2?"שביל החיים ומספר הביטוי משלימים זה את זה: הכלים שבשם תומכים במשימת החיים, גם אם בדרך עקיפה.":"יש מתח בין שביל החיים לבין הכלים שבשם. המתח הזה הוא מנוע לצמיחה, אבל הוא דורש מודעות: לעתים מה שקל לך אינו מה שהדרך מבקשת.");
+    if(P.soul.v&&P.pers.v&&grp(P.soul.v)!==grp(P.pers.v))syn.push("בין דחף הנשמה למספר האישיות יש פער. ייתכן שמה שמניע אותך בפנים שונה מהרושם שאת/ה יוצר/ת, ושאנשים מכירים רק חלק ממך.");
+  }
+  const coreVals=[B.LP,birthday,attitude].concat(P?[P.expr.v,P.soul.v,P.pers.v,maturity]:[]).filter(Boolean);
+  const fq={};coreVals.forEach(v=>{const s=single(v);fq[s]=(fq[s]||0)+1;});
+  const dom=Object.entries(fq).filter(e=>e[1]>=3).map(e=>e[0]);
+  const rep=Object.entries(fq).filter(e=>e[1]===2).map(e=>e[0]);
+  if(dom.length)syn.push(`המספר ${dom.join(" ו-")} חוזר שלוש פעמים או יותר במספרי הליבה. זו האנרגיה הדומיננטית בחייך, על מתנותיה ועל אתגריה: ${dom.map(d=>get(+d,"kw")).join("; ")}.`);
+  else if(rep.length)syn.push(`המספר ${rep.join(" ו-")} מופיע פעמיים במספרי הליבה, ולכן הנושא שלו (${rep.map(d=>get(+d,"kw")).join("; ")}) בולט במיוחד אצלך.`);
+  const masters=coreVals.filter(v=>MASTER.includes(v));
+  if(masters.length)syn.push(`במפה מופיע מספר מאסטר (${[...new Set(masters)].join(", ")}). זה מצביע על פוטנציאל גבוה, וגם על מתח פנימי ורגישות שדורשים קרקוע.`);
+  if(P&&P.lessons.length)syn.push(`בשם חסרים המספרים ${P.lessons.join(", ")}. בנומרולוגיה אלה השיעורים הקרמתיים: תחומים שהחיים יזמנו לך ללמוד שוב ושוב.`);
+  syn.push(`כרגע, בגיל ${age}, את/ה ב<b>שנה אישית ${py}</b> (${YKW[py]})${curIdx>=0?`, בתוך <b>פסגה ${periods[curIdx][2]}</b> ו<b>אתגר ${periods[curIdx][3]}</b>`:""}.`);
+  S.overview=`<section class="ch" id="overview"><h2>תמונה כוללת</h2><div class="core">${coreTiles.join("")}</div><div class="synth" style="margin-top:22px">${syn.map(s=>`<p>${s}</p>`).join("")}</div></section>`;
+
+  /* core: life path */
+  let core=`<section class="ch" id="core"><h2><span class="k">${B.LP}</span>שביל החיים ומספרי התאריך</h2><p class="lead">מספר שביל החיים מחושב מתאריך הלידה המלא. הוא המספר החשוב ביותר במפה ואינו משתנה לעולם.</p>`;
+  core+=reading(B.LP,comp(B.c,B.LP),`שביל החיים: ${get(B.LP,"title")}`,get(B.LP,"kw"),
+   `<p>${get(B.LP,"essence")}</p><div class="two"><div><h4>חוזקות</h4>${ul(get(B.LP,"strengths"))}</div><div><h4 class="neg">הצל</h4>${ul(get(B.LP,"shadow"))}</div></div>
+   <div class="facets"><div class="facet"><b>קריירה ושליחות</b><p>${get(B.LP,"career")}</p></div><div class="facet"><b>אהבה</b><p>${get(B.LP,"love")}</p></div><div class="facet"><b>כסף</b><p>${get(B.LP,"money")}</p></div><div class="facet"><b>כיוון לצמיחה</b><p>${get(B.LP,"growth")}</p></div></div>`,`שביל החיים: ${B.trace}`);
+  core+=reading(birthday,comp(B.d,birthday),"מספר יום הלידה","מתנה מיוחדת שקיבלת לדרך",`<p>יום הלידה ${B.d} מעניק לך את המתנה של ה-${birthday}: ${get(birthday,"gift")}. זה כישרון שעומד לרשותך ומסייע במשימה של שביל החיים. ${get(birthday,"expr")}</p>`,`יום ${B.d}${B.d>9?` → ${birthday}`:""}`);
+  core+=reading(attitude,comp(B.d+B.m,attitude),"מספר הגישה","התגובה הספונטנית שלך לחיים",`<p>היום והחודש יחד מתארים איך את/ה ניגש/ת למצבים חדשים, עוד לפני שמופעלת המחשבה. הגישה שלך נושאת את אופי ה-${attitude}: ${get(attitude,"kw")}. ${get(attitude,"persona")}</p>`,`${B.d} + ${B.m} = ${B.d+B.m}${B.d+B.m>9?` → ${attitude}`:""}`);
+  if(P)core+=reading(maturity,"","מספר הבגרות","מה שמתגלה בחצי השני של החיים",`<p>מספר הבגרות מתעורר בדרך כלל סביב גיל 35 עד 45, ומבטא את המטרה שאליה מתכנסים שביל החיים והשם. אצלך זו אנרגיה של ${get(maturity,"kw")}: ${get(maturity,"growth")}</p>`,`שביל החיים ${B.LP} + ביטוי ${P.expr.v} = ${B.LP+P.expr.v}${B.LP+P.expr.v>9?` → ${maturity}`:""}`);
+  const debts=[];if(B.debt)debts.push(["שביל החיים",B.debt]);if(DEBTS.includes(B.d))debts.push(["יום הלידה",B.d]);if(P)debts.push(...P.debts);
+  if(debts.length)debts.forEach(([w,d])=>{core+=reading(d,"","חוב קרמתי",`נמצא ב${w}`,`<p>${DEBT[d]}</p>`,"",true);});
+  else core+=`<p class="sub" style="color:var(--muted)">לא נמצאו מספרי חוב קרמתי (13, 14, 16, 19) בחישובי הליבה.</p>`;
+  S.core=core+`</section>`;
+
+  /* name */
+  if(names.length){
+    let s=`<section class="ch" id="name"><h2>מספרי השם</h2>${defLine("כל אות בשם מקבלת ערך מ-1 עד 9. מהסכומים של כל האותיות, של התנועות ושל העיצורים נגזרים מספרים שונים.")}<p class="lead">השם שניתן בלידה מתאר את הכלים, הכישרונות והמניעים שאיתם יצאת לדרך. כל אות מקבלת ערך מספרי, ומהערכים מחושבים כמה מספרים שונים.</p>`;
+    if(names.length===2){
+      const [a,b]=names;
+      const rows=[["ביטוי / גורל",a.expr,b.expr],["דחף הנשמה",a.soul,b.soul],["אישיות",a.pers,b.pers],["איזון",a.balance,b.balance]];
+      s+=`<div class="tablewrap"><table><thead><tr><th>מספר</th><th>גימטריה עברית</th><th>פיתגוראית</th><th>פירוש ההשוואה</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1].v||"—"}</td><td class="num">${r[2].v||"—"}</td><td>${single(r[1].v)===single(r[2].v)?'<span class="pill t">זהה</span> האנרגיה הזו מאושרת בשתי השיטות ולכן חזקה במיוחד.':relation(r[1].v,r[2].v)>=3?'<span class="pill">קרוב</span> שני מספרים מאותה משפחה, אותו נושא בגוונים שונים.':'<span class="pill r">שונה</span> שתי השיטות מאירות צדדים שונים שלך. כדאי לקרוא את שתיהן.'}</td></tr>`).join("")}</tbody></table></div>`;
+    }
+    names.forEach(an=>{
+      const lab=an.sys==="he"?"גימטריה עברית":"שיטה פיתגוראית";
+      s+=`<h3 style="margin-top:26px;font-size:1.35rem">${lab}: <span dir="${an.sys==="he"?"rtl":"ltr"}">${esc(an.raw)}</span></h3>${lettersHTML(an)}`;
+      s+=reading(an.expr.v,comp(an.expr.c,an.expr.v),`מספר הביטוי: ${get(an.expr.v,"title")}`,"הכישרונות והיכולות שאיתם נולדת",`<p>${get(an.expr.v,"expr")}</p><p>${get(an.expr.v,"essence")}</p><div class="facets"><div class="facet"><b>בעבודה</b><p>${get(an.expr.v,"career")}</p></div><div class="facet"><b>בכסף</b><p>${get(an.expr.v,"money")}</p></div></div>`,`כל האותיות לפי מילים: ${an.expr.trace}`);
+      if(an.soul.v)s+=reading(an.soul.v,comp(an.soul.c,an.soul.v),"דחף הנשמה","מה את/ה רוצה באמת, מבפנים",`<p>${get(an.soul.v,"soul")}</p><p>${get(an.soul.v,"love")}</p>`,`תנועות: ${an.soul.trace}`);
+      if(an.pers.v)s+=reading(an.pers.v,comp(an.pers.c,an.pers.v),"מספר האישיות","הרושם שאת/ה יוצר/ת על אחרים",`<p>${get(an.pers.v,"persona")}</p><p>זה הצד שאנשים פוגשים לפני שהם מכירים אותך. הוא משמש גם כשומר סף: הוא קובע מה וכמה נכנס פנימה.</p>`,`עיצורים: ${an.pers.trace}`);
+      s+=reading(an.balance.v,comp(an.balance.c,an.balance.v),"מספר האיזון","איך לחזור לאיזון ברגעי משבר",`<p>מספר האיזון מחושב מהאות הראשונה של כל מילה בשם. כשקשה, הדרך שלך חזרה לשקט עוברת דרך ${get(an.balance.v,"kw")}. ${get(an.balance.v,"growth")}</p>`,`אותיות ראשונות: ${an.words.map(w=>w.letters[0].val).join(" + ")} = ${an.balance.c}${an.balance.c>9?` → ${an.balance.v}`:""}`);
+      if(an.passion.length)s+=reading(an.passion.join("·"),"","התשוקה הנסתרת","המספר שחוזר הכי הרבה פעמים בשם",`<p>${an.passion.map(n=>get(n,"passion")).join(" ")} זו אנרגיה שקיימת אצלך בשפע, ולעתים מניעה אותך בלי שתשים/י לב.</p>`,`ספירה: `+[1,2,3,4,5,6,7,8,9].map(i=>`${i}×${an.counts[i]}`).join("  "));
+      if(an.lessons.length)s+=reading(an.lessons.join("·"),"","שיעורים קרמתיים","מספרים שחסרים לגמרי בשם",an.lessons.map(n=>`<p><b>${n}:</b> ${N[n].lesson}</p>`).join(""),"",true);
+      else s+=reading("✓","","שיעורים קרמתיים","כל המספרים מופיעים בשם",`<p>כל המספרים מ-1 עד 9 מופיעים בשם שלך. בנומרולוגיה זה מצביע על כלים מגוונים ועל היעדר שיעור קרמתי מובהק.</p>`,"");
+      s+=reading(an.sub,"","העצמי התת-מודע","ביטחון ותגובה במצבי לחץ",`<p>${an.sub>=8?"יש לך משאבים פנימיים רבים. במצבי לחץ את/ה נשאר/ת יציב/ה יחסית ומוצא/ת פתרונות.":an.sub>=6?"יש לך יכולת התמודדות טובה, אך בתחומים שבהם חסרים לך כלים הלחץ עלול לבלבל אותך. כדאי להכיר את נקודות התורפה מראש.":"במצבי לחץ את/ה עלול/ה להרגיש מוצף/ת. היכרות עם השיעורים הקרמתיים שלך וסדר יום קבוע יעזרו לך להישאר מעוגן/ת."}</p>`,`9 − ${an.lessons.length} מספרים חסרים = ${an.sub}`);
+      if(an.planes){const tot=Object.values(an.planes).reduce((a,b)=>a+b,0)||1;const top=Object.entries(an.planes).sort((a,b)=>b[1]-a[1])[0][0];
+        s+=`<div class="reading" id="r-planes${an.sys==="la"&&names.length>1?"":""}"><div></div><div class="rbody"><h3>מישורי הביטוי</h3>${defLine("חלוקת אותיות השם הלועזי לארבע קבוצות: גוף, שכל, רגש ואינטואיציה. הקבוצה הגדולה מראה דרך איזה ערוץ את/ה חווה את העולם.")}<div class="sub">דרך איזה ערוץ את/ה חווה את העולם</div><div class="facets">${Object.entries(an.planes).map(([k,v])=>`<div class="facet"${k===top?' style="border-color:var(--brass)"':''}><b>${PLANES[k].l} · ${v}</b><p>${Math.round(v/tot*100)}% מהאותיות. ${k===top?PLANES[k].t:""}</p></div>`).join("")}</div></div></div>`;}
+    });
+    S.name=s+`</section>`;
+  }
+
+  /* name change */
+  if(CUR){
+    const a=CUR.an,b=CUR.base;
+    let s=`<section class="ch" id="change"><h2>השם הנוכחי</h2><p class="lead">שם הלידה מתאר את מי שנולדת להיות. השם שבו את/ה משתמש/ת היום מוסיף שכבה: את האנרגיה שאת/ה מקרין/ה בפועל.</p>`;
+    if(b){
+      const rows=[["ביטוי",b.expr.v,a.expr.v,"expr"],["דחף הנשמה",b.soul.v,a.soul.v,"soul"],["אישיות",b.pers.v,a.pers.v,"persona"]];
+      s+=`<div class="tablewrap"><table><thead><tr><th></th><th>שם הלידה</th><th>השם היום</th><th>משמעות</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]||"—"}</td><td class="num">${r[2]||"—"}</td><td>${r[1]===r[2]?"ללא שינוי: האנרגיה נשמרת.":r[2]?`השם הנוכחי מוסיף ${get(r[2],"kw")}. ${get(r[2],r[3])}`:""}</td></tr>`).join("")}</tbody></table></div>`;
+    }else{
+      s+=reading(a.expr.v,comp(a.expr.c,a.expr.v),"מספר הביטוי של השם הנוכחי",get(a.expr.v,"kw"),`<p>${get(a.expr.v,"expr")}</p><p>כדי להשוות לשם הלידה, הזינו גם את שם הלידה באותו כתב (${scriptOf(inp.curName)==="he"?"עברית":"לועזית"}).</p>`,a.expr.trace);
+    }
+    S.change=s+`</section>`;
+  }
+
+  /* cycles */
+  {
+    let s=`<section class="ch" id="cycles"><h2>מחזורי החיים</h2>${defLine("פסגה: הנושא וההזדמנות של תקופה בחיים. אתגר: המכשול שהתקופה מבקשת ללמוד לעבור. שניהם מחושבים מרכיבי תאריך הלידה.")}<p class="lead">החיים מתחלקים לארבע תקופות. לכל תקופה פסגה, שהיא ההזדמנות והנושא המרכזי שלה, ואתגר, שהוא המכשול שצריך ללמוד לעבור. התקופה הראשונה מסתיימת בגיל ${e1} (36 פחות שביל החיים).</p>`;
+    s+=`<div class="tablewrap"><table><thead><tr><th>גילאים</th><th>פסגה</th><th>ההזדמנות</th><th>אתגר</th><th>המכשול</th></tr></thead><tbody>`;
+    periods.forEach((p,i)=>{s+=`<tr class="${i===curIdx?'now':''}"><td style="white-space:nowrap">${p[1]===null?`${p[0]} ומעלה`:`${p[0]}–${p[1]}`}${i===curIdx?'<span class="pill">עכשיו</span>':''}<br><small style="color:var(--muted)">${B.y+p[0]}${p[1]===null?"+":`–${B.y+p[1]}`}</small></td><td class="num">${p[2]}</td><td>${get(p[2],"pinnacle")}<div class="trace">${p[4]} → ${p[2]}</div></td><td class="num rose">${p[3]}</td><td>${p[3]===0?CH0:get(p[3],"challenge")}<div class="trace">${p[5]} = ${p[3]}</div></td></tr>`;});
+    s+=`</tbody></table></div>`;
+    if(curIdx>=0){const p=periods[curIdx];s+=`<div class="facets" style="margin-top:16px"><div class="facet" style="border-color:var(--brass)"><b>התקופה הנוכחית שלך</b><p>בגיל ${age} את/ה בתקופה ${curIdx+1} מתוך 4. הפסגה ${p[2]} מזמינה ${get(p[2],"kw")}, והאתגר ${p[3]} ${p[3]===0?"משאיר את הבחירה בידיים שלך":`מבקש לעבוד על ${get(p[3],"kw")}`}.</p></div></div>`;}
+    S.cycles=s+`</section>`;
+  }
+
+  /* grid */
+  {
+    const pos={3:[0,0],6:[1,0],9:[2,0],2:[0,1],5:[1,1],8:[2,1],1:[0,2],4:[1,2],7:[2,2]};
+    const cx=n=>20+pos[n][0]*70+30, cy=n=>20+pos[n][1]*70+30;
+    let lines="";const present=[],absent=[];
+    ARROWS.forEach(a=>{const all=a.n.every(x=>gc[x]),none=a.n.every(x=>!gc[x]);
+      if(all||none){const f=a.n[0],l=a.n[2];lines+=`<line x1="${cx(f)}" y1="${cy(f)}" x2="${cx(l)}" y2="${cy(l)}" stroke="${all?'var(--brass)':'var(--rose)'}" stroke-width="${all?4:2.5}" stroke-linecap="round" ${none?'stroke-dasharray="6 6"':''} opacity=".75"/>`;(all?present:absent).push(a);}});
+    let cells="";for(const n in pos){const x=20+pos[n][0]*70,y=20+pos[n][1]*70;cells+=`<rect x="${x+3}" y="${y+3}" width="64" height="64" rx="10" fill="var(--panel)" stroke="var(--line)"/><text x="${x+35}" y="${y+16}" font-size="10" text-anchor="middle" fill="var(--muted)" font-family="var(--f-body)">${n}</text>${gc[n]?`<text x="${x+35}" y="${y+48}" font-size="${gc[n]>2?18:24}" text-anchor="middle" fill="var(--fg)" font-family="var(--f-num)" font-weight="600">${String(n).repeat(gc[n])}</text>`:""}`;}
+    const svg=`<svg viewBox="0 0 250 250" role="img" aria-label="טבלת הלידה" dir="ltr"><rect width="250" height="250" fill="none"/>${cells}${lines}</svg>`;
+    const strong=[1,2,3,4,5,6,7,8,9].filter(n=>gc[n]>=3), miss=[1,2,3,4,5,6,7,8,9].filter(n=>!gc[n]);
+    let txt=present.map(a=>`<div class="arrow"><b>${a.p}</b> <span class="pill">קיים</span><br>${a.pt}</div>`).join("")+absent.map(a=>`<div class="arrow"><b>${a.a}</b> <span class="pill r">חסר</span><br>${a.at}</div>`).join("");
+    if(!txt)txt=`<div class="arrow">אין בטבלה שלך חץ שלם או ריק לגמרי. האנרגיות מפוזרות באופן מאוזן יחסית, בלי קיצוניות בולטת.</div>`;
+    if(strong.length)txt+=`<div class="arrow"><b>ריכוז גבוה</b><br>המספר ${strong.join(", ")} מופיע שלוש פעמים או יותר. בתחום הזה (${strong.map(n=>N[n].kw).join("; ")}) יש עוצמה רבה, שעלולה לגלוש להגזמה.</div>`;
+    if(miss.length)txt+=`<div class="arrow"><b>מספרים חסרים בתאריך</b><br>${miss.join(", ")}. בתחומים האלה הכלים פחות מולדים, וצריך לפתח אותם במודע.</div>`;
+    S.grid=`<section class="ch" id="grid"><h2>טבלת הלידה</h2>${defLine("ספרות תאריך הלידה מסודרות בריבוע 3×3. \"חץ\" הוא שורה, טור או אלכסון מלא או ריק, ומסמן חוזקה או נקודה לפיתוח.")}<p class="lead">כל הספרות של תאריך הלידה (${B.d}.${B.m}.${B.y}) מוצבות בריבוע של 3 על 3. שורה, טור או אלכסון מלאים יוצרים "חץ של כוח", וריקים לגמרי יוצרים "חץ של חולשה".</p><div class="gridbox">${svg}<div class="arrows">${txt}</div></div></section>`;
+  }
+
+  /* year */
+  {
+    let strip="";for(let k=-3;k<=5;k++){const yy=T.y+k,p=single(single(B.d)+single(B.m)+single(dsum(yy)));strip+=`<div class="yr${k===0?' now':''}"><div class="y">${yy}</div><div class="n">${p}</div><div class="w">${YKW[p]}</div></div>`;}
+    let s=`<section class="ch" id="year"><h2>השנה האישית</h2><p class="lead">החיים נעים במחזורים של תשע שנים. השנה האישית מחושבת מיום הלידה, חודש הלידה והשנה הקלנדרית, ומתארת את האקלים של התקופה.</p><div class="years">${strip}</div>`;
+    s+=reading(py,"",`שנה אישית ${py}: ${YKW[py]}`,`שנת ${T.y}`,`<p>${N[py].year}</p>`,`${B.d}→${single(B.d)} + ${B.m}→${single(B.m)} + ${T.y}→${single(dsum(T.y))} = ${single(B.d)+single(B.m)+single(dsum(T.y))} → ${py}`);
+    s+=reading(pm,"",`חודש אישי ${pm}`,`חודש ${T.m}/${T.y}`,`<p>${N[pm].pm} החודש צובע את השנה ${py} בגוון של ${YKW[pm]}.</p>`,`${py} + ${T.m} → ${pm}`);
+    s+=reading(pd,"",`יום אישי ${pd}`,`${T.d}.${T.m}.${T.y}`,`<p>${N[pd].pm.replace("חודש","יום")}</p>`,`${pm} + ${T.d} → ${pd}`);
+    S.year=s+`</section>`;
+  }
+
+  /* love */
+  if(PT){
+    const r=relation(B.LP,PT.B.LP);
+    const rt={4:["אותו מספר","הבנה עמוקה ומיידית, אבל גם אותן נקודות עיוורון. חשוב לשים לב שלא תגבירו זה אצל זה את הצדדים הקשים."],3:["התאמה טבעית",`שניכם שייכים ל${GRP[grp(B.LP)]}. אתם מדברים באותה שפה בסיסית, והקשר זורם. כדאי לאתגר זה את זה כדי לא להיתקע בנוחות.`],2:["התאמה משלימה","האנרגיות שונות אבל מזינות זו את זו. כל אחד מביא לשני משהו שחסר לו."],1:["התאמה מאתגרת","האנרגיות שונות מהותית, ולכן יש פוטנציאל לחיכוך וגם לצמיחה גדולה. ההצלחה תלויה בכבוד להבדלים ובתקשורת פתוחה."]}[r];
+    const pn=PT.name?esc(PT.name):"בן/בת הזוג";
+    let s=`<section class="ch" id="love"><h2>התאמה זוגית</h2>${defLine("המספרים מתחלקים לשלוש משפחות: 1-5-7 (עצמאות ומחשבה), 2-4-8 (חומר ועשייה), 3-6-9 (רגש ויצירה). מספרים מאותה משפחה זורמים יחד בקלות.")}<p class="lead">ההתאמה נבחנת בעיקר דרך שבילי החיים, ובנוסף דרך מספרי הביטוי ודחפי הנשמה, אם הוזן שם.</p>`;
+    const meter=n=>`<div class="meter">${[1,2,3,4].map(i=>`<i class="${i<=n?'on':''}"></i>`).join("")}</div>`;
+    s+=`<div class="compat"><div class="who"><div class="n">${B.LP}</div>את/ה<br><small>${get(B.LP,"title")}</small></div><div class="mid">${rt[0]}${meter(r)}</div><div class="who"><div class="n">${PT.B.LP}</div>${pn}<br><small>${get(PT.B.LP,"title")}</small></div></div>`;
+    s+=`<p>${rt[1]}</p><div class="facets"><div class="facet"><b>מה את/ה מביא/ה לקשר</b><p>${get(B.LP,"love")}</p></div><div class="facet"><b>מה ${pn} מביא/ה לקשר</b><p>${get(PT.B.LP,"love")}</p></div></div>`;
+    if(PT.an&&P){
+      const mine=names.find(x=>x.sys===PT.an.sys)||P;
+      const er=relation(mine.expr.v,PT.an.expr.v), sr=(mine.soul.v&&PT.an.soul.v)?relation(mine.soul.v,PT.an.soul.v):0;
+      const lbl={4:"זהה",3:"טבעית",2:"משלימה",1:"מאתגרת"};
+      s+=`<div class="tablewrap"><table><thead><tr><th>רובד</th><th>את/ה</th><th>${pn}</th><th>התאמה</th></tr></thead><tbody>
+      <tr><td>שביל החיים</td><td class="num">${B.LP}</td><td class="num">${PT.B.LP}</td><td>${lbl[r]}</td></tr>
+      <tr><td>ביטוי (איך פועלים בעולם)</td><td class="num">${mine.expr.v}</td><td class="num">${PT.an.expr.v}</td><td>${lbl[er]}</td></tr>
+      ${sr?`<tr><td>דחף הנשמה (מה צריכים בפנים)</td><td class="num">${mine.soul.v}</td><td class="num">${PT.an.soul.v}</td><td>${lbl[sr]}</td></tr>`:""}</tbody></table></div>`;
+      if(sr)s+=`<p style="margin-top:12px">${sr>=3?"התאמה גבוהה בדחפי הנשמה היא סימן חשוב: ברמה העמוקה אתם רוצים דברים דומים מהחיים.":sr===2?"דחפי הנשמה משלימים: הצרכים העמוקים שונים אך אינם מתנגשים.":"דחפי הנשמה שונים. כדאי לדבר במפורש על מה שכל אחד צריך כדי להרגיש אהוב, כי זה לא יהיה מובן מאליו."}</p>`;
+    }else if(!PT.an)s+=`<p class="sub">הזינו את שם בן/בת הזוג כדי להוסיף את התאמת הביטוי ודחף הנשמה.</p>`;
+    const ppy=single(single(PT.B.d)+single(PT.B.m)+single(dsum(T.y)));
+    s+=`<p>בשנה הנוכחית את/ה בשנה אישית ${py} (${YKW[py]}) ו${pn} בשנה אישית ${ppy} (${YKW[ppy]}). ${py===ppy?"אתם באותו שלב של המחזור, וזו שנה טובה למהלכים משותפים.":"אתם בשלבים שונים של המחזור. כדאי להבין שהקצב והצרכים של כל אחד שונים השנה."}</p>`;
+    S.love=s+`</section>`;
+  }
+
+  /* focus */
+  if(inp.focus!=="none"){
+    const cp=curIdx>=0?periods[curIdx]:null;
+    const F={love:["אהבה וזוגיות",[["השביל שלך באהבה",get(B.LP,"love")],P&&P.soul.v?["מה הלב צריך",`דחף הנשמה ${P.soul.v}: ${get(P.soul.v,"soul")}`]:null,P&&P.pers.v?["איך את/ה נתפס/ת בפגישה ראשונה",get(P.pers.v,"persona")]:null,["אקלים השנה",`בשנה אישית ${py}: ${py===2||py===6?"שנה מצוינת לזוגיות, למחויבות ולהעמקת קשר.":py===1?"שנה טובה להתחלות, גם בזוגיות, בתנאי שלא מוותרים על עצמך.":py===5?"שנה של תנועה, שעשויה להביא היכרויות מפתיעות או צורך ברעננות בקשר קיים.":py===7?"שנה פנימית. ייתכן צורך במרחב, וחשוב לשתף אותו בגלוי.":py===9?"שנה של סגירת מעגלים: לסיים את מה שלא מתאים ולפנות מקום.":N[py].year}`]]],
+      career:["קריירה ושליחות",[["כיוון החיים",get(B.LP,"career")],P?["הכלים מהשם",`מספר הביטוי ${P.expr.v}: ${get(P.expr.v,"career")}`]:null,cp?["התקופה הנוכחית",`פסגה ${cp[2]}: ${get(cp[2],"pinnacle")}`]:null,["תזמון",`שנה אישית ${py} (${YKW[py]}). ${[1,8].includes(py)?"זה זמן לצעדים גדולים בקריירה.":[4].includes(py)?"זה זמן לבנות ולהתמיד, לא לקפוץ.":[7,9].includes(py)?"זה זמן להתבונן ולשקול מחדש, לא לרוץ קדימה.":"שימו לב לאופי השנה בפרק השנה האישית."}`]]],
+      money:["כסף ושפע",[["היחס שלך לכסף",get(B.LP,"money")],P?["מקור ההכנסה הטבעי",`מספר הביטוי ${P.expr.v}: ${get(P.expr.v,"money")}`]:null,P&&P.lessons.includes(8)?["שיעור קרמתי","המספר 8 חסר בשם: ניהול כספים ועמידה על ערכך הם שיעור מרכזי עבורך."]:null,["תזמון",`שנה אישית ${py}. ${py===8?"שנת קציר: זה הזמן לקצור פירות כלכליים.":py===4?"שנה לחיסכון, לסדר ולבניית בסיס.":py===5?"שנה תנודתית: כדאי להיזהר מהחלטות פזיזות.":py===1?"שנה טובה להתחיל מקור הכנסה חדש.":"שנה שבה הכסף אינו הנושא המרכזי, ושווה לפעול בזהירות."}`]]],
+      growth:["צמיחה רוחנית",[["כיוון הצמיחה",get(B.LP,"growth")],cp?["האתגר העכשווי",cp[3]===0?CH0:get(cp[3],"challenge")]:null,P&&P.lessons.length?["השיעורים הקרמתיים",P.lessons.map(n=>`${n}: ${N[n].lesson}`).join(" ")]:null,debts.length?["חובות קרמתיים",debts.map(d=>DEBT[d[1]]).join(" ")]:null,["שאלה להתבוננות",`מה היה משתנה אם הייתי מאפשר/ת לעצמי לחיות את ה-${B.LP} שלי במלואו: ${get(B.LP,"kw")}?`]]]}[inp.focus];
+    S.focus=`<section class="ch" id="focus"><h2>מיקוד: ${F[0]}</h2><p class="lead">כל מה שהמפה אומרת על הנושא שבחרת, במקום אחד.</p><div class="facets">${F[1].filter(Boolean).map(x=>`<div class="facet"><b>${x[0]}</b><p>${x[1]}</p></div>`).join("")}</div></section>`;
+  }
+  /* ---------- map & reading guide ---------- */
+  const mi=(href,v,t,d,off)=>`<a class="mi${off?' off':''}" href="#${href}"><span class="v">${v}</span><span class="t">${t}</span><span class="d">${d}</span></a>`;
+  const gridArrows=ARROWS.filter(a=>a.n.every(x=>gc[x])).length, gridEmpty=ARROWS.filter(a=>a.n.every(x=>!gc[x])).length;
+  const cp=curIdx>=0?periods[curIdx]:null;
+  const L1=[mi("r-lp",B.LP,"שביל החיים","הדרך והשיעור המרכזי")];
+  if(P)L1.push(mi("r-expr",P.expr.v,"מספר הביטוי","הכלים והכישרונות שקיבלת"),mi("r-soul",P.soul.v||"—","דחף הנשמה","מה את/ה רוצה בפנים"),mi("r-pers",P.pers.v||"—","מספר האישיות","איך רואים אותך מבחוץ"));
+  else L1.push(mi("frm","?","מספרי השם","הזינו שם כדי לפתוח את השכבה",1));
+  const L2=[mi("r-bday",birthday,"יום הלידה","מתנה מיוחדת לדרך"),mi("r-att",attitude,"מספר הגישה","התגובה הספונטנית שלך")];
+  if(P)L2.push(mi("r-mat",maturity,"מספר הבגרות","מה שמתבהר אחרי גיל 40"),mi("r-bal",P.balance.v,"מספר האיזון","איך חוזרים לשקט"),mi("r-pas",P.passion.join("·")||"—","התשוקה הנסתרת","מה יש לך בשפע"),mi("r-les",P.lessons.length?P.lessons.join("·"):"✓","שיעורים קרמתיים",P.lessons.length?"מה דורש למידה":"אין חסרים בשם"),mi("r-sub",P.sub,"העצמי התת-מודע","משאבים במצבי לחץ"));
+  L2.push(mi(debts.length?"r-debt":"core",debts.length?debts.map(d=>d[1]).join("·"):"—","חובות קרמתיים",debts.length?"שיעור פתוח שדורש תשומת לב":"לא נמצאו"),mi("grid",gridArrows+gridEmpty,"טבלת הלידה",`${gridArrows} חיצי כוח, ${gridEmpty} חיצי חולשה`));
+  if(names.some(n=>n.planes))L2.push(mi("r-planes","4","מישורי הביטוי","גוף, שכל, רגש, אינטואיציה"));
+  const L3=[];
+  if(cp)L3.push(mi("cycles",`${cp[2]}·${cp[3]}`,"התקופה הנוכחית",`פסגה ${cp[2]} ואתגר ${cp[3]}, תקופה ${curIdx+1} מתוך 4`));
+  L3.push(mi("r-py",py,"שנה אישית",`${YKW[py]}, שנה ${py} מתוך 9`),mi("r-pm",pm,"חודש אישי",YKW[pm]),mi("r-pd",pd,"יום אישי",YKW[pd]));
+  const L4=[CUR?mi("change",CUR.an.expr.v,"השם הנוכחי","מה השם של היום מוסיף"):mi("frm","—","השם הנוכחי","הוסיפו שם נוכחי בטופס",1),
+    PT?mi("love",`${B.LP}·${PT.B.LP}`,"התאמה זוגית","השוואה בשלושה רבדים"):mi("frm","—","התאמה זוגית","הוסיפו בן/בת זוג בטופס",1),
+    inp.focus!=="none"?mi("focus","◎","מיקוד","כל מה שהמפה אומרת על הנושא שבחרת"):mi("frm","—","מיקוד","בחרו נושא בטופס",1)];
+  const sentence=P?`הדרך שלך היא <b>${get(B.LP,"kw")}</b> (${B.LP}). הכלים שקיבלת: <b>${get(P.expr.v,"kw")}</b> (${P.expr.v}).${P.soul.v?` הלב מבקש <b>${get(P.soul.v,"kw")}</b> (${P.soul.v}).`:""}${P.pers.v?` העולם פוגש קודם <b>${get(P.pers.v,"kw")}</b> (${P.pers.v}).`:""}`:`הדרך שלך היא <b>${get(B.LP,"kw")}</b> (${B.LP}).`;
+  const guide=`<section class="guide ch" id="map" style="margin-top:24px"><div class="eyebrow">לפני שמתחילים</div><h2>מפה ומדריך קריאה</h2>
+  <p class="lead" style="color:var(--muted);margin:6px 0 0;max-width:68ch">הניתוח ארוך כי הוא מאיר את אותו אדם מכמה זוויות. אין צורך לקרוא הכול ברצף. זה המשפט שמסכם את הליבה שלך, וכל השאר מעמיק אותו:</p>
+  <div class="sentence">${sentence}</div>
+  <ol class="steps">
+   <li><b>התחילו מהתמונה הכוללת</b>היא מחברת את כל המספרים לסיפור אחד, ומסמנת מה בולט אצלך.</li>
+   <li><b>שכבה 1: הליבה</b>ארבעה מספרים שמתארים מי את/ה: הדרך, הכלים, הלב והפנים החיצוניות.</li>
+   <li><b>שכבה 2: הכלים והשיעורים</b>מה קל לך, מה חסר, ואיך את/ה מגיב/ה בלחץ.</li>
+   <li><b>שכבה 3: הזמן</b>באיזה שלב של החיים ושל מחזור תשע השנים את/ה עכשיו.</li>
+   <li><b>שכבה 4: קשרים ומיקוד</b>השם של היום, הזוגיות, והנושא שבחרת להתמקד בו.</li>
+  </ol>
+  <ul class="tips">
+   <li><b>מספר שחוזר</b> כמה פעמים במפה הוא הנושא המרכזי שלך. שימו לב אליו קודם.</li>
+   <li><b>סתירות בין מספרים</b> אינן טעות. הן המתחים הפנימיים שלך, ולעתים קרובות שם נמצא העניין.</li>
+   <li><b>הצל</b> אינו גזר דין. הוא הצורה שהכישרון לובש כשהוא לא מאוזן.</li>
+   <li><b>סימון כמו 29/11</b>: המספר הראשון הוא הסכום לפני הצמצום, והשני הוא התוצאה. הסכום מוסיף גוון.</li>
+   <li>כל כרטיס במפה שלמטה הוא קישור. לחצן "מפה" בפינת המסך מחזיר לכאן מכל מקום.</li>
+  </ul>
+  <div class="layer"><h3><span class="ln">1</span>הליבה <small>מי את/ה</small></h3><div class="mi-grid">${L1.join("")}</div></div>
+  <div class="layer"><h3><span class="ln">2</span>הכלים והשיעורים <small>מה קל ומה דורש עבודה</small></h3><div class="mi-grid">${L2.join("")}</div></div>
+  <div class="layer"><h3><span class="ln">3</span>הזמן <small>איפה את/ה עכשיו</small></h3><div class="mi-grid">${L3.join("")}</div></div>
+  <div class="layer"><h3><span class="ln">4</span>קשרים ומיקוד <small>השם, הזוגיות והנושא שבחרת</small></h3><div class="mi-grid">${L4.join("")}</div></div>
+  <details class="gloss"><summary>מילון מונחים</summary><dl>
+   <dt>צמצום</dt><dd>חיבור הספרות של מספר עד שמתקבלת ספרה אחת. למשל 38 → 3+8 = 11 → 2.</dd>
+   <dt>מספר מורכב</dt><dd>הסכום לפני הצמצום, למשל 29 ב-29/11. הוא מוסיף גוון למספר הסופי.</dd>
+   <dt>מספר מאסטר</dt><dd>11, 22 ו-33 אינם מצומצמים. הם מסמנים פוטנציאל גבוה ומתח פנימי מוגבר.</dd>
+   <dt>חוב קרמתי</dt><dd>13, 14, 16 או 19 בדרך החישוב. שיעור שנשאר פתוח לפי המסורת הנומרולוגית.</dd>
+   <dt>שיעור קרמתי</dt><dd>מספר מ-1 עד 9 שאינו מופיע באותיות השם. תחום שבו צריך לפתח כלים.</dd>
+   <dt>גימטריה (מספר קטן)</dt><dd>שיטה עברית שבה כל אות מקבלת ערך מ-1 עד 9: א=1 עד ט=9, י=1 עד צ=9, ק=1 עד ת=4.</dd>
+   <dt>שיטה פיתגוראית</dt><dd>השיטה המערבית המקובלת לאותיות לטיניות: A=1 עד I=9, ואז שוב מ-J=1.</dd>
+   <dt>תנועות ועיצורים</dt><dd>בלועזית A, E, I, O, U (ולעתים Y). בעברית האותיות א, ה, ו, י. מהתנועות מחושב דחף הנשמה, ומהעיצורים מספר האישיות.</dd>
+   <dt>פסגה</dt><dd>הנושא וההזדמנות של אחת מארבע תקופות החיים.</dd>
+   <dt>אתגר</dt><dd>המכשול שכל תקופה מבקשת ללמוד לעבור. אתגר 0 פירושו בחירה חופשית.</dd>
+   <dt>טבלת לידה וחצים</dt><dd>ספרות התאריך בריבוע 3×3. שורה, טור או אלכסון מלא הוא חץ של כוח, וריק הוא חץ של חולשה.</dd>
+   <dt>מחזור תשע השנים</dt><dd>החיים נעים במחזורים של תשע שנים, מהתחלה (שנה 1) ועד סיום (שנה 9).</dd>
+   <dt>משפחות המספרים</dt><dd>1-5-7, 2-4-8, 3-6-9. מספרים מאותה משפחה מבינים זה את זה בקלות, ומשמשים לבדיקת התאמה.</dd>
+  </dl></details></section>`;
+  const EYE={overview:"סיכום",core:"שכבה 1 · הליבה",name:"שכבה 1 · הליבה, ושכבה 2 · הכלים והשיעורים",grid:"שכבה 2 · הכלים והשיעורים",cycles:"שכבה 3 · הזמן",year:"שכבה 3 · הזמן",change:"שכבה 4 · קשרים ומיקוד",love:"שכבה 4 · קשרים ומיקוד",focus:"שכבה 4 · קשרים ומיקוד"};
+  h+=guide;
+  for(const k of ["overview","core","name","grid","cycles","year","change","love","focus"]){if(S[k])h+=S[k].replace("<h2>",`<div class="eyebrow">${EYE[k]}</div><h2>`);}
+  h+=`<a class="fab" href="#map">מפה ↑</a>`;
+  return h;
+}
+
+/* ---------- form ---------- */
+const $=id=>document.getElementById(id);
+const EXAMPLE={heName:"נועה כהן",laName:"Noa Cohen",curName:"נועה לוי",bdate:"1984-03-17",sys:"both",focus:"love",tdate:"",partnerOn:true,pName:"יואב לוי",pDate:"1981-11-02"};
+function read(){return{heName:$("heName").value,laName:$("laName").value,curName:$("curName").value,bdate:$("bdate").value,sys:document.querySelector('input[name=sys]:checked').value,focus:$("focus").value,tdate:$("tdate").value,partnerOn:$("partnerOn").checked,pName:$("pName").value,pDate:$("pDate").value};}
+function fill(d){$("heName").value=d.heName||"";$("laName").value=d.laName||"";$("curName").value=d.curName||"";$("bdate").value=d.bdate||"";$("focus").value=d.focus||"none";$("tdate").value=d.tdate||"";$("partnerOn").checked=!!d.partnerOn;$("pName").value=d.pName||"";$("pDate").value=d.pDate||"";const r=document.querySelector(`input[name=sys][value="${d.sys||"both"}"]`);if(r)r.checked=true;sync();}
+function sync(){const s=document.querySelector('input[name=sys]:checked').value;$("heWrap").hidden=s==="la";$("laWrap").hidden=s==="he";$("partnerBox").hidden=!$("partnerOn").checked;}
+function run(save){
+  const d=read();$("err").textContent="";
+  if(!d.bdate){$("err").textContent="חסר תאריך לידה.";return;}
+  const needHe=d.sys!=="la",needLa=d.sys!=="he";
+  if(d.sys==="he"&&!d.heName.trim()){$("err").textContent="חסר שם מלא בעברית.";return;}
+  if(d.sys==="la"&&!d.laName.trim()){$("err").textContent="חסר שם מלא באותיות לועזיות.";return;}
+  if(d.sys==="both"&&!d.heName.trim()&&!d.laName.trim()){$("err").textContent="יש להזין לפחות שם אחד.";return;}
+  if(d.partnerOn&&!d.pDate){$("err").textContent="חסר תאריך הלידה של בן/בת הזוג.";return;}
+  $("out").innerHTML=analyze(d);
+  if(save){try{localStorage.setItem("numMap",JSON.stringify(d));}catch(e){}$("exampleNote").hidden=true;
+    document.getElementById("overview").scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
+}
+document.querySelectorAll('input[name=sys]').forEach(r=>r.addEventListener("change",sync));
+$("partnerOn").addEventListener("change",sync);
+$("frm").addEventListener("submit",e=>{e.preventDefault();run(true);});
+$("clearBtn").addEventListener("click",()=>{fill({sys:"both",focus:"none"});$("out").innerHTML="";$("exampleNote").hidden=true;try{localStorage.removeItem("numMap");}catch(e){}});
+(function init(){let saved=null;try{saved=JSON.parse(localStorage.getItem("numMap")||"null");}catch(e){}
+  if(saved&&saved.bdate){fill(saved);$("exampleNote").hidden=true;}else fill(EXAMPLE);run(false);})();
+</script>
+
+</body>
+</html>
