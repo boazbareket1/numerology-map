@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מפת המספרים</title>
 <meta name="description" content="ניתוח נומרולוגי מלא בעברית: שביל החיים, מספרי השם בגימטריה ובשיטה הפיתגוראית, מחזורי חיים, טבלת לידה, שנה אישית והתאמה זוגית.">
+<meta property="og:title" content="מפת המספרים">
+<meta property="og:description" content="ניתוח נומרולוגי אישי ומפורט בעברית">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Cormorant+Garamond:wght@500;600&family=Frank+Ruhl+Libre:wght@500;700&display=swap">
@@ -176,7 +178,27 @@ details.gloss summary{cursor:pointer;font-family:var(--f-display);font-weight:70
 details.gloss dl{display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:8px 16px;margin:12px 0 0}
 details.gloss dt{font-weight:700}
 details.gloss dd{margin:0;color:var(--muted);min-width:0}
-.fab{position:fixed;left:calc(max(16px,env(safe-area-inset-left,0px)) + 0px);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:8;font:inherit;font-weight:700;background:var(--fg);color:var(--bg);border-radius:999px;padding:9px 16px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.fabs a{font:inherit;font-weight:700;background:var(--fg);color:var(--bg);border-radius:999px;padding:9px 16px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.fabs{position:fixed;display:flex;gap:8px;left:calc(max(16px,env(safe-area-inset-left,0px)) + 0px);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:8}
+.share{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:24px;scroll-margin-top:16px}
+.share h2{font-size:clamp(1.3rem,4vw,1.6rem)}
+.share-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
+.share-card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--panel2);min-width:0;display:flex;flex-direction:column;gap:8px}
+.share-card b{font-family:var(--f-display);font-size:1.1rem}
+.share-card p{margin:0;font-size:.92rem;color:var(--muted)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btns .go,.btns .ghost{padding:8px 14px;font-size:.92rem}
+a.ghost{font:inherit;display:inline-flex;align-items:center;border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:8px 14px;font-size:.92rem;text-decoration:none}
+a.ghost:hover,button.ghost:hover{border-color:var(--brass)}
+#linkBox{font:inherit;font-size:.82rem;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;width:100%;min-width:0}
+.status{min-height:1.4em;margin:10px 0 0;font-weight:600;color:var(--teal)}
+.shared{background:var(--brass-soft);border:1px solid var(--brass);border-radius:10px;padding:10px 14px;font-size:.95rem;margin-bottom:16px}
+@media print{
+ :root,:root[data-theme="dark"],:root:not([data-theme="light"]){--bg:#fff;--panel:#fff;--panel2:#f6f8f6;--line:#d3dbd6;--fg:#16262a;--muted:#566763;--brass:#946a1a;--brass-soft:rgba(148,106,26,.1);--rose:#a2513c;--rose-soft:rgba(162,81,60,.08);--teal:#2f6f6a;color-scheme:light}
+ #frm,#shareBar,nav.chapters,.fabs,.example,.shared{display:none!important}
+ section.ch,.reading,.facet,.layer{break-inside:avoid-page}
+ body{padding-block:0}
+}
 @media (max-width:520px){details.gloss dl{grid-template-columns:1fr}details.gloss dd{margin-bottom:6px}}
 @media (max-width:520px){.reading{grid-template-columns:1fr}.med{width:66px;height:66px}.compat{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:no-preference){.tile,.med{transition:transform .2s}.tile:hover{transform:translateY(-2px)}}
@@ -200,6 +222,7 @@ html{scroll-behavior:smooth}
 </header>
 
 <form class="panel form" id="frm" novalidate>
+  <div class="shared" id="sharedNote" hidden>זה ניתוח ששותף איתך. כדי לקבל ניתוח משלך, הזינו את הפרטים שלכם ולחצו "נתחו".</div>
   <div class="example" id="exampleNote">מוצגת דוגמה. הזינו את הפרטים שלכם ולחצו "נתחו".</div>
   <h2>הפרטים שלך</h2>
   <p class="hint">השם המלא כפי שניתן בלידה, כולל שמות אמצעיים ושם המשפחה מהלידה. אפשר להזין ניקוד, הוא מסונן אוטומטית.</p>
@@ -246,6 +269,24 @@ html{scroll-behavior:smooth}
   </div>
 </form>
 
+<section class="share" id="shareBar" hidden aria-labelledby="shareTitle">
+  <div class="eyebrow">שיתוף</div>
+  <h2 id="shareTitle">שיתוף הניתוח</h2>
+  <div class="share-grid">
+    <div class="share-card">
+      <b>קישור לניתוח</b>
+      <p>קישור שפותח את הכלי עם הניתוח הזה בדיוק. מי שמקבל אותו יכול גם לשנות את הפרטים ולנתח את עצמו. הקישור כולל את השמות ותאריכי הלידה שהוזנו.</p>
+      <div class="btns"><button type="button" class="go" id="shLink">שיתוף קישור</button><button type="button" class="ghost" id="cpLink">העתקה</button><a class="ghost" id="waLink" href="#" target="_blank" rel="noopener">וואטסאפ</a></div>
+      <input type="text" id="linkBox" readonly dir="ltr" aria-label="קישור לניתוח">
+    </div>
+    <div class="share-card">
+      <b>מסמך מפורט</b>
+      <p>כל התוכן של הניתוח הנוכחי במסמך אחד: הפרטים שהוזנו, המפה, כל הפרקים, החישובים ומילון המונחים. המסמך נפתח בכל דפדפן גם בלי חיבור לכלי.</p>
+      <div class="btns"><button type="button" class="go" id="shDoc">שיתוף המסמך</button><button type="button" class="ghost" id="dlDoc">הורדה כקובץ</button><button type="button" class="ghost" id="prDoc">הדפסה / PDF</button><button type="button" class="ghost" id="cpText">העתקת הטקסט</button></div>
+    </div>
+  </div>
+  <p class="status" id="shStatus" aria-live="polite"></p>
+</section>
 <div id="out"></div>
 <p class="note">הניתוח מבוסס על הנומרולוגיה הפיתגוראית המודרנית ועל גימטריה עברית בשיטת המספר הקטן (א=1 … ט=9, י=1 … צ=9, ק=1 … ת=4). בגימטריה העברית האותיות א, ה, ו, י משמשות כתנועות לחישוב מספר דחף הנשמה. זהו כלי להתבוננות עצמית ולשיחה, לא אבחון.</p>
 </div>
@@ -788,9 +829,10 @@ function analyze(inp){
   const EYE={overview:"סיכום",core:"שכבה 1 · הליבה",name:"שכבה 1 · הליבה, ושכבה 2 · הכלים והשיעורים",grid:"שכבה 2 · הכלים והשיעורים",cycles:"שכבה 3 · הזמן",year:"שכבה 3 · הזמן",change:"שכבה 4 · קשרים ומיקוד",love:"שכבה 4 · קשרים ומיקוד",focus:"שכבה 4 · קשרים ומיקוד"};
   h+=guide;
   for(const k of ["overview","core","name","grid","cycles","year","change","love","focus"]){if(S[k])h+=S[k].replace("<h2>",`<div class="eyebrow">${EYE[k]}</div><h2>`);}
-  h+=`<a class="fab" href="#map">מפה ↑</a>`;
+  h+=`<div class="fabs"><a href="#shareBar">שיתוף</a><a href="#map">מפה ↑</a></div>`;
   return h;
 }
+
 
 /* ---------- form ---------- */
 const $=id=>document.getElementById(id);
@@ -806,15 +848,97 @@ function run(save){
   if(d.sys==="la"&&!d.laName.trim()){$("err").textContent="חסר שם מלא באותיות לועזיות.";return;}
   if(d.sys==="both"&&!d.heName.trim()&&!d.laName.trim()){$("err").textContent="יש להזין לפחות שם אחד.";return;}
   if(d.partnerOn&&!d.pDate){$("err").textContent="חסר תאריך הלידה של בן/בת הזוג.";return;}
-  $("out").innerHTML=analyze(d);
+  $("out").innerHTML=analyze(d);lastData=d;$("shareBar").hidden=false;updateLink();
   if(save){try{localStorage.setItem("numMap",JSON.stringify(d));}catch(e){}$("exampleNote").hidden=true;
     document.getElementById("overview").scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
 }
 document.querySelectorAll('input[name=sys]').forEach(r=>r.addEventListener("change",sync));
 $("partnerOn").addEventListener("change",sync);
 $("frm").addEventListener("submit",e=>{e.preventDefault();run(true);});
-$("clearBtn").addEventListener("click",()=>{fill({sys:"both",focus:"none"});$("out").innerHTML="";$("exampleNote").hidden=true;try{localStorage.removeItem("numMap");}catch(e){}});
-(function init(){let saved=null;try{saved=JSON.parse(localStorage.getItem("numMap")||"null");}catch(e){}
+$("clearBtn").addEventListener("click",()=>{$("shareBar").hidden=true;$("sharedNote").hidden=true;lastData=null;fill({sys:"both",focus:"none"});$("out").innerHTML="";$("exampleNote").hidden=true;try{localStorage.removeItem("numMap");}catch(e){}});
+/* ---------- sharing ---------- */
+let lastData=null;
+const KEYS=["heName","laName","curName","bdate","sys","focus","tdate","partnerOn","pName","pDate"];
+const BASE=/github\.io$/.test(location.hostname)?location.origin+location.pathname:"https://boazbareket1.github.io/numerology-map/";
+const todayISO=()=>{const x=new Date();return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;};
+function encodeData(d){const arr=KEYS.map(k=>k==="partnerOn"?(d[k]?1:0):(k==="tdate"?(d.tdate||todayISO()):(d[k]||"")));
+  const b=btoa(unescape(encodeURIComponent(JSON.stringify(arr))));return b.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+function decodeData(t){try{let b=t.replace(/-/g,"+").replace(/_/g,"/");while(b.length%4)b+="=";
+  const arr=JSON.parse(decodeURIComponent(escape(atob(b))));if(!Array.isArray(arr))return null;
+  const d={};KEYS.forEach((k,i)=>d[k]=k==="partnerOn"?!!arr[i]:String(arr[i]||""));
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d.bdate))return null;if(!["he","la","both"].includes(d.sys))d.sys="both";
+  if(!["none","love","career","money","growth"].includes(d.focus))d.focus="none";return d;}catch(e){return null;}}
+function readShared(){let t=null;try{t=new URLSearchParams(location.search).get("d");}catch(e){}
+  if(!t){const m=location.hash.match(/^#d=(.+)$/);if(m)t=m[1];}return t?decodeData(t):null;}
+const shareURL=()=>lastData?BASE+"?d="+encodeData(lastData):BASE;
+const personName=()=>{const d=lastData||{};return (d.heName||d.laName||"").trim();};
+const status=msg=>{$("shStatus").textContent=msg;clearTimeout(status.t);status.t=setTimeout(()=>$("shStatus").textContent="",5000);};
+function updateLink(){const u=shareURL();$("linkBox").value=u;
+  $("waLink").href="https://wa.me/?text="+encodeURIComponent(`מפת המספרים${personName()?" של "+personName():""}: ניתוח נומרולוגי אישי\n${u}`);}
+async function copyText(t,okMsg,box){
+  try{await navigator.clipboard.writeText(t);status(okMsg);}
+  catch(e){if(box){box.focus();box.select();status("לא הצלחתי להעתיק אוטומטית. הקישור מסומן, אפשר להעתיק אותו ידנית.");}else status("ההעתקה נחסמה בדפדפן הזה. נסו את ההורדה כקובץ.");}}
+$("shLink").addEventListener("click",async()=>{const url=shareURL();
+  if(navigator.share){try{await navigator.share({title:"מפת המספרים",text:`ניתוח נומרולוגי${personName()?" של "+personName():""}`,url});status("הקישור שותף.");return;}catch(e){if(e&&e.name==="AbortError")return;}}
+  copyText(url,"הקישור הועתק. אפשר להדביק אותו בכל מקום.",$("linkBox"));});
+$("cpLink").addEventListener("click",()=>copyText(shareURL(),"הקישור הועתק.",$("linkBox")));
+$("linkBox").addEventListener("focus",e=>e.target.select());
+
+function withPrintable(fn){
+  const out=$("out");const nav=out.querySelector("nav.chapters"),fabs=out.querySelector(".fabs");
+  const closed=[...out.querySelectorAll("details:not([open])")];
+  if(nav)nav.hidden=true;if(fabs)fabs.hidden=true;closed.forEach(d=>d.open=true);
+  try{return fn(out);}finally{if(nav)nav.hidden=false;if(fabs)fabs.hidden=false;closed.forEach(d=>d.open=false);}}
+function inputsSummary(){const d=lastData;if(!d)return "";const rows=[];
+  const sysL={he:"גימטריה עברית",la:"פיתגוראית",both:"השוואה בין גימטריה לשיטה הפיתגוראית"}[d.sys];
+  const focL={none:"תמונה כללית",love:"אהבה וזוגיות",career:"קריירה ושליחות",money:"כסף ושפע",growth:"צמיחה רוחנית"}[d.focus];
+  const fmt=x=>x?x.split("-").reverse().join("."):"";
+  if(d.heName&&d.sys!=="la")rows.push(["שם לידה (עברית)",d.heName]);if(d.laName&&d.sys!=="he")rows.push(["שם לידה (לועזית)",d.laName]);
+  rows.push(["תאריך לידה",fmt(d.bdate)]);if(d.curName)rows.push(["שם נוכחי",d.curName]);
+  rows.push(["שיטת חישוב",sysL],["מיקוד",focL],["תאריך התחזית",fmt(d.tdate||todayISO())]);
+  if(d.partnerOn&&d.pDate)rows.push(["בן/בת זוג",[d.pName,fmt(d.pDate)].filter(Boolean).join(", ")]);
+  return `<section class="guide" style="margin-top:20px"><div class="eyebrow">הפרטים שהוזנו</div><dl style="display:grid;grid-template-columns:minmax(120px,180px) 1fr;gap:6px 16px;margin:8px 0 0">${rows.map(r=>`<dt style="font-weight:700">${esc(r[0])}</dt><dd style="margin:0">${esc(r[1])}</dd>`).join("")}</dl></section>`;}
+function buildDoc(){
+  const css=document.querySelector("style").textContent;
+  const clone=$("out").cloneNode(true);
+  clone.querySelectorAll("nav.chapters,.fabs").forEach(n=>n.remove());
+  clone.querySelectorAll("details").forEach(d=>d.setAttribute("open",""));
+  const nm=personName(),url=shareURL(),today=todayISO().split("-").reverse().join(".");
+  return `<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מפת המספרים${nm?" · "+esc(nm):""}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Cormorant+Garamond:wght@500;600&family=Frank+Ruhl+Libre:wght@500;700&display=swap">
+<style>${css}
+body{margin:0}[hidden]{display:none!important}html{scroll-behavior:smooth}</style></head>
+<body><div class="wrap">
+<header class="top"><div><div class="sigil">1 · 2 · 3 · 4 · 5 · 6 · 7 · 8 · 9</div><h1>מפת המספרים${nm?" של "+esc(nm):""}</h1>
+<p>ניתוח נומרולוגי מפורט · נוצר ב-${today}</p><p><a href="${esc(url)}" style="color:var(--brass)">לפתיחת הניתוח בכלי האינטראקטיבי</a></p></div></header>
+${inputsSummary()}
+${clone.innerHTML}
+<p class="note">${document.querySelector(".note")?document.querySelector(".note").innerHTML:""}</p>
+</div></body></html>`;}
+const docName=()=>`מפת-המספרים${personName()?"-"+personName().replace(/\s+/g,"-"):""}.html`;
+function downloadDoc(){
+  const blob=new Blob([buildDoc()],{type:"text/html;charset=utf-8"});const u=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=u;a.download=docName();document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),4000);status("המסמך ירד למכשיר. אפשר לפתוח אותו בכל דפדפן ולשלוח אותו הלאה.");}
+$("dlDoc").addEventListener("click",downloadDoc);
+$("shDoc").addEventListener("click",async()=>{
+  try{const file=new File([buildDoc()],docName(),{type:"text/html"});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"מפת המספרים"});status("המסמך שותף.");return;}}
+  catch(e){if(e&&e.name==="AbortError")return;}
+  downloadDoc();});
+$("prDoc").addEventListener("click",()=>{const out=$("out");const closed=[...out.querySelectorAll("details:not([open])")];
+  closed.forEach(d=>d.open=true);const restore=()=>{closed.forEach(d=>d.open=false);removeEventListener("afterprint",restore);};
+  addEventListener("afterprint",restore);window.print();});
+$("cpText").addEventListener("click",()=>{
+  const body=withPrintable(out=>out.innerText).replace(/\n{3,}/g,"\n\n").trim();
+  copyText(`מפת המספרים${personName()?" של "+personName():""}\n${shareURL()}\n\n${body}`,"כל הטקסט של הניתוח הועתק.");});
+
+(function init(){
+  const shared=readShared();
+  if(shared){fill(shared);$("exampleNote").hidden=true;$("sharedNote").hidden=false;run(false);return;}
+  let saved=null;try{saved=JSON.parse(localStorage.getItem("numMap")||"null");}catch(e){}
   if(saved&&saved.bdate){fill(saved);$("exampleNote").hidden=true;}else fill(EXAMPLE);run(false);})();
 </script>
 
