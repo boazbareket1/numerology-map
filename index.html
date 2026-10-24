@@ -50,8 +50,10 @@ header.top p{margin:6px 0 0;color:var(--muted);max-width:52ch}
 .form h2{font-size:1.25rem;margin-bottom:4px}
 .form .hint{color:var(--muted);font-size:.92rem;margin:0 0 16px}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px 18px}
-label.f{display:flex;flex-direction:column;gap:5px;font-weight:600;font-size:.92rem;min-width:0}
-label.f small{font-weight:400;color:var(--muted)}
+.dsel{display:grid;grid-template-columns:.8fr 1.4fr 1fr;gap:6px}
+.dsel select{font-weight:400;padding:9px 6px}
+label.f,div.f{display:flex;flex-direction:column;gap:5px;font-weight:600;font-size:.92rem;min-width:0}
+label.f small,div.f small{font-weight:400;color:var(--muted)}
 input[type=text],input[type=date],select{font:inherit;color:var(--fg);background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;width:100%}
 input:focus-visible,select:focus-visible,button:focus-visible,.seg label:focus-within{outline:2px solid var(--brass);outline-offset:2px}
 .seg{display:flex;flex-wrap:wrap;gap:6px}
@@ -199,6 +201,14 @@ a.ghost:hover,button.ghost:hover{border-color:var(--brass)}
 #linkBox{font:inherit;font-size:.82rem;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;width:100%;min-width:0}
 .status{min-height:1.4em;margin:10px 0 0;font-weight:600;color:var(--teal)}
 .shared{background:var(--brass-soft);border:1px solid var(--brass);border-radius:10px;padding:10px 14px;font-size:.95rem;margin-bottom:16px}
+dialog#resetDlg{border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--fg);padding:22px;width:min(420px,calc(100vw - 32px));direction:rtl;font-family:var(--f-body)}
+dialog#resetDlg::backdrop{background:rgba(10,20,22,.45)}
+dialog#resetDlg h2{font-size:1.35rem}
+dialog#resetDlg p{margin:8px 0 16px;color:var(--muted)}
+.dlg-btns{display:flex;flex-direction:column;gap:8px}
+.dlg-btns .go,.dlg-btns .ghost{justify-content:center;text-align:center;padding:11px 16px}
+button.link{font:inherit;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:6px}
+.fabs button{font:inherit;font-weight:700;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:9px 16px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}
 @media print{
  :root,:root[data-theme="dark"],:root:not([data-theme="light"]){--bg:#fff;--panel:#fff;--panel2:#f6f8f6;--line:#d3dbd6;--fg:#16262a;--muted:#566763;--brass:#946a1a;--brass-soft:rgba(148,106,26,.1);--rose:#a2513c;--rose-soft:rgba(162,81,60,.08);--teal:#2f6f6a;color-scheme:light}
  #frm,#shareBar,nav.chapters,.fabs,.example,.shared{display:none!important}
@@ -245,7 +255,7 @@ html{scroll-behavior:smooth}
   <div class="grid2" style="margin-top:14px">
     <label class="f" id="heWrap">שם מלא מהלידה, בעברית<input type="text" id="heName" autocomplete="off"></label>
     <label class="f" id="laWrap">שם מלא מהלידה, באותיות לועזיות<input type="text" id="laName" autocomplete="off" dir="ltr"></label>
-    <label class="f">תאריך לידה<input type="date" id="bdate"></label>
+    <div class="f" role="group" aria-label="תאריך לידה">תאריך לידה<input type="hidden" id="bdate"><div class="dsel" data-for="bdate" data-range="birth"></div></div>
     <label class="f">השם שבו את/ה משתמש/ת היום <small>אופציונלי: כינוי, שם אחרי נישואין או שם שהוחלף</small><input type="text" id="curName" autocomplete="off"></label>
   </div>
 
@@ -258,21 +268,22 @@ html{scroll-behavior:smooth}
       <option value="money">כסף ושפע</option>
       <option value="growth">צמיחה רוחנית</option>
     </select></label>
-    <label class="f">תאריך יעד לתחזית <small>ברירת המחדל: היום</small><input type="date" id="tdate"></label>
+    <div class="f" role="group" aria-label="תאריך יעד לתחזית">תאריך יעד לתחזית <small>ברירת המחדל: היום</small><input type="hidden" id="tdate"><div class="dsel" data-for="tdate" data-range="target"></div></div>
   </div>
 
   <div class="sep"></div>
   <label class="toggle"><input type="checkbox" id="partnerOn"> הוספת בן/בת זוג להתאמה זוגית</label>
   <div class="grid2" id="partnerBox" style="margin-top:12px">
     <label class="f">שם מלא של בן/בת הזוג <small>בעברית או בלועזית</small><input type="text" id="pName" autocomplete="off"></label>
-    <label class="f">תאריך הלידה של בן/בת הזוג<input type="date" id="pDate"></label>
+    <div class="f" role="group" aria-label="תאריך הלידה של בן/בת הזוג">תאריך הלידה של בן/בת הזוג<input type="hidden" id="pDate"><div class="dsel" data-for="pDate" data-range="birth"></div></div>
   </div>
 
   <div class="row-actions">
     <button class="go" type="submit">נתחו</button>
-    <button class="ghost" type="button" id="clearBtn">ניקוי</button>
+    <button class="ghost" type="button" id="clearBtn">↺ ניתוח חדש</button>
     <span class="err" id="err" role="alert"></span>
   </div>
+  <p class="status" id="frmStatus" aria-live="polite"></p>
 </form>
 
 <section class="share" id="shareBar" hidden aria-labelledby="shareTitle">
@@ -293,6 +304,17 @@ html{scroll-behavior:smooth}
   </div>
   <p class="status" id="shStatus" aria-live="polite"></p>
 </section>
+
+<dialog id="resetDlg" aria-labelledby="resetTitle">
+  <h2 id="resetTitle">ניתוח חדש</h2>
+  <p>לפני שמנקים את הטופס: לשלוח את הניתוח הנוכחי<span id="resetWho"></span>? אחרי הניקוי הוא לא יופיע יותר במסך.</p>
+  <div class="dlg-btns">
+    <button type="button" class="go" id="rsSend">שליחה, ואז ניתוח חדש</button>
+    <a class="ghost" id="rsWa" href="#" target="_blank" rel="noopener">שליחה בוואטסאפ, ואז ניתוח חדש</a>
+    <button type="button" class="ghost" id="rsSkip">ניתוח חדש בלי לשלוח</button>
+    <button type="button" class="link" id="rsCancel">ביטול</button>
+  </div>
+</dialog>
 <div id="out"></div>
 <p class="note">הניתוח מבוסס על הנומרולוגיה הפיתגוראית המודרנית ועל גימטריה עברית בשיטת המספר הקטן (א=1 … ט=9, י=1 … צ=9, ק=1 … ת=4). בגימטריה העברית האותיות א, ה, ו, י משמשות כתנועות לחישוב מספר דחף הנשמה. זהו כלי להתבוננות עצמית ולשיחה, לא אבחון.</p>
 </div>
@@ -835,7 +857,7 @@ function analyze(inp){
   const EYE={overview:"סיכום",core:"שכבה 1 · הליבה",name:"שכבה 1 · הליבה, ושכבה 2 · הכלים והשיעורים",grid:"שכבה 2 · הכלים והשיעורים",cycles:"שכבה 3 · הזמן",year:"שכבה 3 · הזמן",change:"שכבה 4 · קשרים ומיקוד",love:"שכבה 4 · קשרים ומיקוד",focus:"שכבה 4 · קשרים ומיקוד"};
   h+=guide;
   for(const k of ["overview","core","name","grid","cycles","year","change","love","focus"]){if(S[k])h+=S[k].replace("<h2>",`<div class="eyebrow">${EYE[k]}</div><h2>`);}
-  h+=`<div class="fabs"><a href="#shareBar">שיתוף</a><a href="#map">מפה ↑</a></div>`;
+  h+=`<div class="fabs"><a href="#shareBar">שיתוף</a><a href="#map">מפה ↑</a><button type="button" data-reset>↺ חדש</button></div>`;
   return h;
 }
 
@@ -844,7 +866,35 @@ function analyze(inp){
 const $=id=>document.getElementById(id);
 const EXAMPLE={heName:"נועה כהן",laName:"Noa Cohen",curName:"נועה לוי",bdate:"1984-03-17",sys:"both",focus:"love",tdate:"",partnerOn:true,pName:"יואב לוי",pDate:"1981-11-02"};
 function read(){return{heName:$("heName").value,laName:$("laName").value,curName:$("curName").value,bdate:$("bdate").value,sys:document.querySelector('input[name=sys]:checked').value,focus:$("focus").value,tdate:$("tdate").value,partnerOn:$("partnerOn").checked,pName:$("pName").value,pDate:$("pDate").value};}
-function fill(d){$("heName").value=d.heName||"";$("laName").value=d.laName||"";$("curName").value=d.curName||"";$("bdate").value=d.bdate||"";$("focus").value=d.focus||"none";$("tdate").value=d.tdate||"";$("partnerOn").checked=!!d.partnerOn;$("pName").value=d.pName||"";$("pDate").value=d.pDate||"";const r=document.querySelector(`input[name=sys][value="${d.sys||"both"}"]`);if(r)r.checked=true;sync();}
+function fill(d){$("heName").value=d.heName||"";$("laName").value=d.laName||"";$("curName").value=d.curName||"";$("bdate").value=d.bdate||"";$("focus").value=d.focus||"none";$("tdate").value=d.tdate||"";$("partnerOn").checked=!!d.partnerOn;$("pName").value=d.pName||"";$("pDate").value=d.pDate||"";const r=document.querySelector(`input[name=sys][value="${d.sys||"both"}"]`);if(r)r.checked=true;dsSyncAll();sync();}
+/* ---------- date pickers: day / month / year selects ---------- */
+const MONTHS=["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
+const opt=(v,t)=>`<option value="${v}">${t}</option>`;
+function dsBuild(box){
+  const cy=new Date().getFullYear(),birth=box.dataset.range==="birth";
+  const years=[];if(birth){for(let y=cy;y>=1900;y--)years.push(y);}else{for(let y=cy-10;y<=cy+15;y++)years.push(y);}
+  const lab=box.closest(".f").getAttribute("aria-label");
+  box.innerHTML=`<select data-p="d" aria-label="${lab}: יום">${opt("","יום")}${Array.from({length:31},(_,i)=>opt(i+1,i+1)).join("")}</select>`+
+    `<select data-p="m" aria-label="${lab}: חודש">${opt("","חודש")}${MONTHS.map((m,i)=>opt(i+1,m)).join("")}</select>`+
+    `<select data-p="y" aria-label="${lab}: שנה">${opt("","שנה")}${years.map(y=>opt(y,y)).join("")}</select>`;
+  box.addEventListener("change",()=>dsWrite(box));
+}
+function dsParts(box){const g=p=>box.querySelector(`[data-p="${p}"]`);return{d:g("d"),m:g("m"),y:g("y")};}
+function dsWrite(box){
+  const {d,m,y}=dsParts(box);
+  if(m.value){const max=new Date(+(y.value||2000),+m.value,0).getDate();
+    [...d.options].forEach(o=>{if(o.value)o.disabled=+o.value>max;});
+    if(+d.value>max)d.value=String(max);}
+  const hid=$(box.dataset.for);
+  hid.value=(d.value&&m.value&&y.value)?`${y.value}-${String(m.value).padStart(2,"0")}-${String(d.value).padStart(2,"0")}`:"";
+}
+function dsRead(box){
+  const {d,m,y}=dsParts(box);const v=$(box.dataset.for).value;const mt=v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(mt&&!y.querySelector(`option[value="${+mt[1]}"]`))y.insertAdjacentHTML("beforeend",opt(+mt[1],+mt[1]));
+  y.value=mt?String(+mt[1]):"";m.value=mt?String(+mt[2]):"";d.value=mt?String(+mt[3]):"";
+  [...d.options].forEach(o=>o.disabled=false);if(mt)dsWrite(box);
+}
+function dsSyncAll(){document.querySelectorAll(".dsel").forEach(b=>{if(!b.firstChild)dsBuild(b);dsRead(b);});}
 function sync(){const s=document.querySelector('input[name=sys]:checked').value;$("heWrap").hidden=s==="la";$("laWrap").hidden=s==="he";$("partnerBox").hidden=!$("partnerOn").checked;}
 function run(save){
   const d=read();$("err").textContent="";
@@ -861,7 +911,40 @@ function run(save){
 document.querySelectorAll('input[name=sys]').forEach(r=>r.addEventListener("change",sync));
 $("partnerOn").addEventListener("change",sync);
 $("frm").addEventListener("submit",e=>{e.preventDefault();run(true);});
-$("clearBtn").addEventListener("click",()=>{$("shareBar").hidden=true;$("sharedNote").hidden=true;lastData=null;fill({sys:"both",focus:"none"});$("out").innerHTML="";$("exampleNote").hidden=true;try{localStorage.removeItem("numMap");}catch(e){}});
+/* ---------- reset (new analysis) ---------- */
+function doReset(msg){
+  $("shareBar").hidden=true;$("sharedNote").hidden=true;lastData=null;$("err").textContent="";
+  fill({sys:"both",focus:"none"});$("out").innerHTML="";$("exampleNote").hidden=false;
+  try{localStorage.removeItem("numMap");}catch(e){}
+  try{if(location.search||location.hash)history.replaceState(null,"",location.pathname);}catch(e){}
+  $("frm").scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+  const f=$("sysSeg").querySelector("input:checked")?.value==="la"?$("laName"):$("heName");setTimeout(()=>f.focus({preventScroll:true}),350);
+  const st=$("frmStatus");st.textContent=msg||"הטופס נוקה. אפשר להזין פרטים חדשים.";clearTimeout(st.t);st.t=setTimeout(()=>st.textContent="",6000);
+}
+function closeDlg(){const d=$("resetDlg");if(d.open){try{d.close();}catch(e){d.removeAttribute("open");}}}
+function askReset(){
+  if(!lastData){doReset();return;}
+  const nm=personName();$("resetWho").textContent=nm?` של ${nm}`:"";
+  $("rsWa").href=$("waLink").href;
+  const d=$("resetDlg");
+  if(typeof d.showModal==="function")d.showModal();
+  else if(confirm(`לשלוח את הניתוח הנוכחי${nm?" של "+nm:""} לפני הניקוי?`)){$("shLink").click();}
+  else doReset();
+}
+$("clearBtn").addEventListener("click",askReset);
+document.addEventListener("click",e=>{if(e.target.closest("[data-reset]")){e.preventDefault();askReset();}});
+$("rsCancel").addEventListener("click",closeDlg);
+$("rsSkip").addEventListener("click",()=>{closeDlg();doReset();});
+$("rsWa").addEventListener("click",()=>{closeDlg();setTimeout(()=>doReset("הניתוח נשלח לוואטסאפ, והטופס מוכן לניתוח חדש."),300);});
+$("rsSend").addEventListener("click",async()=>{
+  const url=shareURL(),nm=personName();
+  if(navigator.share){
+    try{await navigator.share({title:"מפת המספרים",text:`ניתוח נומרולוגי${nm?" של "+nm:""}`,url});closeDlg();doReset("הניתוח נשלח, והטופס מוכן לניתוח חדש.");return;}
+    catch(e){if(e&&e.name==="AbortError")return;}
+  }
+  try{await navigator.clipboard.writeText(url);closeDlg();doReset("קישור לניתוח הקודם הועתק. אפשר להדביק ולשלוח אותו, והטופס מוכן לניתוח חדש.");}
+  catch(e){closeDlg();$("shareBar").scrollIntoView({block:"start"});$("linkBox").focus();$("linkBox").select();status("לא הצלחתי לשלוח אוטומטית. הקישור מסומן: העתיקו אותו, ואז לחצו שוב על \"ניתוח חדש\".");}
+});
 /* ---------- sharing ---------- */
 let lastData=null;
 const KEYS=["heName","laName","curName","bdate","sys","focus","tdate","partnerOn","pName","pDate"];
