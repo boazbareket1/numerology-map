@@ -201,6 +201,32 @@ a.ghost:hover,button.ghost:hover{border-color:var(--brass)}
 #linkBox{font:inherit;font-size:.82rem;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;width:100%;min-width:0}
 .status{min-height:1.4em;margin:10px 0 0;font-weight:600;color:var(--teal)}
 .shared{background:var(--brass-soft);border:1px solid var(--brass);border-radius:10px;padding:10px 14px;font-size:.95rem;margin-bottom:16px}
+/* opening screen */
+.hero{--hb:#2f5450;--ht:#f4f1e8;background:var(--hb);color:var(--ht);border-radius:22px;padding:30px 22px 26px;text-align:center}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero{--hb:#1f3b38}}
+:root[data-theme="dark"] .hero{--hb:#1f3b38}
+.hero-q{margin:0 0 6px;font-size:1.1rem;opacity:.9}
+.hero h2{font-size:clamp(1.7rem,6.5vw,2.4rem);margin:0 auto 12px;max-width:20ch}
+.sigil{white-space:nowrap;letter-spacing:.22em}
+.hero-meta{margin:0 0 20px;opacity:.85}
+.hero-btn{font:inherit;font-weight:700;font-size:1.2rem;width:100%;max-width:420px;padding:16px 20px;border:0;border-radius:999px;background:#fffdf7;color:#5c4210;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.hero-btn:focus-visible{outline:3px solid #f0d290;outline-offset:3px}
+.hero-list{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:6px;font-size:.98rem}
+.hero-list li::before{content:"✓ ";font-weight:700}
+.form h2{font-size:1.4rem}
+.form .go{font-size:1.05rem;padding:13px 30px}
+details.more{margin-top:18px;border-top:1px dashed var(--line);padding-top:12px}
+details.more summary{cursor:pointer;font-weight:700;color:var(--teal)}
+details.more summary small{font-weight:400;color:var(--muted)}
+/* results: topic switcher, theory toggle */
+.topics{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-top:28px;scroll-margin-top:70px}
+.topics h2{font-size:1.25rem;margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{font:inherit;font-size:.95rem;border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:999px;padding:8px 15px;cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--brass);background:var(--brass);color:var(--bg);font-weight:700}
+.theory-tg{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted);margin-top:14px;cursor:pointer}
+.theory-tg input{accent-color:var(--brass)}
+#out.simple .def,#out.simple .trace,#out.simple .lead,#out.simple .legend,#out.simple .eyebrow{display:none}
 dialog#resetDlg{border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--fg);padding:22px;width:min(420px,calc(100vw - 32px));direction:rtl;font-family:var(--f-body)}
 dialog#resetDlg::backdrop{background:rgba(10,20,22,.45)}
 dialog#resetDlg h2{font-size:1.35rem}
@@ -211,7 +237,7 @@ button.link{font:inherit;background:none;border:0;color:var(--muted);text-decora
 .fabs button{font:inherit;font-weight:700;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:9px 16px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}
 @media print{
  :root,:root[data-theme="dark"],:root:not([data-theme="light"]){--bg:#fff;--panel:#fff;--panel2:#f6f8f6;--line:#d3dbd6;--fg:#16262a;--muted:#566763;--brass:#946a1a;--brass-soft:rgba(148,106,26,.1);--rose:#a2513c;--rose-soft:rgba(162,81,60,.08);--teal:#2f6f6a;color-scheme:light}
- #frm,#shareBar,nav.chapters,.fabs,.example,.shared{display:none!important}
+ #frm,#hero,#shareBar,nav.chapters,.fabs,.example,.shared,.topics,.theory-tg{display:none!important}
  section.ch,.reading,.facet,.layer{break-inside:avoid-page}
  body{padding-block:0}
 }
@@ -233,54 +259,56 @@ html{scroll-behavior:smooth}
   <div>
     <div class="sigil">1 · 2 · 3 · 4 · 5 · 6 · 7 · 8 · 9</div>
     <h1>מפת המספרים</h1>
-    <p>ניתוח נומרולוגי מלא לפי תאריך הלידה והשם: שביל החיים, מספרי השם, מחזורי החיים, טבלת הלידה, השנה האישית והתאמה זוגית.</p>
   </div>
 </header>
 
-<form class="panel form" id="frm" novalidate>
-  <div class="shared" id="sharedNote" hidden>זה ניתוח ששותף איתך. כדי לקבל ניתוח משלך, הזינו את הפרטים שלכם ולחצו "נתחו".</div>
-  <div class="example" id="exampleNote">הזינו שם ותאריך לידה ולחצו "נתחו". הניתוח המלא, המפה ואפשרויות השיתוף יופיעו מתחת לטופס.</div>
+<section class="hero" id="hero">
+  <p class="hero-q">מה המספרים שלך מספרים עליך?</p>
+  <h2>גלו את מפת המספרים האישית שלכם</h2>
+  <p class="hero-meta">2 פרטים · כ־2 דקות · בלי הרשמה</p>
+  <button type="button" class="hero-btn" id="startBtn">להתחלת הניתוח ←</button>
+  <ul class="hero-list">
+    <li>ניתוח אישי לפי השם ותאריך הלידה שלך</li>
+    <li>אהבה, קריירה, כסף או צמיחה: בוחרים מה לבדוק</li>
+    <li>הפרטים לא נשמרים ולא נשלחים לשום מקום</li>
+  </ul>
+</section>
+
+<form class="panel form" id="frm" novalidate hidden>
+  <div class="shared" id="sharedNote" hidden>זה ניתוח ששותף איתך. כדי לקבל ניתוח משלך, הזינו את הפרטים שלכם ולחצו על הכפתור.</div>
+  <div class="example" id="exampleNote" hidden></div>
   <h2>הפרטים שלך</h2>
-  <p class="hint">השם המלא כפי שניתן בלידה, כולל שמות אמצעיים ושם המשפחה מהלידה. אפשר להזין ניקוד, הוא מסונן אוטומטית.</p>
+  <p class="hint">השם המלא כפי שניתן בלידה, כולל שם המשפחה מהלידה.</p>
+  <input type="radio" name="sys" value="he" checked hidden>
+  <input type="hidden" id="laName"><input type="hidden" id="tdate">
 
-  <fieldset>
-    <legend>שיטת החישוב לשם</legend>
-    <div class="seg" id="sysSeg">
-      <label><input type="radio" name="sys" value="he" id="sysHe"> גימטריה עברית</label>
-      <label><input type="radio" name="sys" value="la" id="sysLa"> פיתגוראית (לועזית)</label>
-      <label><input type="radio" name="sys" value="both" id="sysBoth" checked> השוואה בין השתיים</label>
-    </div>
-  </fieldset>
-
-  <div class="grid2" style="margin-top:14px">
-    <label class="f" id="heWrap">שם מלא מהלידה, בעברית<input type="text" id="heName" autocomplete="off"></label>
-    <label class="f" id="laWrap">שם מלא מהלידה, באותיות לועזיות<input type="text" id="laName" autocomplete="off" dir="ltr"></label>
-    <div class="f" role="group" aria-label="תאריך לידה">תאריך לידה<input type="hidden" id="bdate"><div class="dsel" data-for="bdate" data-range="birth"></div></div>
-    <label class="f">השם שבו את/ה משתמש/ת היום <small>אופציונלי: כינוי, שם אחרי נישואין או שם שהוחלף</small><input type="text" id="curName" autocomplete="off"></label>
-  </div>
-
-  <div class="sep"></div>
   <div class="grid2">
-    <label class="f">מיקוד הניתוח<select id="focus">
-      <option value="none">תמונה כללית</option>
-      <option value="love">אהבה וזוגיות</option>
-      <option value="career">קריירה ושליחות</option>
-      <option value="money">כסף ושפע</option>
-      <option value="growth">צמיחה רוחנית</option>
-    </select></label>
-    <div class="f" role="group" aria-label="תאריך יעד לתחזית">תאריך יעד לתחזית <small>ברירת המחדל: היום</small><input type="hidden" id="tdate"><div class="dsel" data-for="tdate" data-range="target"></div></div>
+    <label class="f" id="heWrap">שם מלא מהלידה, בעברית<input type="text" id="heName" autocomplete="off" placeholder="למשל: נועה כהן"></label>
+    <div class="f" role="group" aria-label="תאריך לידה">תאריך לידה<input type="hidden" id="bdate"><div class="dsel" data-for="bdate" data-range="birth"></div></div>
   </div>
 
-  <div class="sep"></div>
-  <label class="toggle"><input type="checkbox" id="partnerOn"> הוספת בן/בת זוג להתאמה זוגית</label>
-  <div class="grid2" id="partnerBox" style="margin-top:12px">
-    <label class="f">שם מלא של בן/בת הזוג <small>בעברית או בלועזית</small><input type="text" id="pName" autocomplete="off"></label>
-    <div class="f" role="group" aria-label="תאריך הלידה של בן/בת הזוג">תאריך הלידה של בן/בת הזוג<input type="hidden" id="pDate"><div class="dsel" data-for="pDate" data-range="birth"></div></div>
-  </div>
+  <details class="more" id="moreBox">
+    <summary>פרטים נוספים <small>(לא חובה)</small></summary>
+    <div class="grid2" style="margin-top:14px">
+      <label class="f">מה תרצו לבדוק קודם?<select id="focus">
+        <option value="none">תמונה כללית</option>
+        <option value="love">אהבה וזוגיות</option>
+        <option value="career">קריירה ושליחות</option>
+        <option value="money">כסף ושפע</option>
+        <option value="growth">צמיחה רוחנית</option>
+      </select></label>
+      <label class="f">השם שבו את/ה משתמש/ת היום <small>כינוי, שם אחרי נישואין או שם שהוחלף</small><input type="text" id="curName" autocomplete="off"></label>
+    </div>
+    <label class="toggle" style="margin-top:16px"><input type="checkbox" id="partnerOn"> הוספת בן/בת זוג להתאמה זוגית</label>
+    <div class="grid2" id="partnerBox" style="margin-top:12px">
+      <label class="f">שם מלא של בן/בת הזוג<input type="text" id="pName" autocomplete="off"></label>
+      <div class="f" role="group" aria-label="תאריך הלידה של בן/בת הזוג">תאריך הלידה של בן/בת הזוג<input type="hidden" id="pDate"><div class="dsel" data-for="pDate" data-range="birth"></div></div>
+    </div>
+  </details>
 
   <div class="row-actions">
-    <button class="go" type="submit">נתחו</button>
-    <button class="ghost" type="button" id="clearBtn">↺ ניתוח חדש</button>
+    <button class="go" type="submit">לניתוח שלי ←</button>
+    <button class="ghost" type="button" id="clearBtn" hidden>↺ ניתוח חדש</button>
     <span class="err" id="err" role="alert"></span>
   </div>
   <p class="status" id="frmStatus" aria-live="polite"></p>
@@ -316,7 +344,7 @@ html{scroll-behavior:smooth}
   </div>
 </dialog>
 <div id="out"></div>
-<p class="note">הניתוח מבוסס על הנומרולוגיה הפיתגוראית המודרנית ועל גימטריה עברית בשיטת המספר הקטן (א=1 … ט=9, י=1 … צ=9, ק=1 … ת=4). בגימטריה העברית האותיות א, ה, ו, י משמשות כתנועות לחישוב מספר דחף הנשמה. זהו כלי להתבוננות עצמית ולשיחה, לא אבחון.</p>
+<p class="note" id="note" hidden>הניתוח מבוסס על הנומרולוגיה הפיתגוראית המודרנית ועל גימטריה עברית בשיטת המספר הקטן (א=1 … ט=9, י=1 … צ=9, ק=1 … ת=4). בגימטריה העברית האותיות א, ה, ו, י משמשות כתנועות לחישוב מספר דחף הנשמה. זהו כלי להתבוננות עצמית ולשיחה, לא אבחון.</p>
 </div>
 
 <script>
@@ -649,7 +677,7 @@ function analyze(inp){
   if(inp.curName.trim()){const s=scriptOf(inp.curName);const an=analyzeName(inp.curName,s);const base=names.find(x=>x.sys===s)||null;if(an)CUR={an,base};}
 
   let h="";const S={};seenIds={};
-  const chapters=[["map","מפה ומדריך"],["overview","תמונה כוללת"],["core","שביל החיים"],P?["name","מספרי השם"]:null,["grid","טבלת הלידה"],["cycles","מחזורי חיים"],["year","השנה האישית"],CUR?["change","שם נוכחי"]:null,PT?["love","התאמה זוגית"]:null,inp.focus!=="none"?["focus","מיקוד"]:null].filter(Boolean);
+  const chapters=[["overview","הסיכום שלך"],inp.focus!=="none"?["focus","הנושא שבחרת"]:["topics","בחירת נושא"],["year","השנה שלך"],["core","שביל החיים"],P?["name","מספרי השם"]:null,PT?["love","התאמה זוגית"]:null,["cycles","מחזורי חיים"],["grid","טבלת הלידה"],CUR?["change","שם נוכחי"]:null,["map","מדריך ומונחים"]].filter(Boolean);
   h+=`<nav class="chapters" aria-label="פרקים">${chapters.map(c=>`<a href="#${c[0]}">${c[1]}</a>`).join("")}</nav>`;
 
   /* overview */
@@ -818,7 +846,7 @@ function analyze(inp){
     PT?mi("love",`${B.LP}·${PT.B.LP}`,"התאמה זוגית","השוואה בשלושה רבדים"):mi("frm","—","התאמה זוגית","הוסיפו בן/בת זוג בטופס",1),
     inp.focus!=="none"?mi("focus","◎","מיקוד","כל מה שהמפה אומרת על הנושא שבחרת"):mi("frm","—","מיקוד","בחרו נושא בטופס",1)];
   const sentence=P?`הדרך שלך היא <b>${get(B.LP,"kw")}</b> (${B.LP}). הכלים שקיבלת: <b>${get(P.expr.v,"kw")}</b> (${P.expr.v}).${P.soul.v?` הלב מבקש <b>${get(P.soul.v,"kw")}</b> (${P.soul.v}).`:""}${P.pers.v?` העולם פוגש קודם <b>${get(P.pers.v,"kw")}</b> (${P.pers.v}).`:""}`:`הדרך שלך היא <b>${get(B.LP,"kw")}</b> (${B.LP}).`;
-  const guide=`<section class="guide ch" id="map" style="margin-top:24px"><div class="eyebrow">לפני שמתחילים</div><h2>מפה ומדריך קריאה</h2>
+  const guide=`<section class="guide ch" id="map" style="margin-top:40px"><details class="gloss" style="margin:0;border:0;padding:0"><summary>מדריך קריאה, מפת כל המספרים ומילון מונחים</summary>
   <p class="lead" style="color:var(--muted);margin:6px 0 0;max-width:68ch">הניתוח ארוך כי הוא מאיר את אותו אדם מכמה זוויות. אין צורך לקרוא הכול ברצף. זה המשפט שמסכם את הליבה שלך, וכל השאר מעמיק אותו:</p>
   <div class="sentence">${sentence}</div>
   <ol class="steps">
@@ -833,7 +861,7 @@ function analyze(inp){
    <li><b>סתירות בין מספרים</b> אינן טעות. הן המתחים הפנימיים שלך, ולעתים קרובות שם נמצא העניין.</li>
    <li><b>הצל</b> אינו גזר דין. הוא הצורה שהכישרון לובש כשהוא לא מאוזן.</li>
    <li><b>סימון כמו 29/11</b>: המספר הראשון הוא הסכום לפני הצמצום, והשני הוא התוצאה. הסכום מוסיף גוון.</li>
-   <li>כל כרטיס במפה שלמטה הוא קישור. לחצן "מפה" בפינת המסך מחזיר לכאן מכל מקום.</li>
+   <li>כל כרטיס במפה שלמטה הוא קישור לפרק המתאים.</li>
   </ul>
   <div class="layer"><h3><span class="ln">1</span>הליבה <small>מי את/ה</small></h3><div class="mi-grid">${L1.join("")}</div></div>
   <div class="layer"><h3><span class="ln">2</span>הכלים והשיעורים <small>מה קל ומה דורש עבודה</small></h3><div class="mi-grid">${L2.join("")}</div></div>
@@ -853,11 +881,16 @@ function analyze(inp){
    <dt>טבלת לידה וחצים</dt><dd>ספרות התאריך בריבוע 3×3. שורה, טור או אלכסון מלא הוא חץ של כוח, וריק הוא חץ של חולשה.</dd>
    <dt>מחזור תשע השנים</dt><dd>החיים נעים במחזורים של תשע שנים, מהתחלה (שנה 1) ועד סיום (שנה 9).</dd>
    <dt>משפחות המספרים</dt><dd>1-5-7, 2-4-8, 3-6-9. מספרים מאותה משפחה מבינים זה את זה בקלות, ומשמשים לבדיקת התאמה.</dd>
-  </dl></details></section>`;
+  </dl></details></details></section>`;
   const EYE={overview:"סיכום",core:"שכבה 1 · הליבה",name:"שכבה 1 · הליבה, ושכבה 2 · הכלים והשיעורים",grid:"שכבה 2 · הכלים והשיעורים",cycles:"שכבה 3 · הזמן",year:"שכבה 3 · הזמן",change:"שכבה 4 · קשרים ומיקוד",love:"שכבה 4 · קשרים ומיקוד",focus:"שכבה 4 · קשרים ומיקוד"};
+  const TOP=[["love","אהבה וזוגיות"],["career","קריירה ושליחות"],["money","כסף ושפע"],["growth","צמיחה רוחנית"],["none","בלי נושא"]];
+  S.overview=S.overview.replace('<div class="core">',`<div class="sentence">${sentence}</div><div class="core">`)
+    .replace(/<\/section>$/,`<label class="theory-tg"><input type="checkbox" id="theoryTg"${showTheory?" checked":""}> הצגת הסברים על השיטה ודרך החישוב</label></section>`);
+  S.overview=S.overview.replace("<h2>תמונה כוללת</h2>",`<h2>הסיכום שלך${P?`, ${esc(P.raw.trim().split(/\s+/)[0])}`:""}</h2>`);
+  S.topics=`<section class="topics" id="topics"><h2>${inp.focus==="none"?"מה תרצו לבדוק לעומק?":"לבדוק תחום אחר?"}</h2><div class="chips">${TOP.filter(t=>t[0]!=="none"||inp.focus!=="none").map(t=>`<button type="button" data-focus="${t[0]}" aria-pressed="${inp.focus===t[0]}">${t[1]}</button>`).join("")}</div></section>`;
+  for(const k of ["overview","topics","focus","year","core","name","love","cycles","grid","change"]){if(S[k])h+=EYE[k]?S[k].replace("<h2>",`<div class="eyebrow">${EYE[k]}</div><h2>`):S[k];}
   h+=guide;
-  for(const k of ["overview","core","name","grid","cycles","year","change","love","focus"]){if(S[k])h+=S[k].replace("<h2>",`<div class="eyebrow">${EYE[k]}</div><h2>`);}
-  h+=`<div class="fabs"><a href="#shareBar">שיתוף</a><a href="#map">מפה ↑</a><button type="button" data-reset>↺ חדש</button></div>`;
+  h+=`<div class="fabs"><a href="#shareBar">שיתוף</a><a href="#overview">למעלה ↑</a><button type="button" data-reset>↺ חדש</button></div>`;
   return h;
 }
 
@@ -865,7 +898,7 @@ function analyze(inp){
 /* ---------- form ---------- */
 const $=id=>document.getElementById(id);
 const EXAMPLE={heName:"נועה כהן",laName:"Noa Cohen",curName:"נועה לוי",bdate:"1984-03-17",sys:"both",focus:"love",tdate:"",partnerOn:true,pName:"יואב לוי",pDate:"1981-11-02"};
-function read(){return{heName:$("heName").value,laName:$("laName").value,curName:$("curName").value,bdate:$("bdate").value,sys:document.querySelector('input[name=sys]:checked').value,focus:$("focus").value,tdate:$("tdate").value,partnerOn:$("partnerOn").checked,pName:$("pName").value,pDate:$("pDate").value};}
+function read(){return{heName:$("heName").value,laName:"",curName:$("curName").value,bdate:$("bdate").value,sys:"he",focus:$("focus").value,tdate:"",partnerOn:$("partnerOn").checked,pName:$("pName").value,pDate:$("pDate").value};}
 function fill(d){$("heName").value=d.heName||"";$("laName").value=d.laName||"";$("curName").value=d.curName||"";$("bdate").value=d.bdate||"";$("focus").value=d.focus||"none";$("tdate").value=d.tdate||"";$("partnerOn").checked=!!d.partnerOn;$("pName").value=d.pName||"";$("pDate").value=d.pDate||"";const r=document.querySelector(`input[name=sys][value="${d.sys||"both"}"]`);if(r)r.checked=true;dsSyncAll();sync();}
 /* ---------- date pickers: day / month / year selects ---------- */
 const MONTHS=["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
@@ -895,30 +928,40 @@ function dsRead(box){
   [...d.options].forEach(o=>o.disabled=false);if(mt)dsWrite(box);
 }
 function dsSyncAll(){document.querySelectorAll(".dsel").forEach(b=>{if(!b.firstChild)dsBuild(b);dsRead(b);});}
-function sync(){const s=document.querySelector('input[name=sys]:checked').value;$("heWrap").hidden=s==="la";$("laWrap").hidden=s==="he";$("partnerBox").hidden=!$("partnerOn").checked;}
+function sync(){$("partnerBox").hidden=!$("partnerOn").checked;}
+let showTheory=false;
+function showForm(){$("hero").hidden=true;$("frm").hidden=false;}
 function run(save){
   const d=read();$("err").textContent="";
   if(!d.bdate){$("err").textContent="חסר תאריך לידה.";return;}
   const needHe=d.sys!=="la",needLa=d.sys!=="he";
-  if(d.sys==="he"&&!d.heName.trim()){$("err").textContent="חסר שם מלא בעברית.";return;}
+  if(!d.heName.trim()||!/[א-ת]/.test(d.heName)){$("err").textContent="חסר שם מלא בעברית.";return;}
   if(d.sys==="la"&&!d.laName.trim()){$("err").textContent="חסר שם מלא באותיות לועזיות.";return;}
   if(d.sys==="both"&&!d.heName.trim()&&!d.laName.trim()){$("err").textContent="יש להזין לפחות שם אחד.";return;}
   if(d.partnerOn&&!d.pDate){$("err").textContent="חסר תאריך הלידה של בן/בת הזוג.";return;}
+  showForm();$("note").hidden=false;$("clearBtn").hidden=false;$("out").classList.toggle("simple",!showTheory);
   $("out").innerHTML=analyze(d);lastData=d;$("shareBar").hidden=false;updateLink();
+  if(d.focus!=="none"||d.curName||d.partnerOn)$("moreBox").open=true;
   if(save){$("exampleNote").hidden=true;$("sharedNote").hidden=true;
     document.getElementById("overview").scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
 }
 document.querySelectorAll('input[name=sys]').forEach(r=>r.addEventListener("change",sync));
 $("partnerOn").addEventListener("change",sync);
 $("frm").addEventListener("submit",e=>{e.preventDefault();run(true);});
+const smooth=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
+$("startBtn").addEventListener("click",()=>{showForm();$("frm").scrollIntoView({behavior:smooth(),block:"start"});setTimeout(()=>$("heName").focus({preventScroll:true}),300);});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-focus]");if(!b||!lastData)return;
+  $("focus").value=b.dataset.focus;run(false);
+  const t=$(b.dataset.focus==="none"?"topics":"focus");if(t)t.scrollIntoView({behavior:smooth(),block:"start"});});
+document.addEventListener("change",e=>{if(e.target.id==="theoryTg"){showTheory=e.target.checked;$("out").classList.toggle("simple",!showTheory);}});
 /* ---------- reset (new analysis) ---------- */
 function doReset(msg){
   $("shareBar").hidden=true;$("sharedNote").hidden=true;lastData=null;$("err").textContent="";
-  fill({sys:"both",focus:"none"});$("out").innerHTML="";$("exampleNote").hidden=false;
+  fill({sys:"both",focus:"none"});$("out").innerHTML="";$("moreBox").open=false;showForm();$("clearBtn").hidden=true;
   try{localStorage.removeItem("numMap");}catch(e){}
   try{if(location.search||location.hash)history.replaceState(null,"",location.pathname);}catch(e){}
   $("frm").scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
-  const f=$("sysSeg").querySelector("input:checked")?.value==="la"?$("laName"):$("heName");setTimeout(()=>f.focus({preventScroll:true}),350);
+  setTimeout(()=>$("heName").focus({preventScroll:true}),350);
   const st=$("frmStatus");st.textContent=msg||"הטופס נוקה. אפשר להזין פרטים חדשים.";clearTimeout(st.t);st.t=setTimeout(()=>st.textContent="",6000);
 }
 function closeDlg(){const d=$("resetDlg");if(d.open){try{d.close();}catch(e){d.removeAttribute("open");}}}
@@ -950,7 +993,7 @@ let lastData=null;
 const KEYS=["heName","laName","curName","bdate","sys","focus","tdate","partnerOn","pName","pDate"];
 const BASE=/github\.io$/.test(location.hostname)?location.origin+location.pathname:"https://boazbareket1.github.io/numerology-map/";
 const todayISO=()=>{const x=new Date();return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;};
-function encodeData(d){const arr=KEYS.map(k=>k==="partnerOn"?(d[k]?1:0):(k==="tdate"?(d.tdate||todayISO()):(d[k]||"")));
+function encodeData(d){const arr=KEYS.map(k=>k==="partnerOn"?(d[k]?1:0):(k==="tdate"?"":(d[k]||"")));
   const b=btoa(unescape(encodeURIComponent(JSON.stringify(arr))));return b.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
 function decodeData(t){try{let b=t.replace(/-/g,"+").replace(/_/g,"/");while(b.length%4)b+="=";
   const arr=JSON.parse(decodeURIComponent(escape(atob(b))));if(!Array.isArray(arr))return null;
