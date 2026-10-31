@@ -1068,6 +1068,13 @@ $("cpText").addEventListener("click",()=>{
   copyText(`מפת המספרים${personName()?" של "+personName():""}\n${shareURL()}\n\n${body}`,"כל הטקסט של הניתוח הועתק.");});
 
 (function init(){
+  /* back link to a circle (המארג הקבוצתי/המשפחתי) that opened this map */
+  try{const back=new URLSearchParams(location.search).get("back");
+    if(back&&/^https:\/\/boazbareket1\.github\.io\//.test(back)){
+      const bar=document.createElement("a");bar.href=back;bar.id="backBar";
+      bar.textContent="← חזרה למעגל";
+      bar.style.cssText="position:fixed;top:10px;right:10px;z-index:1000;background:#1f2d3a;color:#fff;padding:10px 16px;border-radius:999px;font-weight:700;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.25);font-size:15px";
+      document.body.appendChild(bar);}}catch(e){}
   const shared=readShared();
   if(shared){fill(shared);$("exampleNote").hidden=true;$("sharedNote").hidden=false;run(false);return;}
   try{localStorage.removeItem("numMap");}catch(e){}
