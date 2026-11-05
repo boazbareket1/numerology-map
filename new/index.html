@@ -289,7 +289,7 @@ body.doc .kard{flex:none;width:100%;min-height:0}
       <summary>עוד אפשרויות (לא חובה)</summary>
       <div class="inner">
         <label class="f">השם שבו את/ה משתמש/ת היום <small>כינוי, שם אחרי נישואין או שם שהוחלף</small><input type="text" id="curName" autocomplete="off"></label>
-        <label class="f">נושא שמעניין אותך במיוחד<select id="focus">
+        <label class="f">נושא לחקירה הפעם <small>אפשר להחליף בכל רגע: בתפריט "עוד" ← "הנושא", או בתחתית מסך המפה</small><select id="focus">
           <option value="none">בלי נושא מיוחד</option>
           <option value="love">אהבה וזוגיות</option>
           <option value="career">קריירה ושליחות</option>
@@ -1095,6 +1095,7 @@ const leadOf=sec=>{const l=sec&&sec.querySelector(":scope > .lead");return l?l.i
 function buildScreens(raw,inp){
   SC=[];const add=(id,label,count,html)=>SC.push({id,label,count,html});
   const g=id=>raw.querySelector("#"+id);
+  const F=g("focus"),T=g("topics");
   /* map */
   {const s=g("overview");const nm=(inp.heName||"").trim().split(/\s+/)[0]||"";
     const sentence=s.querySelector(".sentence");
@@ -1108,11 +1109,11 @@ function buildScreens(raw,inp){
       ${sentence?`<div class="sentence">${sentence.innerHTML}</div>`:""}
       <div class="tiles" data-qmhost>${tiles.join("")}</div>
       ${syn.slice(0,2).join("")}${syn.length>2?item("עוד מהסיכום",syn.slice(2).join("")):""}
-      <h3 class="sub3">המסע במפה</h3><ol class="journey" id="journey"></ol>`);}
+      <h3 class="sub3">המסע במפה</h3><ol class="journey" id="journey"></ol>${T?`<h3 class="sub3">${F?"להחליף את הנושא לחקירה":"נושא לחקירה הפעם"}</h3>${T.querySelector(".chips").outerHTML}`:""}`);}
   /* focus / topics */
-  const F=g("focus"),T=g("topics");
+  
   if(F){const h=F.querySelector("h2").textContent;const fac=[...F.querySelectorAll(".facet")].map((f,i)=>item(f.querySelector("b").textContent,`<p style="margin:0">${f.querySelector("p").innerHTML}</p>`,i===0));
-    add("focus",h.replace("מיקוד: ",""),`${fac.length} נושאים`,`${shead(h,"",leadOf(F))}${fac.join("")}${T?`<h3 class="sub3">${T.querySelector("h2").textContent}</h3>${T.querySelector(".chips").outerHTML}`:""}`);}
+    add("focus","הנושא: "+h.replace("מיקוד: ",""),`${fac.length} היבטים`,`${shead(h,"",leadOf(F))}${fac.join("")}${T?`<h3 class="sub3">${T.querySelector("h2").textContent}</h3>${T.querySelector(".chips").outerHTML}`:""}`);}
   /* core */
   {const s=g("core");const ks=[...s.querySelectorAll(".reading")].map(kardFromReading);const note=s.querySelector(":scope > p.sub");
     add("core","הליבה",`${ks.length} קלפים`,`${shead("הליבה: שביל החיים ומספרי התאריך","שביל החיים","הדרך שלך, מתאריך הלידה")}${deckHTML(ks)}${note?`<p class="muted" style="font-size:.92rem">${note.innerHTML}</p>`:""}`);}
@@ -1156,7 +1157,7 @@ function buildScreens(raw,inp){
     const kids=[...s.children].filter(x=>!x.matches("h2,.def,.lead,.reading,.eyebrow")).map(x=>x.outerHTML).join("");
     add("change","השם הנוכחי","",`${shead("השם הנוכחי","השם הנוכחי",esc(inp.curName))}${kids}${deckHTML(ks)}`);}}
   /* topics, when no focus was chosen */
-  if(!F&&T)add("topics","בחירת נושא","",`${shead(T.querySelector("h2").textContent,"","אהבה, קריירה, כסף או צמיחה")}${T.querySelector(".chips").outerHTML}`);
+  if(!F&&T)add("topics","הנושא: בחירה","לחקירה",`${shead(T.querySelector("h2").textContent,"","אהבה, קריירה, כסף או צמיחה")}${T.querySelector(".chips").outerHTML}`);
   /* guide */
   {const s=g("map");if(s){const layers=[...s.querySelectorAll(".layer")].map(x=>x.outerHTML).join("");
     const steps=s.querySelector("ol.steps"),tips=s.querySelector("ul.tips");const dl=s.querySelector("details.gloss dl");
