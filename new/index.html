@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מפת המספרים</title>
+<meta name="robots" content="noindex">
+<meta property="og:title" content="מפת המספרים">
+<meta property="og:description" content="מפה נומרולוגית אישית מהשם ומתאריך הלידה, בגימטריה עברית: שביל החיים, מספרי השם, מחזורי חיים ושנה אישית.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://boazbareket1.github.io/numerology-map/og.jpg">
+<meta property="og:locale" content="he_IL">
+<meta name="theme-color" content="#0f6b66">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Secular+One&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* עיצוב 03 של המארג, בגוון הכלי האישי (לבנדר בהיר). טורקיז = אני/מספרים, כחול בטון = זמן ומחזורים. */
+:root{
+  --bg:#f3f1f8; --panel:#fff; --panel2:#ece9f3; --line2:#d6d1e0; --ink:#1f2d3a; --fg:#1f2d3a; --muted:#565f6b;
+  --teal:#0f6b66; --teal-soft:rgba(15,107,102,.10); --concrete:#4a86a3; --slate:#4a5f72; --lav:#8c7bb0;
+  --acc:var(--teal); --acc-soft:var(--teal-soft); --line:#d6d1e0; --brass:#0f6b66; --rose:#8c7bb0;
+  --f-display:"Secular One","Heebo",sans-serif;
+  --f-body:"Heebo","Arial Hebrew","Segoe UI",Arial,sans-serif;
+  --f-num:"Secular One","Heebo",sans-serif;
+  --f-mono:"IBM Plex Mono",Heebo,ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.65;
+  padding:env(safe-area-inset-top,0) max(16px,env(safe-area-inset-right,0)) calc(96px + env(safe-area-inset-bottom,0)) max(16px,env(safe-area-inset-left,0))}
+[hidden]{display:none!important}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:400;margin:0;line-height:1.25;text-wrap:balance}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:var(--teal);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+::selection{background:rgba(15,107,102,.2)}
+input,textarea{caret-color:var(--teal)}
+input[type=checkbox]{accent-color:var(--teal);width:20px;height:20px}
+.wrap{max-width:760px;margin:0 auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border:2px solid var(--acc);border-radius:6px;padding:10px 20px;font-weight:700;background:var(--acc);color:#fff;text-decoration:none}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--ink)}
+.btn.small{min-height:40px;padding:6px 14px;font-size:.95rem}
+.btn.wide{width:100%}
+.link{background:none;border:0;color:var(--teal);text-decoration:underline;padding:6px;font-weight:700}
+.mono{font-family:var(--f-mono)}
+.muted{color:var(--muted)}
+.status{color:var(--teal);font-weight:600;min-height:1.4em;margin:6px 0 0}
+.err{color:#8a2f3c;font-weight:700;min-height:1.4em}
+
+/* top line */
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:3px solid var(--acc);padding:22px 0 10px;margin-bottom:18px}
+.top h1{font-size:clamp(1.7rem,6vw,2.3rem);color:var(--teal)}
+.top .who{font-family:var(--f-mono);font-size:.9rem;color:var(--muted)}
+
+/* entry form */
+.entry .lead{font-size:1.08rem;color:#333;margin:0 0 18px}
+.f{display:flex;flex-direction:column;gap:6px;font-weight:700;margin:0 0 16px}
+.f small{font-family:var(--f-mono);font-weight:500;font-size:.85rem;color:var(--muted)}
+.f input[type=text],.f select{height:50px;border:2px solid var(--ink);border-radius:6px;padding:0 12px;background:#fff;color:var(--ink);font-weight:400;width:100%}
+.dsel{display:grid;grid-template-columns:1fr 1.6fr 1.2fr;gap:8px}
+.dsel select{height:50px;border:2px solid var(--ink);border-radius:6px;padding:0 8px;background:#fff;font-family:var(--f-mono);font-weight:600;color:var(--ink);width:100%}
+details.more{border:2px dashed var(--lav);border-radius:6px;padding:12px 14px;background:#fff;margin:4px 0 18px}
+details.more>summary{cursor:pointer;font-weight:700;color:#5d4d86;list-style:none;min-height:30px;display:flex;align-items:center;gap:8px}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::before{content:"+";font-family:var(--f-mono);font-weight:600;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--lav);border-radius:4px}
+details.more[open]>summary::before{content:"−"}
+details.more .inner{margin-top:14px}
+.toggle{display:flex;align-items:center;gap:10px;font-weight:700;margin:4px 0 12px}
+.note-box{padding:10px 12px;border-radius:6px;background:var(--acc-soft);font-size:.95rem;margin:0 0 14px}
+.fine{font-family:var(--f-mono);font-size:.85rem;color:var(--muted);text-align:center;margin:14px 0 0}
+
+/* screen */
+.screen{animation:in .28s ease-out}
+@keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.screen{animation:none}}
+.shead{display:flex;flex-direction:column;gap:2px;margin:0 0 14px}
+.shead h2{font-size:clamp(1.7rem,6vw,2.2rem)}
+.shead .kick{margin:2px 0 0;font-family:var(--f-mono);font-size:.92rem;color:var(--muted)}
+.screen>p,.screen .para{margin:0 0 12px}
+.sentence{font-size:1.12rem;line-height:1.65;padding:14px 16px;background:#fff;border:2px solid var(--acc);border-radius:8px;margin:0 0 16px}
+.sentence b{color:var(--teal);font-weight:700}
+
+/* question marks */
+.qm{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--acc);color:var(--acc);background:#fff;font:700 .8rem var(--f-body);margin-inline-start:6px;vertical-align:middle;padding:0;line-height:1;position:relative}
+.qm::after{content:"";position:absolute;inset:-10px}
+.qm[aria-expanded="true"]{background:var(--acc);color:#fff}
+.qmbox{display:block;margin:6px 0 10px;padding:10px 12px;border:1.5px dashed var(--acc);border-radius:6px;background:#fff;font-family:var(--f-body);font-size:.95rem;line-height:1.55;color:#333;font-weight:400;text-align:start}
+.qmbox b{font-family:var(--f-mono);font-weight:600;color:var(--acc);display:block;font-size:.85rem}
+
+/* overview tiles */
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 16px}
+.tilebtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px;background:#fff;border:2px solid var(--line2);border-radius:8px;text-align:start;color:var(--ink);min-height:118px;position:relative}
+.tilebtn:first-child{border-color:var(--teal)}
+.tilebtn .n{font-family:var(--f-num);font-size:3rem;line-height:1;color:var(--teal)}
+.tilebtn .c{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);min-height:1em}
+.tilebtn .l{font-weight:700;font-size:1rem}
+.tilewrap{position:relative;display:flex}.tilewrap>.tilebtn{width:100%}
+.tilewrap .qm{position:absolute;top:10px;left:10px}
+@media (min-width:600px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* journey list */
+.journey{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.journey button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;min-height:52px;background:#fff;border:2px solid var(--line2);border-radius:6px;color:var(--ink);font-weight:700;text-align:start}
+.journey button span{font-family:var(--f-mono);font-weight:600;font-size:.82rem;color:var(--muted);white-space:nowrap}
+.journey button.seen{border-color:var(--teal)}
+.journey button.seen span{color:var(--teal)}
+h3.sub3{font-size:1.35rem;margin:22px 0 10px}
+
+/* deck of cards (as in המארג) */
+.deck{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 16px 8px;margin:0 -16px;scrollbar-width:none;-webkit-overflow-scrolling:touch;align-items:flex-start}
+.deck::-webkit-scrollbar{display:none}
+.kard{flex:0 0 min(86vw,340px);scroll-snap-align:center;border:2px solid var(--line2);border-radius:8px;padding:20px 18px 18px;background:#fff;display:flex;flex-direction:column;align-items:flex-start;min-height:420px;scroll-margin:16px}
+.kard.on{border-color:var(--acc)}
+.kard.rose{border-style:dashed}
+.kard .k{margin:0;font-family:var(--f-mono);font-size:.9rem;color:var(--muted)}
+.kard .big{display:flex;align-items:baseline;gap:8px;margin:6px 0 0;font-family:var(--f-num);font-size:5.4rem;line-height:.95;color:var(--acc)}
+.kard .big small{font-family:var(--f-mono);font-size:.85rem;color:var(--muted)}
+.kard h3{margin:6px 0 0;font-size:1.55rem}
+.kard .x{margin:10px 0 0;font-size:1.05rem;line-height:1.6;color:#333}
+.kard .here{display:inline-block;margin-top:6px;padding:2px 10px;border-radius:4px;background:var(--acc);color:#fff;font-family:var(--f-mono);font-size:.82rem;font-weight:600}
+.kard details.deep{margin-top:auto;padding-top:14px;width:100%}
+.kard details.deep>summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;min-height:44px;padding:8px 18px;background:var(--acc);color:#fff;border-radius:6px;font-weight:700}
+.kard details.deep>summary::-webkit-details-marker{display:none}
+.kard details.deep[open]>summary{background:#fff;color:var(--acc);border:2px solid var(--acc);padding:6px 16px}
+.dbody{padding-top:12px;font-size:1rem;line-height:1.6;color:#333}
+.dbody p{margin:0 0 10px}
+.dbody h4{font-family:var(--f-body);font-weight:700;font-size:1rem;margin:12px 0 4px;color:var(--teal)}
+.dbody h4.neg{color:var(--slate)}
+.dbody ul{margin:0 0 8px;padding-inline-start:20px}
+.dbody .two{display:block}
+.dbody .facets{display:grid;gap:8px;margin:8px 0}
+.dbody .facet{padding:10px 12px;border:1.5px solid var(--line2);border-radius:6px}
+.dbody .facet b{display:block;font-size:.95rem}
+.dbody .facet p{margin:2px 0 0;font-size:.95rem}
+.trace{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line2);font-family:var(--f-mono);font-size:.78rem;color:var(--muted);direction:rtl;unicode-bidi:plaintext}
+.trace::before{content:"דרך החישוב: ";font-weight:600}
+.deck-ctl{display:flex;align-items:center;justify-content:space-between;margin:8px 0 6px}
+.deck-ctl button{width:46px;height:46px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);border-radius:6px;background:#fff;color:var(--ink)}
+.deck-ctl button:last-child{background:var(--ink);color:#fff}
+.deck-ctl button:disabled{opacity:.35}
+.dots{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line2)}
+.dots i.on{background:var(--acc)}
+.deck-count{font-family:var(--f-mono);font-size:.85rem;color:var(--muted)}
+@media (min-width:760px){.deck{margin:0;padding-inline:0;flex-wrap:wrap;overflow:visible}.kard{flex:0 0 calc(50% - 6px)}.deck-ctl{display:none}}
+
+/* feedback + other angle */
+.fbk{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:12px;font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.fbk button{border:1.5px solid var(--line2);border-radius:4px;background:#fff;padding:6px 10px;min-height:36px;font:600 .8rem var(--f-mono);color:var(--ink)}
+.fbk button[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-soft)}
+.fbalt{flex-basis:100%;margin:6px 0 2px;padding:10px 12px;border:1.5px dashed var(--teal);border-radius:6px;background:#fff;font-family:var(--f-body);color:#333}
+.fbalt b{display:block;font-family:var(--f-mono);font-weight:600;font-size:.85rem;color:var(--teal)}
+.fbalt span{display:block;font-size:1rem;line-height:1.6}
+
+/* letters */
+.letters{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 6px}
+.word{display:flex;gap:4px}
+.lt{display:flex;flex-direction:column;align-items:center;min-width:34px;padding:6px 4px;border:1.5px solid var(--line2);border-radius:6px;background:#fff}
+.lt .ch{font-size:1.25rem;font-weight:700}
+.lt .v{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.lt.vow{border-color:var(--teal);background:var(--teal-soft)}
+.lt.vow .v{color:var(--teal)}
+.legend{font-family:var(--f-mono);font-size:.82rem;color:var(--muted);margin:0 0 16px}
+
+/* years strip */
+.years{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;margin:0 0 14px;scrollbar-width:none}
+.years::-webkit-scrollbar{display:none}
+.yr{flex:0 0 64px;text-align:center;padding:8px 4px;border:1.5px solid var(--line2);border-radius:6px;background:#fff}
+.yr .y{font-family:var(--f-mono);font-size:.75rem;color:var(--muted)}
+.yr .n{font-family:var(--f-num);font-size:1.6rem;line-height:1.1;color:var(--acc)}
+.yr .w{font-size:.75rem}
+.yr.now{border:2px solid var(--acc);background:var(--acc-soft)}
+
+/* grid */
+.gridbox svg{width:100%;max-width:300px;display:block;margin:0 auto 14px}
+.gridbox svg text{font-family:var(--f-mono)}
+details.item{border:2px solid var(--line2);border-radius:6px;background:#fff;margin:0 0 8px}
+details.item>summary{cursor:pointer;list-style:none;padding:12px 14px;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700}
+details.item>summary::-webkit-details-marker{display:none}
+details.item>summary::after{content:"+";font-family:var(--f-mono);color:var(--acc)}
+details.item[open]>summary::after{content:"−"}
+details.item[open]{border-color:var(--acc)}
+details.item .ib{padding:0 14px 12px;color:#333}
+.pill{display:inline-block;padding:1px 8px;border-radius:4px;font:600 .75rem var(--f-mono);background:var(--teal-soft);color:var(--teal)}
+.pill.r{background:#efe9f5;color:#5d4d86}
+.pill.t{background:var(--teal);color:#fff}
+
+/* love */
+.compat{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:16px;background:#fff;border:2px solid var(--acc);border-radius:8px;margin:0 0 14px;text-align:center}
+.compat .n{font-family:var(--f-num);font-size:3rem;line-height:1;color:var(--acc)}
+.compat .mid{font-weight:700;font-size:.95rem}
+.meter{display:flex;gap:3px;justify-content:center;margin-top:6px}
+.meter i{width:14px;height:6px;border-radius:2px;background:var(--line2)}
+.meter i.on{background:var(--acc)}
+.tablewrap{overflow-x:auto;margin:10px 0;border:2px solid var(--line2);border-radius:6px;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line2);text-align:start;vertical-align:top}
+th{font-family:var(--f-mono);font-weight:600;font-size:.8rem;color:var(--muted)}
+td.num{font-family:var(--f-num);font-size:1.3rem;color:var(--acc)}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{border:2px solid var(--line2);border-radius:6px;background:#fff;padding:8px 14px;min-height:44px;font-weight:700;color:var(--ink)}
+.chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+/* guide */
+.mi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 14px}
+.mi{display:flex;flex-direction:column;padding:10px 12px;border:1.5px solid var(--line2);border-radius:6px;background:#fff;text-decoration:none;color:var(--ink)}
+.mi .v{font-family:var(--f-num);font-size:1.4rem;color:var(--teal);line-height:1.1}
+.mi .t{font-weight:700;font-size:.95rem}
+.mi .d{font-size:.82rem;color:var(--muted)}
+.mi.off{opacity:.55}
+.layer h3{font-size:1.2rem;margin:16px 0 8px}
+.layer h3 small{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);margin-inline-start:6px}
+.layer .ln{display:inline-flex;width:26px;height:26px;align-items:center;justify-content:center;background:var(--acc);color:#fff;border-radius:4px;font-family:var(--f-mono);font-size:.85rem;margin-inline-end:8px}
+dl.gloss{margin:0}
+dl.gloss dt{font-weight:700;margin-top:10px}
+dl.gloss dd{margin:2px 0 0;color:#333}
+.gsearch{width:100%;height:48px;border:2px solid var(--ink);border-radius:6px;padding:0 12px;margin:0 0 6px;background:#fff}
+ol.steps,ul.tips{padding-inline-start:20px;margin:0 0 14px}
+ol.steps li,ul.tips li{margin:0 0 6px}
+ol.steps b{display:block}
+
+/* prev/next */
+.pager{display:flex;gap:10px;justify-content:space-between;margin:22px 0 0}
+.pager .btn{flex:1}
+
+/* share */
+.share-card{padding:16px;background:#fff;border:2px solid var(--line2);border-radius:8px;margin:0 0 12px}
+.share-card b{font-size:1.1rem}
+.share-card p{margin:4px 0 10px;color:#333;font-size:.95rem}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+#linkBox{width:100%;height:44px;margin-top:10px;border:1.5px solid var(--line2);border-radius:6px;padding:0 10px;font-family:var(--f-mono);font-size:.8rem;background:var(--panel2)}
+
+/* bottom nav */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:20;background:var(--teal);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 4px calc(8px + env(safe-area-inset-bottom,0))}
+.bnav button{border:0;background:none;color:rgba(255,255,255,.74);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:54px;font-size:.78rem;font-weight:700}
+.bnav button[aria-current="page"]{color:#fff}
+.bnav button[aria-current="page"] svg{stroke-width:2.4}
+@media (min-width:760px){.bnav{left:50%;right:auto;transform:translateX(-50%);width:600px;bottom:12px;border-radius:10px}}
+
+/* more sheet */
+dialog{border:2px solid var(--ink);border-radius:8px;padding:20px;max-width:min(92vw,460px);width:100%;color:var(--ink)}
+dialog::backdrop{background:rgba(31,45,58,.45)}
+dialog h2{font-size:1.5rem;margin-bottom:10px}
+.sheet-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sheet-list button{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:8px 14px;border:2px solid var(--line2);border-radius:6px;background:#fff;color:var(--ink);font-weight:700;text-align:start}
+.sheet-list button span{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);font-weight:600}
+.sheet-list button[aria-current="page"]{border-color:var(--acc)}
+.dlg-btns{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+
+/* screens that use the "time" hue */
+.screen[data-s="cycles"],.screen[data-s="year"]{--acc:var(--concrete);--acc-soft:rgba(74,134,163,.12)}
+.screen[data-s="love"],.screen[data-s="change"]{--acc:#6b5a91;--acc-soft:rgba(107,90,145,.10)}
+
+#backBar{position:fixed;top:10px;left:10px;z-index:30;background:var(--ink);color:#fff;padding:10px 16px;border-radius:6px;font-weight:700;text-decoration:none;font-size:15px}
+
+/* print & document: every screen, every card open */
+body.doc .screen[hidden]{display:block!important}
+body.doc .bnav,body.doc .pager,body.doc .deck-ctl,body.doc .dots,body.doc .fbk,body.doc #shareScreen{display:none!important}
+body.doc .deck{flex-direction:column;overflow:visible;margin:0;padding:0}
+body.doc .kard{flex:none;width:100%;min-height:0}
+@media print{
+  body{background:#fff;padding:0}
+  .screen[hidden]{display:block!important}
+  .bnav,.pager,.deck-ctl,.dots,.fbk,#shareScreen,#entry,#backBar{display:none!important}
+  .deck{flex-direction:column;overflow:visible;margin:0;padding:0}
+  .kard{flex:none;width:100%;min-height:0;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><h1>מפת המספרים</h1><span class="who" id="who"></span></header>
+
+<section id="entry" class="entry screen" aria-labelledby="entryTitle">
+  <h2 id="entryTitle" class="mono" style="font-family:var(--f-mono);font-size:1rem;color:var(--muted);margin:-8px 0 12px">שם ותאריך לידה. זה כל מה שצריך.</h2>
+  <div class="note-box" id="sharedNote" hidden>זו מפה ששותפה איתך. כדי לקבל מפה משלך, הזינו את הפרטים שלכם.</div>
+  <div id="exampleNote" hidden></div>
+  <p class="lead">מהשם ומתאריך הלידה נבנית מפה אישית: מי את/ה, מה מניע אותך ובאיזו תקופה את/ה נמצא/ת. נפתח אותה יחד, קלף אחר קלף.</p>
+  <form id="frm" novalidate>
+    <input type="radio" name="sys" value="he" checked hidden>
+    <input type="hidden" id="laName"><input type="hidden" id="tdate">
+    <label class="f">השם המלא מהלידה, בעברית <small>כולל שם המשפחה מהלידה</small><input type="text" id="heName" autocomplete="off" placeholder="למשל: נועה כהן"></label>
+    <div class="f" role="group" aria-label="תאריך לידה">תאריך לידה<input type="hidden" id="bdate"><div class="dsel" data-for="bdate" data-range="birth"></div></div>
+    <details class="more" id="moreBox">
+      <summary>עוד אפשרויות (לא חובה)</summary>
+      <div class="inner">
+        <label class="f">השם שבו את/ה משתמש/ת היום <small>כינוי, שם אחרי נישואין או שם שהוחלף</small><input type="text" id="curName" autocomplete="off"></label>
+        <label class="f">נושא שמעניין אותך במיוחד<select id="focus">
+          <option value="none">בלי נושא מיוחד</option>
+          <option value="love">אהבה וזוגיות</option>
+          <option value="career">קריירה ושליחות</option>
+          <option value="money">כסף ושפע</option>
+          <option value="growth">צמיחה רוחנית</option>
+        </select></label>
+        <label class="toggle"><input type="checkbox" id="partnerOn"> הוספת בן/בת זוג להתאמה זוגית</label>
+        <div id="partnerBox">
+          <label class="f">שם מלא של בן/בת הזוג<input type="text" id="pName" autocomplete="off"></label>
+          <div class="f" role="group" aria-label="תאריך הלידה של בן/בת הזוג">תאריך הלידה של בן/בת הזוג<input type="hidden" id="pDate"><div class="dsel" data-for="pDate" data-range="birth"></div></div>
+        </div>
+      </div>
+    </details>
+    <button class="btn wide" type="submit">לפתוח את המפה שלי</button>
+    <p class="err" id="err" role="alert"></p>
+    <p class="status" id="frmStatus" aria-live="polite"></p>
+    <button class="link" type="button" id="backToMap" hidden>← חזרה למפה בלי לשנות</button>
+  </form>
+  <p class="fine">הפרטים לא נשמרים ולא נשלחים לשום מקום · כלי להתבוננות ולשיחה, לא אבחון</p>
+</section>
+
+<main id="screens" aria-live="polite"></main>
+
+<section id="shareScreen" class="screen" data-s="share" hidden aria-labelledby="shareTitle">
+  <div class="shead"><h2 id="shareTitle">שיתוף ושמירה</h2><p class="kick">קישור, מסמך או הדפסה</p></div>
+  <div class="share-card">
+    <b>קישור למפה</b>
+    <p>קישור שפותח את הכלי עם המפה הזו בדיוק. הקישור כולל את השמות ותאריכי הלידה שהוזנו.</p>
+    <div class="btns"><button type="button" class="btn small" id="shLink">שיתוף קישור</button><button type="button" class="btn ghost small" id="cpLink">העתקה</button><a class="btn ghost small" id="waLink" href="#" target="_blank" rel="noopener">וואטסאפ</a></div>
+    <input type="text" id="linkBox" readonly dir="ltr" aria-label="קישור למפה">
+  </div>
+  <div class="share-card">
+    <b>מסמך מלא</b>
+    <p>כל המפה במסמך אחד, עם כל הקלפים פתוחים, החישובים ומילון המונחים. נפתח בכל דפדפן.</p>
+    <div class="btns"><button type="button" class="btn small" id="shDoc">שיתוף המסמך</button><button type="button" class="btn ghost small" id="dlDoc">הורדה כקובץ</button><button type="button" class="btn ghost small" id="prDoc">הדפסה / PDF</button><button type="button" class="btn ghost small" id="cpText">העתקת הטקסט</button></div>
+  </div>
+  <div class="share-card">
+    <b>מפה חדשה</b>
+    <p>לשנות פרטים או לפתוח מפה לאדם אחר.</p>
+    <div class="btns"><button type="button" class="btn ghost small" id="editBtn">שינוי הפרטים</button><button type="button" class="btn ghost small" data-reset>מפה חדשה</button></div>
+  </div>
+  <p class="status" id="shStatus" aria-live="polite"></p>
+</section>
+
+<p class="fine" id="note" hidden>המפה מבוססת על גימטריה עברית בשיטת המספר הקטן (א=1 … ט=9, י=1 … צ=9, ק=1 … ת=4) ועל מסגרת המספרים של הנומרולוגיה הפיתגוראית המודרנית. האותיות א, ה, ו, י משמשות כתנועות לחישוב דחף הנשמה. כלי להתבוננות ולשיחה, לא אבחון.</p>
+</div>
+
+<nav class="bnav" id="bnav" aria-label="ניווט במפה" hidden>
+  <button type="button" data-go="overview"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg>המפה</button>
+  <button type="button" data-go="core"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M9.5 9h5M9.5 13h5"/></svg>הליבה</button>
+  <button type="button" data-go="name"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 19h14M7 15l5-10 5 10M9 11h6"/></svg>השם</button>
+  <button type="button" data-go="cycles"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 17c3-8 6-8 8-4s5 4 8-4"/><circle cx="12" cy="13" r="1.6" fill="currentColor"/></svg>מחזורים</button>
+  <button type="button" data-go="more" aria-haspopup="dialog"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg>עוד</button>
+</nav>
+
+<dialog id="moreDlg" aria-labelledby="moreTitle">
+  <h2 id="moreTitle">כל חלקי המפה</h2>
+  <ul class="sheet-list" id="moreList"></ul>
+  <div class="dlg-btns"><button type="button" class="btn ghost" id="moreClose">סגירה</button></div>
+</dialog>
+
+<dialog id="resetDlg" aria-labelledby="resetTitle">
+  <h2 id="resetTitle">מפה חדשה</h2>
+  <p>לפני שמנקים: לשלוח את המפה הנוכחית<span id="resetWho"></span>? אחרי הניקוי היא לא תופיע יותר במסך.</p>
+  <div class="dlg-btns">
+    <button type="button" class="btn" id="rsSend">שליחה, ואז מפה חדשה</button>
+    <a class="btn ghost" id="rsWa" href="#" target="_blank" rel="noopener">שליחה בוואטסאפ, ואז מפה חדשה</a>
+    <button type="button" class="btn ghost" id="rsSkip">מפה חדשה בלי לשלוח</button>
+    <button type="button" class="link" id="rsCancel">ביטול</button>
+  </div>
+</dialog>
+
+<div id="raw" hidden></div>
+<script>
+/* ---------- data ---------- */
+const N={
+1:{title:"המוביל/ה",kw:"עצמאות, יוזמה ומנהיגות",gift:"אומץ ליזום",
+essence:"מספר 1 הוא הניצוץ הראשון: אנרגיה של התחלה, עצמאות ורצון לסלול דרך משלך. יש בך דחף פנימי להוביל, להחליט ולהיות מקורי/ת. הלמידה המרכזית היא לעמוד על שלך בלי לסגור את הלב לאחרים.",
+strengths:["אומץ ויוזמה","מקוריות","כוח רצון ונחישות","יכולת לפעול לבד"],
+shadow:["עקשנות ושתלטנות","חוסר סבלנות","קושי לבקש עזרה","ספק עצמי שמוסתר מאחורי ביטחון"],
+career:"תחומים שיש בהם חופש החלטה: יזמות, ניהול, עבודה עצמאית, חלוציות בתחום חדש. קשה לך במקומות שבהם מכתיבים לך כל צעד.",
+love:"דרוש לך בן/בת זוג שמכבד/ת את העצמאות שלך ולא מתחרה בה. הלמידה בזוגיות היא להקשיב ולתת מקום, לא רק להוביל.",
+money:"כסף מגיע ממהלכים יזומים ומעבודה עצמאית. כדאי להיזהר מהחלטות פזיזות.",
+growth:"לתרגל שיתוף פעולה ולגלות שתלות הדדית אינה חולשה.",
+soul:"בפנים את/ה רוצה להיות ראשון/ה, להשאיר חותם ולהיות אדון/ת לחייך. מה שמזין אותך הוא תחושת עצמאות והישג אישי.",
+persona:"אחרים רואים בך אדם בטוח, ישיר ונמרץ, לפעמים מעט מאיים. הרושם הראשון הוא של מי שיודע לאן הוא הולך.",
+expr:"הכישרון שלך הוא ליזום ולהוביל. נועדת לפתוח דרכים, ליצור דברים חדשים ולהיות מקור השראה בזכות האומץ שלך.",
+year:"שנת התחלות. זמן לשתול זרעים, להתחיל פרויקטים, לקבל החלטות אמיצות ולשים את עצמך במרכז. מה שמתחיל עכשיו ילווה אותך במחזור של תשע שנים.",
+pm:"חודש של התחלות ויוזמה.",
+pinnacle:"תקופה של עמידה על הרגליים, פיתוח עצמאות ונטילת אחריות על החיים. נדרשים אומץ ויוזמה.",
+challenge:"האתגר הוא לבסס ביטחון עצמי בלי לגלוש לשתלטנות, ולפעול גם כשאין אישור מבחוץ.",
+lesson:"שיעור של עצמאות ועמידה על דעתך. ייתכן שקשה לך לקבל החלטות לבד או להציב את עצמך במקום הראשון.",
+passion:"תשוקה לעצמאות, להובלה ולמקוריות."},
+2:{title:"המגשר/ת",kw:"שיתוף, רגישות ודיפלומטיה",gift:"רגישות דקה לאנשים ולמצבים",
+essence:"מספר 2 הוא אנרגיה של חיבור. יש בך רגישות עמוקה לאנשים ולאווירה, יכולת להקשיב ולגשר בין עמדות. כוחך בעדינות, בסבלנות ובשותפות. הלמידה היא לא לוותר על עצמך כדי לשמור על השקט.",
+strengths:["אמפתיה והקשבה","דיפלומטיה ויכולת גישור","סבלנות ותשומת לב לפרטים","נאמנות ושותפות"],
+shadow:["רגישות יתר ונטייה להיעלב","ריצוי וקושי לומר לא","היסוס וחוסר החלטיות","תלות באישור מבחוץ"],
+career:"תחומים של קשר ותיווך: ייעוץ, טיפול, הוראה, גישור, עבודת צוות, ומוזיקה או אמנות שמשלבות הקשבה. את/ה פורח/ת לצד שותף/ה ולא בהכרח בקדמת הבמה.",
+love:"הזוגיות חשובה לך מאוד, ואת/ה מביא/ה אליה מסירות ועדינות. חשוב לבחור מי שמעריך/ה את הרגישות ולא מנצל/ת אותה, ולזכור לבטא צרכים בקול.",
+money:"כסף מגיע דרך שיתופי פעולה ושותפויות. חשוב לתמחר את עצמך בהגינות ולא להמעיט בערך העבודה השקטה שלך.",
+growth:"לתרגל גבולות. \"לא\" שנאמר ברכות הוא גם מעשה של אהבה.",
+soul:"בפנים את/ה כמה/ה להרמוניה, לשלום ולקשר קרוב. מה שמזין אותך הוא תחושה שאת/ה חלק משלם ושאוהבים אותך.",
+persona:"אחרים רואים בך אדם נעים, עדין ונגיש, שקל לפתוח בפניו את הלב.",
+expr:"הכישרון שלך הוא לחבר. נועדת לגשר, ללוות, לתמוך ולהביא שיתוף פעולה לכל מקום שאליו את/ה מגיע/ה.",
+year:"שנת סבלנות ושותפויות. הזרעים שנשתלו בשנה הקודמת צומחים לאט. זמן לטפח קשרים, לשתף פעולה ולהקשיב, ולא לדחוק בדברים.",
+pm:"חודש של הקשבה ושיתוף פעולה.",
+pinnacle:"תקופה שבה קשרים ושותפויות במרכז. לומדים סבלנות, דיפלומטיה ורגישות לאחרים.",
+challenge:"האתגר הוא רגישות יתר: לא לתת לפחד מדחייה או מביקורת לשתק, ולמצוא את הקול הפנימי בתוך הקשר.",
+lesson:"שיעור של סבלנות, שיתוף ותשומת לב לפרטים. ייתכן קושי לעבוד עם אחרים או לחכות.",
+passion:"תשוקה לקשר, לשותפות ולהרמוניה."},
+3:{title:"היוצר/ת",kw:"ביטוי עצמי, יצירה ושמחה",gift:"כושר ביטוי והשראה",
+essence:"מספר 3 הוא אנרגיה של ביטוי. מילים, צלילים, צבעים והומור זורמים דרכך. יש בך אופטימיות מדבקת ויכולת להאיר חדר. הלמידה היא לתעל את הכישרון הרב למשהו מתמשך ולא להתפזר.",
+strengths:["יצירתיות ודמיון","כושר ביטוי בדיבור ובכתיבה","חוש הומור ושמחת חיים","חברותיות וכריזמה"],
+shadow:["פיזור ובזבוז אנרגיה","בריחה מכאב אל החגיגה","ביקורתיות כשדברים לא מתנהלים","מצבי רוח משתנים"],
+career:"אמנות, מוזיקה, כתיבה, משחק, הוראה, שיווק ותקשורת. כל מקום שבו הביטוי העצמי הוא חלק מהעבודה.",
+love:"את/ה מביא/ה לזוגיות קלילות, רומנטיקה ושמחה. חשוב לך קשר שיש בו שיחה, צחוק והשראה. הלמידה היא להישאר גם כשהקסם הראשוני מתחלף בשגרה.",
+money:"כסף מגיע מכישרונות יצירתיים ומחשיפה. דרושה משמעת כדי שההכנסה לא תהיה תנודתית.",
+growth:"לסיים את מה שמתחילים. לבחור ערוץ עיקרי אחד ולהעמיק בו.",
+soul:"בפנים את/ה רוצה להתבטא, ליצור ולשמח. מה שמזין אותך הוא חופש יצירתי וקהל שמגיב.",
+persona:"אחרים רואים בך אדם חם, שנון ומלא חיים, שמעניין להיות לידו.",
+expr:"הכישרון שלך הוא הביטוי. נועדת לספר, לנגן, לכתוב ולהעניק השראה ושמחה דרך היצירה.",
+year:"שנת יצירה וחברה. זמן לבטא את עצמך, ליצור, להיפגש עם אנשים וליהנות. כדאי להיזהר מלהתפזר על יותר מדי כיוונים.",
+pm:"חודש של יצירה, מפגשים וביטוי עצמי.",
+pinnacle:"תקופה של פריחה יצירתית וחברתית. הכישרונות מבקשים לצאת החוצה.",
+challenge:"האתגר הוא ביטוי עצמי: להתגבר על פחד מביקורת או מבוכה, ולהעז להשמיע את הקול האמיתי בלי להתפזר.",
+lesson:"שיעור של ביטוי עצמי ושמחה. ייתכן קושי לשתף רגשות או להאמין ביכולת היצירתית.",
+passion:"תשוקה ליצירה, לביטוי ולבמה."},
+4:{title:"הבונה",kw:"יציבות, סדר והתמדה",gift:"יסודיות ואמינות",
+essence:"מספר 4 הוא אנרגיה של יסודות. את/ה בונה דברים שעומדים לאורך זמן, בעבודה שיטתית, ביושר ובנאמנות. אנשים סומכים עליך. הלמידה היא להשאיר מקום לגמישות ולהנאה בתוך המבנה.",
+strengths:["אמינות ויושר","כושר עבודה והתמדה","חשיבה מעשית ומאורגנת","נאמנות למשפחה ולערכים"],
+shadow:["נוקשות ועקשנות","התנגדות לשינוי","עבודה יתר ושחיקה","ראייה צרה ושיפוטיות"],
+career:"הנדסה, בנייה, ניהול תפעול, חשבונאות, טכנולוגיה ומלאכת יד. כל תחום שבו בונים צעד אחר צעד ונמדדים בתוצאה מוחשית.",
+love:"את/ה בן/בת זוג נאמן/ה ויציב/ה, שמבטא/ת אהבה במעשים יותר מבמילים. חשוב לזכור גם ספונטניות, רומנטיקה ומילה טובה.",
+money:"כסף נבנה לאט ובבטחה: חיסכון, תכנון ונכסים. הימורים פיננסיים מתאימים לך פחות.",
+growth:"להרפות. לא כל דבר צריך להיות מושלם ומתוכנן כדי להיות טוב.",
+soul:"בפנים את/ה כמה/ה לביטחון, לסדר ולתחושה שהקרקע יציבה מתחת לרגליים.",
+persona:"אחרים רואים בך אדם רציני, אחראי ואמין, שאפשר לסמוך עליו.",
+expr:"הכישרון שלך הוא להפוך רעיונות למציאות. נועדת לבנות מבנים, מערכות ומסגרות שאחרים יכולים להישען עליהן.",
+year:"שנת עבודה ובנייה. זמן להניח יסודות, לסדר, לתכנן ולהשקיע מאמץ. העבודה הקשה עכשיו תשתלם בהמשך.",
+pm:"חודש של סדר, עבודה ממוקדת וטיפול בפרטים.",
+pinnacle:"תקופה של עבודה קשה ובניית בסיס: בית, קריירה ויציבות כלכלית.",
+challenge:"האתגר הוא משמעת בלי נוקשות: להתמיד גם כשמשעמם, ובו בזמן לא להיתקע בשיטה אחת.",
+lesson:"שיעור של סדר, משמעת והתמדה. ייתכן קושי לסיים משימות או לבנות שגרה.",
+passion:"תשוקה לסדר, לבנייה ולביטחון."},
+5:{title:"ההרפתקן/ית",kw:"חופש, שינוי וחוויה",gift:"הסתגלות מהירה וסקרנות",
+essence:"מספר 5 הוא אנרגיה של תנועה. את/ה סקרן/ית, מסתגל/ת במהירות ונמשך/ת לחוויות, למקומות ולאנשים חדשים. החיים שלך עשירים בתפניות. הלמידה היא חופש עם אחריות: לבחור לעומק ולא רק לרוחב.",
+strengths:["גמישות והסתגלות","סקרנות ואהבת למידה","כושר שכנוע ותקשורת","אומץ לשנות"],
+shadow:["חוסר מנוחה ושעמום מהיר","קושי במחויבות","נטייה להגזמה ולהתמכרויות","פזיזות"],
+career:"מכירות, תקשורת, תיירות, יזמות, עיתונאות, הדרכה ואמנויות הבמה. כל עבודה מגוונת עם תנועה ואנשים חדשים.",
+love:"דרוש לך בן/בת זוג שהוא/היא גם שותף/ה להרפתקה ושנותן/ת מרחב. מחויבות אפשרית כשהיא לא מרגישה כמו כלוב.",
+money:"כסף מגיע ממגוון מקורות ובגלים. כדאי לבנות כרית ביטחון לתקופות השקטות.",
+growth:"לגלות את החופש שבמחויבות. לעומק יש טעם שאין לרוחב.",
+soul:"בפנים את/ה כמה/ה לחופש, לגיוון ולטעום מכל מה שהחיים מציעים.",
+persona:"אחרים רואים בך אדם תוסס, מסקרן ומלא אנרגיה, לפעמים בלתי צפוי.",
+expr:"הכישרון שלך הוא לחבר בין עולמות. נועדת להביא שינוי, רעננות ותנועה, ולהפיץ רעיונות.",
+year:"שנת שינויים. צפויות תנועה, הפתעות והזדמנויות חדשות. זמן להיות גמיש/ה, לטייל, ללמוד ולשחרר את מה שכבר לא מתאים.",
+pm:"חודש של תנועה, הפתעות והזדמנויות.",
+pinnacle:"תקופה של שינויים, נסיעות וחוויות מגוונות. לומדים להסתגל ולבחור.",
+challenge:"האתגר הוא חופש מאוזן: לא לברוח מכל מסגרת, ומצד שני לא לפחד משינוי.",
+lesson:"שיעור של גמישות והתנסות. ייתכן חשש משינוי או מיציאה מאזור הנוחות.",
+passion:"תשוקה לחופש, לגיוון ולחוויה."},
+6:{title:"המטפל/ת",kw:"אחריות, אהבה ובית",gift:"חום ואכפתיות",
+essence:"מספר 6 הוא אנרגיה של אכפתיות. משפחה, קהילה ויופי חשובים לך. את/ה מטפל/ת, מלמד/ת ומרפא/ה, ונושא/ת באחריות לאחרים באופן טבעי. הלמידה היא לתת בלי לשלוט, ולזכור לטפל גם בעצמך.",
+strengths:["אכפתיות ונדיבות","חוש אחריות","חוש אסתטי והרמוני","יכולת ריפוי והוראה"],
+shadow:["התערבות ושליטה מתוך דאגה","פרפקציוניזם","הקרבה עצמית ותחושת אשמה","קושי לקבל"],
+career:"טיפול, רפואה, חינוך, ייעוץ, עיצוב, אמנות ועבודה קהילתית. כל מקום שבו דואגים לאחרים או יוצרים יופי.",
+love:"את/ה בן/בת זוג מסור/ה ואוהב/ת שבונה בית חם. הלמידה היא לאהוב בלי לנסות \"לתקן\" את האחר, ולאפשר לעצמך גם לקבל.",
+money:"כסף מגיע משירות ומאחריות. כדאי להיזהר מלתת יותר ממה שאפשר להרשות לעצמך.",
+growth:"לטפל בעצמך באותה מסירות שבה את/ה מטפל/ת באחרים.",
+soul:"בפנים את/ה כמה/ה לאהוב ולהיות נאהב/ת, לבית הרמוני ולתחושה שאת/ה נחוץ/ה.",
+persona:"אחרים רואים בך אדם חם, מגונן ואמין, שפונים אליו לעצה ולתמיכה.",
+expr:"הכישרון שלך הוא לטפח. נועדת לרפא, לחנך, ליצור הרמוניה ויופי, ולהחזיק קהילה.",
+year:"שנת משפחה ואחריות. נושאי בית, זוגיות וקהילה במרכז. זמן לטפל ביחסים, לתת וגם לקבל.",
+pm:"חודש של משפחה, בית ואחריות כלפי אחרים.",
+pinnacle:"תקופה של אחריות משפחתית וקהילתית. בונים בית, מטפלים ומלמדים.",
+challenge:"האתגר הוא אידיאליזם: לא לדרוש שלמות מעצמך ומאחרים, ולתת בלי להעמיס על עצמך את כל העולם.",
+lesson:"שיעור של אחריות ונתינה. ייתכן קושי להתחייב לבית, למשפחה או לקהילה.",
+passion:"תשוקה לאהבה, לבית ולשירות."},
+7:{title:"החוקר/ת",kw:"עומק, חכמה ורוחניות",gift:"תובנה ואינטואיציה חדה",
+essence:"מספר 7 הוא אנרגיה של חיפוש. את/ה שואל/ת שאלות עמוקות, לא מסתפק/ת בתשובות שטחיות, ומחפש/ת את האמת שמאחורי הדברים, בשכל וברוח. הלמידה היא לבטוח, ולא להסתגר בתוך העולם הפנימי.",
+strengths:["חשיבה אנליטית ועמוקה","אינטואיציה","עצמאות מחשבתית","חיבור לרוחניות ולחכמה"],
+shadow:["הסתגרות ובדידות","חשדנות וציניות","ביקורתיות","קושי לשתף רגשות"],
+career:"מחקר, מדע, פילוסופיה, טכנולוגיה, כתיבה, הנחיה רוחנית ומוזיקה מעמיקה. עבודה שמאפשרת שקט, ריכוז ועומק.",
+love:"דרוש לך בן/בת זוג שמכבד/ת את המרחב הפנימי שלך ושאפשר לשוחח איתו/ה לעומק. האמון נבנה לאט, אבל הוא עמוק.",
+money:"כסף מגיע מהמומחיות. כסף מניע אותך פחות, ולכן חשוב לא להזניח את הצד המעשי.",
+growth:"לפתוח את הלב, לא רק את המחשבה. לשתף גם לפני שהכול מובן עד הסוף.",
+soul:"בפנים את/ה כמה/ה להבין, לדעת ולהתחבר למשהו גדול ונסתר.",
+persona:"אחרים רואים בך אדם שקט, מסתורי ועמוק, לפעמים מרוחק.",
+expr:"הכישרון שלך הוא להעמיק. נועדת לחקור, לנתח, לגלות חכמה ולהעביר אותה הלאה.",
+year:"שנת התבוננות. זמן ללמוד, להעמיק, לנוח, להתבודד ולהתחבר פנימה. פחות זמן לדחוף קדימה בעולם החיצוני.",
+pm:"חודש של התבוננות, לימוד ומנוחה.",
+pinnacle:"תקופה של העמקה, לימוד וחיפוש רוחני. לעתים כרוכה בבדידות שמולידה חכמה.",
+challenge:"האתגר הוא אמון: להתגבר על ספקנות והסתגרות, ולתת לאחרים להיכנס.",
+lesson:"שיעור של העמקה ואמונה. ייתכן קושי להתבונן פנימה או לבטוח בתהליכים.",
+passion:"תשוקה לידע, לאמת ולעומק."},
+8:{title:"המממש/ת",kw:"עוצמה, הישג ושפע",gift:"כושר ניהול ומימוש",
+essence:"מספר 8 הוא אנרגיה של כוח בעולם החומרי. יש בך יכולת ניהול, שאפתנות ותבונה מעשית לייצר תוצאות, כסף והשפעה. הלמידה היא לאזן בין חומר לרוח ולהשתמש בכוח לטובה.",
+strengths:["ראייה אסטרטגית","כושר ניהול וארגון","שאפתנות ונחישות","חוסן מול קשיים"],
+shadow:["שתלטנות ומאבקי כוח","עבודה בלי הפסקה","מדידת ערך עצמי לפי הצלחה","קשיחות רגשית"],
+career:"ניהול, עסקים, פיננסים, משפטים, נדל\"ן והפקה. כל תפקיד שבו מובילים מערכות ומגייסים משאבים.",
+love:"את/ה בן/בת זוג מגונן/ת ומחויב/ת. חשוב להביא הביתה גם רכות, ולא רק את ראש העבודה.",
+money:"כאן המספר בביתו: יכולת גבוהה לייצר שפע, לצד תנודות. ההצלחה החומרית יציבה כשהיא נשענת על יושר.",
+growth:"לזכור שהערך שלך אינו תלוי בהישגים. כוח אמיתי כולל גם פגיעות.",
+soul:"בפנים את/ה כמה/ה להצליח, להשפיע ולהגיע לעצמאות כלכלית ולהכרה.",
+persona:"אחרים רואים בך אדם סמכותי, בטוח ובעל נוכחות, שמנהל את העניינים.",
+expr:"הכישרון שלך הוא לממש. נועדת לנהל, לבנות מערכות גדולות ולהביא שפע לעולם.",
+year:"שנת קציר והישגים. זמן לקדם קריירה, כסף ומעמד, ולקצור את פירות המאמץ. נדרשים איזון ויושר.",
+pm:"חודש של עשייה, החלטות כלכליות והתקדמות.",
+pinnacle:"תקופה של הישגים חומריים, ניהול וכוח. לומדים להשתמש בסמכות בתבונה.",
+challenge:"האתגר הוא היחס לכוח ולכסף: לא להיבלע בחומריות, וגם לא לפחד מהצלחה.",
+lesson:"שיעור של ניהול כספים וכוח אישי. ייתכן קושי לעמוד על ערכך או לנהל משאבים.",
+passion:"תשוקה להישג, להשפעה ולשפע."},
+9:{title:"ההומניסט/ית",kw:"חמלה, נתינה והשלמה",gift:"ראייה רחבה וחמלה",
+essence:"מספר 9 הוא אנרגיה של סיום ושלמות. הוא מכיל את כל המספרים שלפניו, ולכן יש בך חכמה רחבה, חמלה ורצון לתרום לעולם. הלמידה היא לשחרר אנשים, עבר וציפיות, ולתת מתוך שפע ולא מתוך הקרבה.",
+strengths:["חמלה ונדיבות","ראייה רחבה ואוניברסלית","יצירתיות והשראה","סובלנות"],
+shadow:["קושי לשחרר","אכזבה מהעולם","נתינה שהופכת להקרבה","ריחוק רגשי"],
+career:"עבודה חברתית, אמנות, חינוך, רפואה וארגונים ללא מטרות רווח. כל עבודה שיש בה שליחות גדולה ממך.",
+love:"את/ה אוהב/ת בעומק ובנדיבות, ולעתים נמשך/ת לאנשים שצריכים \"הצלה\". הלמידה היא אהבה בגובה העיניים.",
+money:"כסף זורם כשהעבודה משרתת מטרה גדולה. מלחמה בכסף או זלזול בו פוגעים בשליחות עצמה.",
+growth:"לשחרר את מה שהסתיים, ולסמוך שמקום ריק יתמלא בטוב.",
+soul:"בפנים את/ה כמה/ה לעולם טוב יותר, לתת ולהיות חלק ממשהו משמעותי.",
+persona:"אחרים רואים בך אדם רחב לב, אצילי ומעורר השראה.",
+expr:"הכישרון שלך הוא לתת השראה ולרפא. נועדת לשרת אנשים דרך אמנות, חינוך או חמלה.",
+year:"שנת סיומים. מחזור של תשע שנים נסגר. זמן לשחרר, לסכם, לסלוח ולפנות מקום לחדש שיגיע בשנה הבאה.",
+pm:"חודש של סיכומים, שחרור וסגירת מעגלים.",
+pinnacle:"תקופה של נתינה, השלמה ושחרור. החיים מזמינים לראות את התמונה הגדולה.",
+challenge:"האתגר הוא שחרור: לסיים פרקים בלי מרירות, ולאזן בין נתינה לעולם לבין הצרכים שלך.",
+lesson:"שיעור של חמלה וראייה רחבה. ייתכן קושי לסלוח או לראות מעבר לטובתך האישית.",
+passion:"תשוקה לתרום, לרפא ולהעניק."},
+11:{title:"המאיר/ה",kw:"אינטואיציה, השראה והארה",gift:"אינטואיציה והשראה",
+essence:"11 הוא מספר מאסטר: אנרגיית ה-2 בעוצמה כפולה. יש בך רגישות גבוהה, אינטואיציה חזקה ויכולת להעניק השראה לאחרים. את/ה מעין אנטנה שקולטת את מה שאחרים לא רואים. המתח הפנימי גבוה, בין חזון גדול לבין פחד וחרדה. הלמידה היא לבטוח בקול הפנימי ולקרקע אותו.",
+strengths:["אינטואיציה חדה","כושר השראה","רגישות רוחנית","חזון"],
+shadow:["חרדה ועצבנות","רגישות יתר","חוסר מעשיות","ספק עצמי עמוק"],
+career:"הוראה רוחנית, טיפול, אמנות, מוזיקה וכתיבה מעוררת השראה. כל תחום שבו מעבירים מסר.",
+love:"קשר עמוק ורוחני חשוב לך. דרוש/ה לך בן/בת זוג יציב/ה שיכול/ה להכיל את עוצמת הרגש.",
+money:"כסף מגיע כשהשליחות מקבלת צורה מעשית. בלי קרקוע, הרעיונות נשארים באוויר.",
+growth:"לקרקע: שגרה, גוף ותנועה מעגנים את עוצמת ההשראה.",
+soul:"בפנים את/ה כמה/ה להאיר ולעורר אחרים, ולחיות לפי אמת פנימית גבוהה.",
+persona:"אחרים רואים בך אדם מיוחד, רגיש ומעורר השראה, עם נוכחות שקשה להגדיר.",
+expr:"הכישרון שלך הוא להעביר השראה. נועדת להיות גשר בין העולם הרוחני לעולם היומיומי.",
+pinnacle:"תקופה של התעוררות רוחנית והשראה, ואפשרות להפוך למורה או למקור השראה."},
+22:{title:"הבונה הגדול/ה",kw:"חזון מעשי בקנה מידה גדול",gift:"יכולת להגשים חזון",
+essence:"22 הוא מספר מאסטר, \"הבונה הגדול\": החזון של 11 יחד עם המעשיות של 4. יש בך פוטנציאל לבנות דברים גדולים שמשפיעים על אנשים רבים, והלחץ גבוה בהתאם. הלמידה היא לא להיבהל מגודל הפוטנציאל, ולבנות אותו לבנה אחר לבנה.",
+strengths:["חזון יחד עם ביצוע","כושר ארגון גבוה","מנהיגות שקטה","התמדה"],
+shadow:["לחץ פנימי עצום","פחד מכישלון","נוקשות","שחיקה"],
+career:"יזמות רחבת היקף, אדריכלות, ניהול ארגונים, הקמת מוסדות ומיזמים חברתיים.",
+love:"את/ה מחפש/ת שותפות יציבה ונאמנה שתומכת בחזון. חשוב להשאיר זמן לזוגיות ולא רק לפרויקט.",
+money:"פוטנציאל לשפע רב כשמשתמשים בו כדי לבנות משהו שמשרת רבים.",
+growth:"לפרק את החזון הגדול לצעדים קטנים ולסמוך על התהליך.",
+soul:"בפנים את/ה כמה/ה להשאיר אחריך משהו מוחשי ומשמעותי לעולם.",
+persona:"אחרים רואים בך אדם יציב, רציני וחזק, שמעורר אמון.",
+expr:"הכישרון שלך הוא להגשים חזונות גדולים. נועדת לבנות מבנים ומערכות שמשרתים רבים.",
+pinnacle:"תקופה של בנייה גדולה ואפשרות להגשים חזון רחב השפעה."},
+33:{title:"המורה המרפא/ה",kw:"אהבה, ריפוי ושירות",gift:"אהבה מרפאת",
+essence:"33 הוא הנדיר במספרי המאסטר, \"המורה המרפא\". יש בו את האחריות של 6 בעוצמה רוחנית. הפוטנציאל הוא נתינה, ריפוי והוראה מתוך אהבה ללא תנאים. הלמידה היא לא לשאת את כל העולם על הכתפיים.",
+strengths:["חמלה עמוקה","יכולת ריפוי","הוראה מתוך דוגמה אישית","מסירות"],
+shadow:["הקרבה עצמית","תחושת אחריות מוגזמת","ביקורתיות כלפי עצמך","תחושת קורבן"],
+career:"טיפול, ריפוי, חינוך, הנחיה רוחנית ואמנות מרפאת.",
+love:"אהבה גדולה ומכילה. חשוב לבחור קשר הדדי, שבו גם את/ה מקבל/ת.",
+money:"כסף מגיע מתוך שירות. חשוב לא להתבייש לקבל תמורה.",
+growth:"לרפא קודם את עצמך. אהבה עצמית היא הבסיס לאהבה לאחרים.",
+soul:"בפנים את/ה כמה/ה לרפא ולהעניק אהבה בלי תנאים.",
+persona:"אחרים רואים בך אדם חם, מכיל ומרגיע, שאפשר להישען עליו.",
+expr:"הכישרון שלך הוא לרפא וללמד. נועדת להעלות את התודעה של הסובבים דרך אהבה.",
+pinnacle:"תקופה של שירות, ריפוי והוראה."}
+};
+const CH0="אתגר האפס: אין אתגר מוגדר אחד. כל האפשרויות פתוחות, והמשימה היא לבחור. זה יכול להעיד על חופש גדול או על קושי למצוא כיוון.";
+const DEBT={
+13:"חוב 13/4, חוב של עבודה. לפי המסורת הנומרולוגית הוא מצביע על נטייה לקיצורי דרך. בחיים האלה נדרשים התמדה, סדר ועבודה עקבית, וההצלחה מגיעה דווקא בזכות מאמץ שיטתי.",
+14:"חוב 14/5, חוב של חירות. מצביע על שימוש לא מאוזן בחופש. הלמידה היא מתינות ואיפוק, והתמודדות עם שינויים בלי לברוח לקיצוניות או להתמכרויות.",
+16:"חוב 16/7, חוב של אגו. החיים מזמנים פירוק של מבנים שנבנו על גאווה או אשליה, כדי לפתוח מקום לענווה ולקשר רוחני אמיתי.",
+19:"חוב 19/1, חוב של כוח. מצביע על שימוש אנוכי בעצמאות. הלמידה היא עצמאות שאינה מתנשאת, והיכולת לבקש עזרה כשצריך."};
+const YKW={1:"התחלה",2:"שותפות",3:"ביטוי",4:"בנייה",5:"שינוי",6:"אחריות",7:"התבוננות",8:"קציר",9:"סיום"};
+const ARROWS=[
+{n:[1,2,3],p:"חץ התכנון",pt:"יכולת טבעית לתכנן, לארגן ולראות צעד אחד קדימה.",a:"היעדר חץ התכנון",at:"נטייה לאלתר במקום לתכנן. כדאי לאמץ כלים פשוטים של תכנון."},
+{n:[4,5,6],p:"חץ כוח הרצון",pt:"נחישות ויכולת להתמיד מול קשיים. כשמחליטים, מגיעים.",a:"חץ התסכול",at:"רגישות לאכזבות כשהמציאות לא מתאימה לציפיות. הלמידה היא גמישות בציפיות."},
+{n:[7,8,9],p:"חץ הפעילות",pt:"אנרגיה של עשייה ופעולה. קשה לך לשבת בלי לעשות.",a:"היעדר חץ הפעילות",at:"נטייה לחשוב הרבה לפני שפועלים. צעד קטן אחד עדיף על עוד תכנון."},
+{n:[3,6,9],p:"חץ האינטלקט",pt:"זיכרון טוב, חשיבה חדה ויכולת ניתוח.",a:"חץ הזיכרון החלש",at:"כדאי לחזק את הזיכרון והריכוז בכתיבה, ברשימות ובחזרה."},
+{n:[2,5,8],p:"חץ האיזון הרגשי",pt:"יציבות רגשית ויכולת להחזיק רגשות בלי להיסחף.",a:"חץ הרגישות היתרה",at:"רגישות גבוהה לפגיעה, שלעתים מוסתרת מאחורי מעטה של ריחוק."},
+{n:[1,4,7],p:"חץ המעשיות",pt:"ידיים טובות, כושר ביצוע ויכולת להתמודד עם העולם החומרי.",a:"חץ חוסר הסדר",at:"קושי בפרטים המעשיים ובסדר. כדאי לפשט ולמסד הרגלים."},
+{n:[1,5,9],p:"חץ הנחישות",pt:"התמדה ועקשנות חיובית לראות דברים עד הסוף.",a:"חץ הדחיינות",at:"נטייה לדחות דברים. מועדים קבועים ושותף/ה לדרך עוזרים."},
+{n:[3,5,7],p:"חץ הרוחניות",pt:"חמלה, אמונה וחיבור טבעי לממד הרוחני.",a:"חץ הספקנות",at:"צורך בהוכחות לפני אמונה. הלמידה היא לתת מקום גם לחוויה הבלתי מוסברת."}];
+const PLANES={phys:{l:"מישור הגוף",ch:"EWDM",t:"חוויה דרך החושים והעשייה. נוח לך עם מה שמוחשי ומעשי."},ment:{l:"מישור השכל",ch:"AHJNPGL",t:"חשיבה, ניתוח והיגיון. את/ה מעבד/ת חוויות דרך הראש."},emo:{l:"מישור הרגש",ch:"IORZBSTX",t:"רגשות, יצירה ודמיון. את/ה חווה את העולם דרך הלב."},intu:{l:"מישור האינטואיציה",ch:"KFQUYCV",t:"תחושות בטן וקליטה רוחנית. את/ה יודע/ת דברים בלי לדעת איך."}};
+const HEB={'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':1,'כ':2,'ך':2,'ל':3,'מ':4,'ם':4,'נ':5,'ן':5,'ס':6,'ע':7,'פ':8,'ף':8,'צ':9,'ץ':9,'ק':1,'ר':2,'ש':3,'ת':4};
+const HEBV="אהוי", LATV="AEIOU", MASTER=[11,22,33], DEBTS=[13,14,16,19];
+const COMPAT=new Set(["1-3","1-9","2-6","2-9","3-5","4-6","4-7","5-9","6-8","2-3"]);
+
+/* ---------- math ---------- */
+const dsum=n=>String(n).split('').reduce((a,b)=>a+(+b),0);
+function red(n,keep=true){const ch=[n];while(n>9&&!(keep&&MASTER.includes(n))){n=dsum(n);ch.push(n);}return{v:n,ch};}
+const rv=(n,k=true)=>red(n,k).v, single=n=>rv(n,false);
+const debtIn=n=>red(n).ch.find(x=>DEBTS.includes(x));
+const comp=(c,v)=>(c>9&&c!==v)?`${c}/${v}`:"";
+function get(n,f){if(N[n]&&N[n][f]!==undefined)return N[n][f];const s=single(n);return N[s]?N[s][f]:"";}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const grp=n=>{n=single(n);return [1,5,7].includes(n)?0:[2,4,8].includes(n)?1:2;};
+const GRP=["משולש העצמאות והמחשבה (1, 5, 7)","משולש החומר והעשייה (2, 4, 8)","משולש הרגש והיצירה (3, 6, 9)"];
+function relation(a,b){a=single(a);b=single(b);if(a===b)return 4;if(grp(a)===grp(b))return 3;const k=[a,b].sort().join('-');return COMPAT.has(k)?2:1;}
+const scriptOf=s=>/[א-ת]/.test(s)?"he":"la";
+
+function analyzeName(raw,sys){
+  const parts=raw.trim().split(/[\s\-־'"׳״.]+/).filter(Boolean);
+  const words=[];const counts=Array(10).fill(0);
+  for(const p of parts){
+    const letters=[];
+    if(sys==="he"){
+      const w=p.replace(/[֑-ׇ]/g,'').replace(/[^א-ת]/g,'');
+      for(const ch of w){if(HEB[ch])letters.push({ch,val:HEB[ch],vow:HEBV.includes(ch)});}
+    }else{
+      const w=p.toUpperCase().replace(/[^A-Z]/g,'');
+      [...w].forEach((ch,i)=>{const val=((ch.charCodeAt(0)-65)%9)+1;let vow=LATV.includes(ch);
+        if(ch==="Y"){const pr=w[i-1],nx=w[i+1];vow=!(pr&&LATV.includes(pr))&&!(nx&&LATV.includes(nx));}
+        letters.push({ch,val,vow});});
+    }
+    if(!letters.length)continue;
+    const sum=letters.reduce((a,l)=>a+l.val,0),vs=letters.filter(l=>l.vow).reduce((a,l)=>a+l.val,0),cs=sum-vs;
+    letters.forEach(l=>counts[l.val]++);
+    words.push({letters,sum,vs,cs});
+  }
+  if(!words.length)return null;
+  const mk=key=>{const c=words.reduce((a,w)=>a+rv(w[key]),0);return{c,v:rv(c),trace:words.map(w=>`${w[key]}→${rv(w[key])}`).join(" + ")+` = ${c}`+(c>9?` → ${rv(c)}`:"")};};
+  const expr=mk("sum"),soul=mk("vs"),pers=mk("cs");
+  const initials=words.reduce((a,w)=>a+w.letters[0].val,0);
+  const max=Math.max(...counts.slice(1));
+  const passion=max>0?counts.map((c,i)=>i&&c===max?i:0).filter(Boolean):[];
+  const lessons=[1,2,3,4,5,6,7,8,9].filter(i=>!counts[i]);
+  let planes=null;
+  if(sys==="la"){planes={};for(const k in PLANES){planes[k]=words.reduce((a,w)=>a+w.letters.filter(l=>PLANES[k].ch.includes(l.ch)).length,0);}}
+  const debts=[["ביטוי",expr.c],["דחף הנשמה",soul.c],["אישיות",pers.c]].map(([l,c])=>[l,debtIn(c)]).filter(x=>x[1]);
+  return{sys,raw,words,expr,soul,pers,balance:{c:initials,v:single(initials)},counts,passion,lessons,sub:9-lessons.length,planes,debts};
+}
+
+function birth(dateStr){
+  const [y,m,d]=dateStr.split('-').map(Number);
+  const dR=rv(d),mR=rv(m),yR=rv(dsum(y));
+  const c=dR+mR+yR,LP=rv(c);
+  return{y,m,d,dR,mR,yR,c,LP,trace:`${d}→${dR} + ${m}→${mR} + ${y}→${yR} = ${c}`+(c>9?` → ${LP}`:""),debt:debtIn(c)};
+}
+function ageAt(b,t){let a=t.y-b.y;if(t.m<b.m||(t.m===b.m&&t.d<b.d))a--;return a;}
+
+/* ---------- render helpers ---------- */
+const med=(n,c,rose)=>`<div class="med${rose?' rose':''}" aria-hidden="true"><span class="n">${n}</span>${c?`<span class="c">${c}</span>`:""}</div>`;
+const tr=t=>t?`<div class="trace">${esc(t)}</div>`:"";
+const DEFS=[
+["שביל החיים","lp","המספר החשוב ביותר במפה. מחושב מתאריך הלידה המלא ומתאר את הדרך ואת השיעור המרכזי של החיים."],
+["יום הלידה","bday","מחושב מהיום בחודש שבו נולדת בלבד. מתאר כישרון מיוחד שעומד לרשותך."],
+["מספר הגישה","att","סכום היום והחודש של הלידה. מתאר את התגובה הראשונית והספונטנית שלך למצבים חדשים."],
+["הבגרות","mat","סכום שביל החיים ומספר הביטוי. מתאר את המטרה שמתבהרת בחצי השני של החיים."],
+["חוב קרמתי","debt","המספרים 13, 14, 16 ו-19 כשהם מופיעים בדרך החישוב. במסורת הנומרולוגית הם מסמנים שיעור שנשאר פתוח."],
+["מספר הביטוי","expr","נקרא גם מספר הגורל. סכום כל אותיות השם, ומתאר את הכישרונות והכלים שאיתם נולדת."],
+["דחף הנשמה","soul","סכום התנועות בשם. מתאר את הרצונות העמוקים, מה שמניע אותך כשאף אחד לא רואה."],
+["מספר האישיות","pers","סכום העיצורים בשם. מתאר את הרושם החיצוני, הצד שאת/ה מראה לעולם."],
+["מספר האיזון","bal","סכום האותיות הראשונות של כל מילה בשם. מתאר איך לחזור לשקט ברגעי משבר."],
+["התשוקה הנסתרת","pas","המספר שחוזר הכי הרבה פעמים בין אותיות השם. מתאר דחף או כישרון שקיים אצלך בשפע."],
+["שיעורים קרמתיים","les","מספרים שלא מופיעים כלל באותיות השם. מתארים תחומים שבהם הכלים פחות מולדים וצריך ללמוד אותם."],
+["העצמי התת-מודע","sub","9 פחות מספר השיעורים הקרמתיים. מודד כמה כלים פנימיים זמינים לך במצבי לחץ."],
+["שנה אישית","py","מחושבת מיום וחודש הלידה ומהשנה הקלנדרית. כל שנה היא שלב במחזור של תשע שנים, מהתחלה (1) ועד סיום (9)."],
+["חודש אישי","pm","השנה האישית ועוד מספר החודש. מתאר את הגוון של החודש בתוך השנה."],
+["יום אישי","pd","החודש האישי ועוד היום בחודש. מתאר את האנרגיה של יום מסוים."]];
+let seenIds={};
+const defLine=t=>`<div class="def"><span>מה זה</span>${t}</div>`;
+function reading(n,c,title,sub,body,trace,rose){
+  const d=DEFS.find(x=>title.includes(x[0]));let id="";
+  if(d){id="r-"+d[1];seenIds[id]=(seenIds[id]||0)+1;if(seenIds[id]>1)id+="-"+seenIds[id];}
+  return `<div class="reading"${id?` id="${id}"`:""}>${med(n,c,rose)}<div class="rbody"><h3>${title}</h3>${d?defLine(d[2]):""}${sub?`<div class="sub">${sub}</div>`:""}${body}${tr(trace)}</div></div>`;}
+const ul=a=>`<ul class="plain">${a.map(x=>`<li>${x}</li>`).join("")}</ul>`;
+const tile=(n,c,l)=>`<div class="tile"><span class="n">${n}</span><span class="c">${c||"&nbsp;"}</span><div class="l">${l}</div></div>`;
+function lettersHTML(an){
+  const dir=an.sys==="he"?"rtl":"ltr";
+  return `<div class="letters" dir="${dir}">${an.words.map(w=>`<div class="word">${w.letters.map(l=>`<div class="lt${l.vow?' vow':''}"><span class="ch">${l.ch}</span><span class="v">${l.val}</span></div>`).join("")}</div>`).join("")}</div><div class="legend">אותיות מודגשות הן תנועות, ומהן מחושב דחף הנשמה. השאר עיצורים, ומהם מחושב מספר האישיות.</div>`;
+}
+
+/* ---------- main ---------- */
+function analyze(inp){
+  const B=birth(inp.bdate);
+  const td=inp.tdate?inp.tdate.split('-').map(Number):null;const T=td?{y:td[0],m:td[1],d:td[2]}:(()=>{const x=new Date();return{y:x.getFullYear(),m:x.getMonth()+1,d:x.getDate()};})();
+  const names=[];
+  if((inp.sys==="he"||inp.sys==="both")&&inp.heName.trim()){const a=analyzeName(inp.heName,"he");if(a)names.push(a);}
+  if((inp.sys==="la"||inp.sys==="both")&&inp.laName.trim()){const a=analyzeName(inp.laName,"la");if(a)names.push(a);}
+  const P=names[0]||null;
+  const age=ageAt(B,T);
+  const birthday=rv(B.d), attitude=rv(B.d+B.m);
+  const maturity=P?rv(B.LP+P.expr.v):null;
+  // cycles
+  const m1=single(B.m),d1=single(B.d),y1=single(dsum(B.y));
+  const p1=rv(m1+d1),p2=rv(d1+y1),p3=rv(single(p1)+single(p2)),p4=rv(m1+y1);
+  const c1=Math.abs(m1-d1),c2=Math.abs(d1-y1),c3=Math.abs(c1-c2),c4=Math.abs(m1-y1);
+  const e1=36-single(B.LP);
+  const periods=[[0,e1,p1,c1,`${m1}+${d1}`,`|${m1}−${d1}|`],[e1+1,e1+9,p2,c2,`${d1}+${y1}`,`|${d1}−${y1}|`],[e1+10,e1+18,p3,c3,`${single(p1)}+${single(p2)}`,`|${c1}−${c2}|`],[e1+19,null,p4,c4,`${m1}+${y1}`,`|${m1}−${y1}|`]];
+  const curIdx=periods.findIndex(p=>age>=p[0]&&(p[1]===null||age<=p[1]));
+  // personal year
+  const py=single(single(B.d)+single(B.m)+single(dsum(T.y))),pm=single(py+T.m),pd=single(pm+T.d);
+  // grid
+  const digits=(String(B.d)+String(B.m)+String(B.y)).split('').map(Number).filter(x=>x>0);
+  const gc=Array(10).fill(0);digits.forEach(x=>gc[x]++);
+  // partner
+  let PT=null;
+  if(inp.partnerOn&&inp.pDate){PT={B:birth(inp.pDate),an:inp.pName.trim()?analyzeName(inp.pName,scriptOf(inp.pName)):null,name:inp.pName.trim()};}
+  // current name
+  let CUR=null;
+  if(inp.curName.trim()){const s=scriptOf(inp.curName);const an=analyzeName(inp.curName,s);const base=names.find(x=>x.sys===s)||null;if(an)CUR={an,base};}
+
+  let h="";const S={};seenIds={};
+  const chapters=[["overview","הסיכום שלך"],inp.focus!=="none"?["focus","הנושא שבחרת"]:["topics","בחירת נושא"],["year","השנה שלך"],["core","שביל החיים"],P?["name","מספרי השם"]:null,PT?["love","התאמה זוגית"]:null,["cycles","מחזורי חיים"],["grid","טבלת הלידה"],CUR?["change","שם נוכחי"]:null,["map","מדריך ומונחים"]].filter(Boolean);
+  h+=`<nav class="chapters" aria-label="פרקים">${chapters.map(c=>`<a href="#${c[0]}">${c[1]}</a>`).join("")}</nav>`;
+
+  /* overview */
+  const coreTiles=[tile(B.LP,comp(B.c,B.LP),"שביל החיים")];
+  if(P){coreTiles.push(tile(P.expr.v,comp(P.expr.c,P.expr.v),"ביטוי / גורל"),tile(P.soul.v||"—",comp(P.soul.c,P.soul.v),"דחף הנשמה"),tile(P.pers.v||"—",comp(P.pers.c,P.pers.v),"אישיות"));}
+  coreTiles.push(tile(birthday,comp(B.d,birthday),"יום הלידה"));
+  if(P)coreTiles.push(tile(maturity,"","בגרות"));
+  coreTiles.push(tile(py,"",`שנה אישית ${T.y}`));
+  // synthesis
+  const syn=[];
+  syn.push(`במרכז המפה עומד <b>שביל החיים ${B.LP}</b>, ${get(B.LP,"title")}: ${get(B.LP,"kw")}. זה הכיוון הכללי של חייך, מה שבאת ללמוד ולהגשים.`);
+  if(P){
+    syn.push(`השם שקיבלת בלידה נותן לך את הכלים: מספר הביטוי <b>${P.expr.v}</b> (${get(P.expr.v,"kw")}). הלב מונע על ידי דחף נשמה <b>${P.soul.v||"—"}</b>${P.soul.v?` (${get(P.soul.v,"kw")})`:""}, ואחרים פוגשים קודם את מספר האישיות <b>${P.pers.v||"—"}</b>${P.pers.v?` (${get(P.pers.v,"kw")})`:""}.`);
+    const r=relation(B.LP,P.expr.v);
+    syn.push(r>=3?"שביל החיים ומספר הביטוי שייכים לאותה משפחת מספרים. יש הלימה בין מה שבאת ללמוד לבין הכלים שקיבלת, והדרך מרגישה טבעית.":r===2?"שביל החיים ומספר הביטוי משלימים זה את זה: הכלים שבשם תומכים במשימת החיים, גם אם בדרך עקיפה.":"יש מתח בין שביל החיים לבין הכלים שבשם. המתח הזה הוא מנוע לצמיחה, אבל הוא דורש מודעות: לעתים מה שקל לך אינו מה שהדרך מבקשת.");
+    if(P.soul.v&&P.pers.v&&grp(P.soul.v)!==grp(P.pers.v))syn.push("בין דחף הנשמה למספר האישיות יש פער. ייתכן שמה שמניע אותך בפנים שונה מהרושם שאת/ה יוצר/ת, ושאנשים מכירים רק חלק ממך.");
+  }
+  const coreVals=[B.LP,birthday,attitude].concat(P?[P.expr.v,P.soul.v,P.pers.v,maturity]:[]).filter(Boolean);
+  const fq={};coreVals.forEach(v=>{const s=single(v);fq[s]=(fq[s]||0)+1;});
+  const dom=Object.entries(fq).filter(e=>e[1]>=3).map(e=>e[0]);
+  const rep=Object.entries(fq).filter(e=>e[1]===2).map(e=>e[0]);
+  if(dom.length)syn.push(`המספר ${dom.join(" ו-")} חוזר שלוש פעמים או יותר במספרי הליבה. זו האנרגיה הדומיננטית בחייך, על מתנותיה ועל אתגריה: ${dom.map(d=>get(+d,"kw")).join("; ")}.`);
+  else if(rep.length)syn.push(`המספר ${rep.join(" ו-")} מופיע פעמיים במספרי הליבה, ולכן הנושא שלו (${rep.map(d=>get(+d,"kw")).join("; ")}) בולט במיוחד אצלך.`);
+  const masters=coreVals.filter(v=>MASTER.includes(v));
+  if(masters.length)syn.push(`במפה מופיע מספר מאסטר (${[...new Set(masters)].join(", ")}). זה מצביע על פוטנציאל גבוה, וגם על מתח פנימי ורגישות שדורשים קרקוע.`);
+  if(P&&P.lessons.length)syn.push(`בשם חסרים המספרים ${P.lessons.join(", ")}. בנומרולוגיה אלה השיעורים הקרמתיים: תחומים שהחיים יזמנו לך ללמוד שוב ושוב.`);
+  syn.push(`כרגע, בגיל ${age}, את/ה ב<b>שנה אישית ${py}</b> (${YKW[py]})${curIdx>=0?`, בתוך <b>פסגה ${periods[curIdx][2]}</b> ו<b>אתגר ${periods[curIdx][3]}</b>`:""}.`);
+  S.overview=`<section class="ch" id="overview"><h2>תמונה כוללת</h2><div class="core">${coreTiles.join("")}</div><div class="synth" style="margin-top:22px">${syn.map(s=>`<p>${s}</p>`).join("")}</div></section>`;
+
+  /* core: life path */
+  let core=`<section class="ch" id="core"><h2><span class="k">${B.LP}</span>שביל החיים ומספרי התאריך</h2><p class="lead">מספר שביל החיים מחושב מתאריך הלידה המלא. הוא המספר החשוב ביותר במפה ואינו משתנה לעולם.</p>`;
+  core+=reading(B.LP,comp(B.c,B.LP),`שביל החיים: ${get(B.LP,"title")}`,get(B.LP,"kw"),
+   `<p>${get(B.LP,"essence")}</p><div class="two"><div><h4>חוזקות</h4>${ul(get(B.LP,"strengths"))}</div><div><h4 class="neg">הצל</h4>${ul(get(B.LP,"shadow"))}</div></div>
+   <div class="facets"><div class="facet"><b>קריירה ושליחות</b><p>${get(B.LP,"career")}</p></div><div class="facet"><b>אהבה</b><p>${get(B.LP,"love")}</p></div><div class="facet"><b>כסף</b><p>${get(B.LP,"money")}</p></div><div class="facet"><b>כיוון לצמיחה</b><p>${get(B.LP,"growth")}</p></div></div>`,`שביל החיים: ${B.trace}`);
+  core+=reading(birthday,comp(B.d,birthday),"מספר יום הלידה","מתנה מיוחדת שקיבלת לדרך",`<p>יום הלידה ${B.d} מעניק לך את המתנה של ה-${birthday}: ${get(birthday,"gift")}. זה כישרון שעומד לרשותך ומסייע במשימה של שביל החיים. ${get(birthday,"expr")}</p>`,`יום ${B.d}${B.d>9?` → ${birthday}`:""}`);
+  core+=reading(attitude,comp(B.d+B.m,attitude),"מספר הגישה","התגובה הספונטנית שלך לחיים",`<p>היום והחודש יחד מתארים איך את/ה ניגש/ת למצבים חדשים, עוד לפני שמופעלת המחשבה. הגישה שלך נושאת את אופי ה-${attitude}: ${get(attitude,"kw")}. ${get(attitude,"persona")}</p>`,`${B.d} + ${B.m} = ${B.d+B.m}${B.d+B.m>9?` → ${attitude}`:""}`);
+  if(P)core+=reading(maturity,"","מספר הבגרות","מה שמתגלה בחצי השני של החיים",`<p>מספר הבגרות מתעורר בדרך כלל סביב גיל 35 עד 45, ומבטא את המטרה שאליה מתכנסים שביל החיים והשם. אצלך זו אנרגיה של ${get(maturity,"kw")}: ${get(maturity,"growth")}</p>`,`שביל החיים ${B.LP} + ביטוי ${P.expr.v} = ${B.LP+P.expr.v}${B.LP+P.expr.v>9?` → ${maturity}`:""}`);
+  const debts=[];if(B.debt)debts.push(["שביל החיים",B.debt]);if(DEBTS.includes(B.d))debts.push(["יום הלידה",B.d]);if(P)debts.push(...P.debts);
+  if(debts.length)debts.forEach(([w,d])=>{core+=reading(d,"","חוב קרמתי",`נמצא ב${w}`,`<p>${DEBT[d]}</p>`,"",true);});
+  else core+=`<p class="sub" style="color:var(--muted)">לא נמצאו מספרי חוב קרמתי (13, 14, 16, 19) בחישובי הליבה.</p>`;
+  S.core=core+`</section>`;
+
+  /* name */
+  if(names.length){
+    let s=`<section class="ch" id="name"><h2>מספרי השם</h2>${defLine("כל אות בשם מקבלת ערך מ-1 עד 9. מהסכומים של כל האותיות, של התנועות ושל העיצורים נגזרים מספרים שונים.")}<p class="lead">השם שניתן בלידה מתאר את הכלים, הכישרונות והמניעים שאיתם יצאת לדרך. כל אות מקבלת ערך מספרי, ומהערכים מחושבים כמה מספרים שונים.</p>`;
+    if(names.length===2){
+      const [a,b]=names;
+      const rows=[["ביטוי / גורל",a.expr,b.expr],["דחף הנשמה",a.soul,b.soul],["אישיות",a.pers,b.pers],["איזון",a.balance,b.balance]];
+      s+=`<div class="tablewrap"><table><thead><tr><th>מספר</th><th>גימטריה עברית</th><th>פיתגוראית</th><th>פירוש ההשוואה</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1].v||"—"}</td><td class="num">${r[2].v||"—"}</td><td>${single(r[1].v)===single(r[2].v)?'<span class="pill t">זהה</span> האנרגיה הזו מאושרת בשתי השיטות ולכן חזקה במיוחד.':relation(r[1].v,r[2].v)>=3?'<span class="pill">קרוב</span> שני מספרים מאותה משפחה, אותו נושא בגוונים שונים.':'<span class="pill r">שונה</span> שתי השיטות מאירות צדדים שונים שלך. כדאי לקרוא את שתיהן.'}</td></tr>`).join("")}</tbody></table></div>`;
+    }
+    names.forEach(an=>{
+      const lab=an.sys==="he"?"גימטריה עברית":"שיטה פיתגוראית";
+      s+=`<h3 style="margin-top:26px;font-size:1.35rem">${lab}: <span dir="${an.sys==="he"?"rtl":"ltr"}">${esc(an.raw)}</span></h3>${lettersHTML(an)}`;
+      s+=reading(an.expr.v,comp(an.expr.c,an.expr.v),`מספר הביטוי: ${get(an.expr.v,"title")}`,"הכישרונות והיכולות שאיתם נולדת",`<p>${get(an.expr.v,"expr")}</p><p>${get(an.expr.v,"essence")}</p><div class="facets"><div class="facet"><b>בעבודה</b><p>${get(an.expr.v,"career")}</p></div><div class="facet"><b>בכסף</b><p>${get(an.expr.v,"money")}</p></div></div>`,`כל האותיות לפי מילים: ${an.expr.trace}`);
+      if(an.soul.v)s+=reading(an.soul.v,comp(an.soul.c,an.soul.v),"דחף הנשמה","מה את/ה רוצה באמת, מבפנים",`<p>${get(an.soul.v,"soul")}</p><p>${get(an.soul.v,"love")}</p>`,`תנועות: ${an.soul.trace}`);
+      if(an.pers.v)s+=reading(an.pers.v,comp(an.pers.c,an.pers.v),"מספר האישיות","הרושם שאת/ה יוצר/ת על אחרים",`<p>${get(an.pers.v,"persona")}</p><p>זה הצד שאנשים פוגשים לפני שהם מכירים אותך. הוא משמש גם כשומר סף: הוא קובע מה וכמה נכנס פנימה.</p>`,`עיצורים: ${an.pers.trace}`);
+      s+=reading(an.balance.v,comp(an.balance.c,an.balance.v),"מספר האיזון","איך לחזור לאיזון ברגעי משבר",`<p>מספר האיזון מחושב מהאות הראשונה של כל מילה בשם. כשקשה, הדרך שלך חזרה לשקט עוברת דרך ${get(an.balance.v,"kw")}. ${get(an.balance.v,"growth")}</p>`,`אותיות ראשונות: ${an.words.map(w=>w.letters[0].val).join(" + ")} = ${an.balance.c}${an.balance.c>9?` → ${an.balance.v}`:""}`);
+      if(an.passion.length)s+=reading(an.passion.join("·"),"","התשוקה הנסתרת","המספר שחוזר הכי הרבה פעמים בשם",`<p>${an.passion.map(n=>get(n,"passion")).join(" ")} זו אנרגיה שקיימת אצלך בשפע, ולעתים מניעה אותך בלי שתשים/י לב.</p>`,`ספירה: `+[1,2,3,4,5,6,7,8,9].map(i=>`${i}×${an.counts[i]}`).join("  "));
+      if(an.lessons.length)s+=reading(an.lessons.join("·"),"","שיעורים קרמתיים","מספרים שחסרים לגמרי בשם",an.lessons.map(n=>`<p><b>${n}:</b> ${N[n].lesson}</p>`).join(""),"",true);
+      else s+=reading("✓","","שיעורים קרמתיים","כל המספרים מופיעים בשם",`<p>כל המספרים מ-1 עד 9 מופיעים בשם שלך. בנומרולוגיה זה מצביע על כלים מגוונים ועל היעדר שיעור קרמתי מובהק.</p>`,"");
+      s+=reading(an.sub,"","העצמי התת-מודע","ביטחון ותגובה במצבי לחץ",`<p>${an.sub>=8?"יש לך משאבים פנימיים רבים. במצבי לחץ את/ה נשאר/ת יציב/ה יחסית ומוצא/ת פתרונות.":an.sub>=6?"יש לך יכולת התמודדות טובה, אך בתחומים שבהם חסרים לך כלים הלחץ עלול לבלבל אותך. כדאי להכיר את נקודות התורפה מראש.":"במצבי לחץ את/ה עלול/ה להרגיש מוצף/ת. היכרות עם השיעורים הקרמתיים שלך וסדר יום קבוע יעזרו לך להישאר מעוגן/ת."}</p>`,`9 − ${an.lessons.length} מספרים חסרים = ${an.sub}`);
+      if(an.planes){const tot=Object.values(an.planes).reduce((a,b)=>a+b,0)||1;const top=Object.entries(an.planes).sort((a,b)=>b[1]-a[1])[0][0];
+        s+=`<div class="reading" id="r-planes${an.sys==="la"&&names.length>1?"":""}"><div></div><div class="rbody"><h3>מישורי הביטוי</h3>${defLine("חלוקת אותיות השם הלועזי לארבע קבוצות: גוף, שכל, רגש ואינטואיציה. הקבוצה הגדולה מראה דרך איזה ערוץ את/ה חווה את העולם.")}<div class="sub">דרך איזה ערוץ את/ה חווה את העולם</div><div class="facets">${Object.entries(an.planes).map(([k,v])=>`<div class="facet"${k===top?' style="border-color:var(--brass)"':''}><b>${PLANES[k].l} · ${v}</b><p>${Math.round(v/tot*100)}% מהאותיות. ${k===top?PLANES[k].t:""}</p></div>`).join("")}</div></div></div>`;}
+    });
+    S.name=s+`</section>`;
+  }
+
+  /* name change */
+  if(CUR){
+    const a=CUR.an,b=CUR.base;
+    let s=`<section class="ch" id="change"><h2>השם הנוכחי</h2><p class="lead">שם הלידה מתאר את מי שנולדת להיות. השם שבו את/ה משתמש/ת היום מוסיף שכבה: את האנרגיה שאת/ה מקרין/ה בפועל.</p>`;
+    if(b){
+      const rows=[["ביטוי",b.expr.v,a.expr.v,"expr"],["דחף הנשמה",b.soul.v,a.soul.v,"soul"],["אישיות",b.pers.v,a.pers.v,"persona"]];
+      s+=`<div class="tablewrap"><table><thead><tr><th></th><th>שם הלידה</th><th>השם היום</th><th>משמעות</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]||"—"}</td><td class="num">${r[2]||"—"}</td><td>${r[1]===r[2]?"ללא שינוי: האנרגיה נשמרת.":r[2]?`השם הנוכחי מוסיף ${get(r[2],"kw")}. ${get(r[2],r[3])}`:""}</td></tr>`).join("")}</tbody></table></div>`;
+    }else{
+      s+=reading(a.expr.v,comp(a.expr.c,a.expr.v),"מספר הביטוי של השם הנוכחי",get(a.expr.v,"kw"),`<p>${get(a.expr.v,"expr")}</p><p>כדי להשוות לשם הלידה, הזינו גם את שם הלידה באותו כתב (${scriptOf(inp.curName)==="he"?"עברית":"לועזית"}).</p>`,a.expr.trace);
+    }
+    S.change=s+`</section>`;
+  }
+
+  /* cycles */
+  {
+    let s=`<section class="ch" id="cycles"><h2>מחזורי החיים</h2>${defLine("פסגה: הנושא וההזדמנות של תקופה בחיים. אתגר: המכשול שהתקופה מבקשת ללמוד לעבור. שניהם מחושבים מרכיבי תאריך הלידה.")}<p class="lead">החיים מתחלקים לארבע תקופות. לכל תקופה פסגה, שהיא ההזדמנות והנושא המרכזי שלה, ואתגר, שהוא המכשול שצריך ללמוד לעבור. התקופה הראשונה מסתיימת בגיל ${e1} (36 פחות שביל החיים).</p>`;
+    s+=`<div class="tablewrap"><table><thead><tr><th>גילאים</th><th>פסגה</th><th>ההזדמנות</th><th>אתגר</th><th>המכשול</th></tr></thead><tbody>`;
+    periods.forEach((p,i)=>{s+=`<tr class="${i===curIdx?'now':''}"><td style="white-space:nowrap">${p[1]===null?`${p[0]} ומעלה`:`${p[0]}–${p[1]}`}${i===curIdx?'<span class="pill">עכשיו</span>':''}<br><small style="color:var(--muted)">${B.y+p[0]}${p[1]===null?"+":`–${B.y+p[1]}`}</small></td><td class="num">${p[2]}</td><td>${get(p[2],"pinnacle")}<div class="trace">${p[4]} → ${p[2]}</div></td><td class="num rose">${p[3]}</td><td>${p[3]===0?CH0:get(p[3],"challenge")}<div class="trace">${p[5]} = ${p[3]}</div></td></tr>`;});
+    s+=`</tbody></table></div>`;
+    if(curIdx>=0){const p=periods[curIdx];s+=`<div class="facets" style="margin-top:16px"><div class="facet" style="border-color:var(--brass)"><b>התקופה הנוכחית שלך</b><p>בגיל ${age} את/ה בתקופה ${curIdx+1} מתוך 4. הפסגה ${p[2]} מזמינה ${get(p[2],"kw")}, והאתגר ${p[3]} ${p[3]===0?"משאיר את הבחירה בידיים שלך":`מבקש לעבוד על ${get(p[3],"kw")}`}.</p></div></div>`;}
+    S.cycles=s+`</section>`;
+  }
+
+  /* grid */
+  {
+    const pos={3:[0,0],6:[1,0],9:[2,0],2:[0,1],5:[1,1],8:[2,1],1:[0,2],4:[1,2],7:[2,2]};
+    const cx=n=>20+pos[n][0]*70+30, cy=n=>20+pos[n][1]*70+30;
+    let lines="";const present=[],absent=[];
+    ARROWS.forEach(a=>{const all=a.n.every(x=>gc[x]),none=a.n.every(x=>!gc[x]);
+      if(all||none){const f=a.n[0],l=a.n[2];lines+=`<line x1="${cx(f)}" y1="${cy(f)}" x2="${cx(l)}" y2="${cy(l)}" stroke="${all?'var(--brass)':'var(--rose)'}" stroke-width="${all?4:2.5}" stroke-linecap="round" ${none?'stroke-dasharray="6 6"':''} opacity=".75"/>`;(all?present:absent).push(a);}});
+    let cells="";for(const n in pos){const x=20+pos[n][0]*70,y=20+pos[n][1]*70;cells+=`<rect x="${x+3}" y="${y+3}" width="64" height="64" rx="10" fill="var(--panel)" stroke="var(--line)"/><text x="${x+35}" y="${y+16}" font-size="10" text-anchor="middle" fill="var(--muted)" font-family="var(--f-body)">${n}</text>${gc[n]?`<text x="${x+35}" y="${y+48}" font-size="${gc[n]>2?18:24}" text-anchor="middle" fill="var(--fg)" font-family="var(--f-num)" font-weight="600">${String(n).repeat(gc[n])}</text>`:""}`;}
+    const svg=`<svg viewBox="0 0 250 250" role="img" aria-label="טבלת הלידה" dir="ltr"><rect width="250" height="250" fill="none"/>${cells}${lines}</svg>`;
+    const strong=[1,2,3,4,5,6,7,8,9].filter(n=>gc[n]>=3), miss=[1,2,3,4,5,6,7,8,9].filter(n=>!gc[n]);
+    let txt=present.map(a=>`<div class="arrow"><b>${a.p}</b> <span class="pill">קיים</span><br>${a.pt}</div>`).join("")+absent.map(a=>`<div class="arrow"><b>${a.a}</b> <span class="pill r">חסר</span><br>${a.at}</div>`).join("");
+    if(!txt)txt=`<div class="arrow">אין בטבלה שלך חץ שלם או ריק לגמרי. האנרגיות מפוזרות באופן מאוזן יחסית, בלי קיצוניות בולטת.</div>`;
+    if(strong.length)txt+=`<div class="arrow"><b>ריכוז גבוה</b><br>המספר ${strong.join(", ")} מופיע שלוש פעמים או יותר. בתחום הזה (${strong.map(n=>N[n].kw).join("; ")}) יש עוצמה רבה, שעלולה לגלוש להגזמה.</div>`;
+    if(miss.length)txt+=`<div class="arrow"><b>מספרים חסרים בתאריך</b><br>${miss.join(", ")}. בתחומים האלה הכלים פחות מולדים, וצריך לפתח אותם במודע.</div>`;
+    S.grid=`<section class="ch" id="grid"><h2>טבלת הלידה</h2>${defLine("ספרות תאריך הלידה מסודרות בריבוע 3×3. \"חץ\" הוא שורה, טור או אלכסון מלא או ריק, ומסמן חוזקה או נקודה לפיתוח.")}<p class="lead">כל הספרות של תאריך הלידה (${B.d}.${B.m}.${B.y}) מוצבות בריבוע של 3 על 3. שורה, טור או אלכסון מלאים יוצרים "חץ של כוח", וריקים לגמרי יוצרים "חץ של חולשה".</p><div class="gridbox">${svg}<div class="arrows">${txt}</div></div></section>`;
+  }
+
+  /* year */
+  {
+    let strip="";for(let k=-3;k<=5;k++){const yy=T.y+k,p=single(single(B.d)+single(B.m)+single(dsum(yy)));strip+=`<div class="yr${k===0?' now':''}"><div class="y">${yy}</div><div class="n">${p}</div><div class="w">${YKW[p]}</div></div>`;}
+    let s=`<section class="ch" id="year"><h2>השנה האישית</h2><p class="lead">החיים נעים במחזורים של תשע שנים. השנה האישית מחושבת מיום הלידה, חודש הלידה והשנה הקלנדרית, ומתארת את האקלים של התקופה.</p><div class="years">${strip}</div>`;
+    s+=reading(py,"",`שנה אישית ${py}: ${YKW[py]}`,`שנת ${T.y}`,`<p>${N[py].year}</p>`,`${B.d}→${single(B.d)} + ${B.m}→${single(B.m)} + ${T.y}→${single(dsum(T.y))} = ${single(B.d)+single(B.m)+single(dsum(T.y))} → ${py}`);
+    s+=reading(pm,"",`חודש אישי ${pm}`,`חודש ${T.m}/${T.y}`,`<p>${N[pm].pm} החודש צובע את השנה ${py} בגוון של ${YKW[pm]}.</p>`,`${py} + ${T.m} → ${pm}`);
+    s+=reading(pd,"",`יום אישי ${pd}`,`${T.d}.${T.m}.${T.y}`,`<p>${N[pd].pm.replace("חודש","יום")}</p>`,`${pm} + ${T.d} → ${pd}`);
+    S.year=s+`</section>`;
+  }
+
+  /* love */
+  if(PT){
+    const r=relation(B.LP,PT.B.LP);
+    const rt={4:["אותו מספר","הבנה עמוקה ומיידית, אבל גם אותן נקודות עיוורון. חשוב לשים לב שלא תגבירו זה אצל זה את הצדדים הקשים."],3:["התאמה טבעית",`שניכם שייכים ל${GRP[grp(B.LP)]}. אתם מדברים באותה שפה בסיסית, והקשר זורם. כדאי לאתגר זה את זה כדי לא להיתקע בנוחות.`],2:["התאמה משלימה","האנרגיות שונות אבל מזינות זו את זו. כל אחד מביא לשני משהו שחסר לו."],1:["התאמה מאתגרת","האנרגיות שונות מהותית, ולכן יש פוטנציאל לחיכוך וגם לצמיחה גדולה. ההצלחה תלויה בכבוד להבדלים ובתקשורת פתוחה."]}[r];
+    const pn=PT.name?esc(PT.name):"בן/בת הזוג";
+    let s=`<section class="ch" id="love"><h2>התאמה זוגית</h2>${defLine("המספרים מתחלקים לשלוש משפחות: 1-5-7 (עצמאות ומחשבה), 2-4-8 (חומר ועשייה), 3-6-9 (רגש ויצירה). מספרים מאותה משפחה זורמים יחד בקלות.")}<p class="lead">ההתאמה נבחנת בעיקר דרך שבילי החיים, ובנוסף דרך מספרי הביטוי ודחפי הנשמה, אם הוזן שם.</p>`;
+    const meter=n=>`<div class="meter">${[1,2,3,4].map(i=>`<i class="${i<=n?'on':''}"></i>`).join("")}</div>`;
+    s+=`<div class="compat"><div class="who"><div class="n">${B.LP}</div>את/ה<br><small>${get(B.LP,"title")}</small></div><div class="mid">${rt[0]}${meter(r)}</div><div class="who"><div class="n">${PT.B.LP}</div>${pn}<br><small>${get(PT.B.LP,"title")}</small></div></div>`;
+    s+=`<p>${rt[1]}</p><div class="facets"><div class="facet"><b>מה את/ה מביא/ה לקשר</b><p>${get(B.LP,"love")}</p></div><div class="facet"><b>מה ${pn} מביא/ה לקשר</b><p>${get(PT.B.LP,"love")}</p></div></div>`;
+    if(PT.an&&P){
+      const mine=names.find(x=>x.sys===PT.an.sys)||P;
+      const er=relation(mine.expr.v,PT.an.expr.v), sr=(mine.soul.v&&PT.an.soul.v)?relation(mine.soul.v,PT.an.soul.v):0;
+      const lbl={4:"זהה",3:"טבעית",2:"משלימה",1:"מאתגרת"};
+      s+=`<div class="tablewrap"><table><thead><tr><th>רובד</th><th>את/ה</th><th>${pn}</th><th>התאמה</th></tr></thead><tbody>
+      <tr><td>שביל החיים</td><td class="num">${B.LP}</td><td class="num">${PT.B.LP}</td><td>${lbl[r]}</td></tr>
+      <tr><td>ביטוי (איך פועלים בעולם)</td><td class="num">${mine.expr.v}</td><td class="num">${PT.an.expr.v}</td><td>${lbl[er]}</td></tr>
+      ${sr?`<tr><td>דחף הנשמה (מה צריכים בפנים)</td><td class="num">${mine.soul.v}</td><td class="num">${PT.an.soul.v}</td><td>${lbl[sr]}</td></tr>`:""}</tbody></table></div>`;
+      if(sr)s+=`<p style="margin-top:12px">${sr>=3?"התאמה גבוהה בדחפי הנשמה היא סימן חשוב: ברמה העמוקה אתם רוצים דברים דומים מהחיים.":sr===2?"דחפי הנשמה משלימים: הצרכים העמוקים שונים אך אינם מתנגשים.":"דחפי הנשמה שונים. כדאי לדבר במפורש על מה שכל אחד צריך כדי להרגיש אהוב, כי זה לא יהיה מובן מאליו."}</p>`;
+    }else if(!PT.an)s+=`<p class="sub">הזינו את שם בן/בת הזוג כדי להוסיף את התאמת הביטוי ודחף הנשמה.</p>`;
+    const ppy=single(single(PT.B.d)+single(PT.B.m)+single(dsum(T.y)));
+    s+=`<p>בשנה הנוכחית את/ה בשנה אישית ${py} (${YKW[py]}) ו${pn} בשנה אישית ${ppy} (${YKW[ppy]}). ${py===ppy?"אתם באותו שלב של המחזור, וזו שנה טובה למהלכים משותפים.":"אתם בשלבים שונים של המחזור. כדאי להבין שהקצב והצרכים של כל אחד שונים השנה."}</p>`;
+    S.love=s+`</section>`;
+  }
+
+  /* focus */
+  if(inp.focus!=="none"){
+    const cp=curIdx>=0?periods[curIdx]:null;
+    const F={love:["אהבה וזוגיות",[["השביל שלך באהבה",get(B.LP,"love")],P&&P.soul.v?["מה הלב צריך",`דחף הנשמה ${P.soul.v}: ${get(P.soul.v,"soul")}`]:null,P&&P.pers.v?["איך את/ה נתפס/ת בפגישה ראשונה",get(P.pers.v,"persona")]:null,["אקלים השנה",`בשנה אישית ${py}: ${py===2||py===6?"שנה מצוינת לזוגיות, למחויבות ולהעמקת קשר.":py===1?"שנה טובה להתחלות, גם בזוגיות, בתנאי שלא מוותרים על עצמך.":py===5?"שנה של תנועה, שעשויה להביא היכרויות מפתיעות או צורך ברעננות בקשר קיים.":py===7?"שנה פנימית. ייתכן צורך במרחב, וחשוב לשתף אותו בגלוי.":py===9?"שנה של סגירת מעגלים: לסיים את מה שלא מתאים ולפנות מקום.":N[py].year}`]]],
+      career:["קריירה ושליחות",[["כיוון החיים",get(B.LP,"career")],P?["הכלים מהשם",`מספר הביטוי ${P.expr.v}: ${get(P.expr.v,"career")}`]:null,cp?["התקופה הנוכחית",`פסגה ${cp[2]}: ${get(cp[2],"pinnacle")}`]:null,["תזמון",`שנה אישית ${py} (${YKW[py]}). ${[1,8].includes(py)?"זה זמן לצעדים גדולים בקריירה.":[4].includes(py)?"זה זמן לבנות ולהתמיד, לא לקפוץ.":[7,9].includes(py)?"זה זמן להתבונן ולשקול מחדש, לא לרוץ קדימה.":"שימו לב לאופי השנה בפרק השנה האישית."}`]]],
+      money:["כסף ושפע",[["היחס שלך לכסף",get(B.LP,"money")],P?["מקור ההכנסה הטבעי",`מספר הביטוי ${P.expr.v}: ${get(P.expr.v,"money")}`]:null,P&&P.lessons.includes(8)?["שיעור קרמתי","המספר 8 חסר בשם: ניהול כספים ועמידה על ערכך הם שיעור מרכזי עבורך."]:null,["תזמון",`שנה אישית ${py}. ${py===8?"שנת קציר: זה הזמן לקצור פירות כלכליים.":py===4?"שנה לחיסכון, לסדר ולבניית בסיס.":py===5?"שנה תנודתית: כדאי להיזהר מהחלטות פזיזות.":py===1?"שנה טובה להתחיל מקור הכנסה חדש.":"שנה שבה הכסף אינו הנושא המרכזי, ושווה לפעול בזהירות."}`]]],
+      growth:["צמיחה רוחנית",[["כיוון הצמיחה",get(B.LP,"growth")],cp?["האתגר העכשווי",cp[3]===0?CH0:get(cp[3],"challenge")]:null,P&&P.lessons.length?["השיעורים הקרמתיים",P.lessons.map(n=>`${n}: ${N[n].lesson}`).join(" ")]:null,debts.length?["חובות קרמתיים",debts.map(d=>DEBT[d[1]]).join(" ")]:null,["שאלה להתבוננות",`מה היה משתנה אם הייתי מאפשר/ת לעצמי לחיות את ה-${B.LP} שלי במלואו: ${get(B.LP,"kw")}?`]]]}[inp.focus];
+    S.focus=`<section class="ch" id="focus"><h2>מיקוד: ${F[0]}</h2><p class="lead">כל מה שהמפה אומרת על הנושא שבחרת, במקום אחד.</p><div class="facets">${F[1].filter(Boolean).map(x=>`<div class="facet"><b>${x[0]}</b><p>${x[1]}</p></div>`).join("")}</div></section>`;
+  }
+  /* ---------- map & reading guide ---------- */
+  const mi=(href,v,t,d,off)=>`<a class="mi${off?' off':''}" href="#${href}"><span class="v">${v}</span><span class="t">${t}</span><span class="d">${d}</span></a>`;
+  const gridArrows=ARROWS.filter(a=>a.n.every(x=>gc[x])).length, gridEmpty=ARROWS.filter(a=>a.n.every(x=>!gc[x])).length;
+  const cp=curIdx>=0?periods[curIdx]:null;
+  const L1=[mi("r-lp",B.LP,"שביל החיים","הדרך והשיעור המרכזי")];
+  if(P)L1.push(mi("r-expr",P.expr.v,"מספר הביטוי","הכלים והכישרונות שקיבלת"),mi("r-soul",P.soul.v||"—","דחף הנשמה","מה את/ה רוצה בפנים"),mi("r-pers",P.pers.v||"—","מספר האישיות","איך רואים אותך מבחוץ"));
+  else L1.push(mi("frm","?","מספרי השם","הזינו שם כדי לפתוח את השכבה",1));
+  const L2=[mi("r-bday",birthday,"יום הלידה","מתנה מיוחדת לדרך"),mi("r-att",attitude,"מספר הגישה","התגובה הספונטנית שלך")];
+  if(P)L2.push(mi("r-mat",maturity,"מספר הבגרות","מה שמתבהר אחרי גיל 40"),mi("r-bal",P.balance.v,"מספר האיזון","איך חוזרים לשקט"),mi("r-pas",P.passion.join("·")||"—","התשוקה הנסתרת","מה יש לך בשפע"),mi("r-les",P.lessons.length?P.lessons.join("·"):"✓","שיעורים קרמתיים",P.lessons.length?"מה דורש למידה":"אין חסרים בשם"),mi("r-sub",P.sub,"העצמי התת-מודע","משאבים במצבי לחץ"));
+  L2.push(mi(debts.length?"r-debt":"core",debts.length?debts.map(d=>d[1]).join("·"):"—","חובות קרמתיים",debts.length?"שיעור פתוח שדורש תשומת לב":"לא נמצאו"),mi("grid",gridArrows+gridEmpty,"טבלת הלידה",`${gridArrows} חיצי כוח, ${gridEmpty} חיצי חולשה`));
+  if(names.some(n=>n.planes))L2.push(mi("r-planes","4","מישורי הביטוי","גוף, שכל, רגש, אינטואיציה"));
+  const L3=[];
+  if(cp)L3.push(mi("cycles",`${cp[2]}·${cp[3]}`,"התקופה הנוכחית",`פסגה ${cp[2]} ואתגר ${cp[3]}, תקופה ${curIdx+1} מתוך 4`));
+  L3.push(mi("r-py",py,"שנה אישית",`${YKW[py]}, שנה ${py} מתוך 9`),mi("r-pm",pm,"חודש אישי",YKW[pm]),mi("r-pd",pd,"יום אישי",YKW[pd]));
+  const L4=[CUR?mi("change",CUR.an.expr.v,"השם הנוכחי","מה השם של היום מוסיף"):mi("frm","—","השם הנוכחי","הוסיפו שם נוכחי בטופס",1),
+    PT?mi("love",`${B.LP}·${PT.B.LP}`,"התאמה זוגית","השוואה בשלושה רבדים"):mi("frm","—","התאמה זוגית","הוסיפו בן/בת זוג בטופס",1),
+    inp.focus!=="none"?mi("focus","◎","מיקוד","כל מה שהמפה אומרת על הנושא שבחרת"):mi("frm","—","מיקוד","בחרו נושא בטופס",1)];
+  const sentence=P?`הדרך שלך היא <b>${get(B.LP,"kw")}</b> (${B.LP}). הכלים שקיבלת: <b>${get(P.expr.v,"kw")}</b> (${P.expr.v}).${P.soul.v?` הלב מבקש <b>${get(P.soul.v,"kw")}</b> (${P.soul.v}).`:""}${P.pers.v?` העולם פוגש קודם <b>${get(P.pers.v,"kw")}</b> (${P.pers.v}).`:""}`:`הדרך שלך היא <b>${get(B.LP,"kw")}</b> (${B.LP}).`;
+  const guide=`<section class="guide ch" id="map" style="margin-top:40px"><details class="gloss" style="margin:0;border:0;padding:0"><summary>מדריך קריאה, מפת כל המספרים ומילון מונחים</summary>
+  <p class="lead" style="color:var(--muted);margin:6px 0 0;max-width:68ch">הניתוח ארוך כי הוא מאיר את אותו אדם מכמה זוויות. אין צורך לקרוא הכול ברצף. זה המשפט שמסכם את הליבה שלך, וכל השאר מעמיק אותו:</p>
+  <div class="sentence">${sentence}</div>
+  <ol class="steps">
+   <li><b>התחילו מהתמונה הכוללת</b>היא מחברת את כל המספרים לסיפור אחד, ומסמנת מה בולט אצלך.</li>
+   <li><b>שכבה 1: הליבה</b>ארבעה מספרים שמתארים מי את/ה: הדרך, הכלים, הלב והפנים החיצוניות.</li>
+   <li><b>שכבה 2: הכלים והשיעורים</b>מה קל לך, מה חסר, ואיך את/ה מגיב/ה בלחץ.</li>
+   <li><b>שכבה 3: הזמן</b>באיזה שלב של החיים ושל מחזור תשע השנים את/ה עכשיו.</li>
+   <li><b>שכבה 4: קשרים ומיקוד</b>השם של היום, הזוגיות, והנושא שבחרת להתמקד בו.</li>
+  </ol>
+  <ul class="tips">
+   <li><b>מספר שחוזר</b> כמה פעמים במפה הוא הנושא המרכזי שלך. שימו לב אליו קודם.</li>
+   <li><b>סתירות בין מספרים</b> אינן טעות. הן המתחים הפנימיים שלך, ולעתים קרובות שם נמצא העניין.</li>
+   <li><b>הצל</b> אינו גזר דין. הוא הצורה שהכישרון לובש כשהוא לא מאוזן.</li>
+   <li><b>סימון כמו 29/11</b>: המספר הראשון הוא הסכום לפני הצמצום, והשני הוא התוצאה. הסכום מוסיף גוון.</li>
+   <li>כל כרטיס במפה שלמטה הוא קישור לפרק המתאים.</li>
+  </ul>
+  <div class="layer"><h3><span class="ln">1</span>הליבה <small>מי את/ה</small></h3><div class="mi-grid">${L1.join("")}</div></div>
+  <div class="layer"><h3><span class="ln">2</span>הכלים והשיעורים <small>מה קל ומה דורש עבודה</small></h3><div class="mi-grid">${L2.join("")}</div></div>
+  <div class="layer"><h3><span class="ln">3</span>הזמן <small>איפה את/ה עכשיו</small></h3><div class="mi-grid">${L3.join("")}</div></div>
+  <div class="layer"><h3><span class="ln">4</span>קשרים ומיקוד <small>השם, הזוגיות והנושא שבחרת</small></h3><div class="mi-grid">${L4.join("")}</div></div>
+  <details class="gloss"><summary>מילון מונחים</summary><dl>
+   <dt>צמצום</dt><dd>חיבור הספרות של מספר עד שמתקבלת ספרה אחת. למשל 38 → 3+8 = 11 → 2.</dd>
+   <dt>מספר מורכב</dt><dd>הסכום לפני הצמצום, למשל 29 ב-29/11. הוא מוסיף גוון למספר הסופי.</dd>
+   <dt>מספר מאסטר</dt><dd>11, 22 ו-33 אינם מצומצמים. הם מסמנים פוטנציאל גבוה ומתח פנימי מוגבר.</dd>
+   <dt>חוב קרמתי</dt><dd>13, 14, 16 או 19 בדרך החישוב. שיעור שנשאר פתוח לפי המסורת הנומרולוגית.</dd>
+   <dt>שיעור קרמתי</dt><dd>מספר מ-1 עד 9 שאינו מופיע באותיות השם. תחום שבו צריך לפתח כלים.</dd>
+   <dt>גימטריה (מספר קטן)</dt><dd>שיטה עברית שבה כל אות מקבלת ערך מ-1 עד 9: א=1 עד ט=9, י=1 עד צ=9, ק=1 עד ת=4.</dd>
+   <dt>שיטה פיתגוראית</dt><dd>השיטה המערבית המקובלת לאותיות לטיניות: A=1 עד I=9, ואז שוב מ-J=1.</dd>
+   <dt>תנועות ועיצורים</dt><dd>בלועזית A, E, I, O, U (ולעתים Y). בעברית האותיות א, ה, ו, י. מהתנועות מחושב דחף הנשמה, ומהעיצורים מספר האישיות.</dd>
+   <dt>פסגה</dt><dd>הנושא וההזדמנות של אחת מארבע תקופות החיים.</dd>
+   <dt>אתגר</dt><dd>המכשול שכל תקופה מבקשת ללמוד לעבור. אתגר 0 פירושו בחירה חופשית.</dd>
+   <dt>טבלת לידה וחצים</dt><dd>ספרות התאריך בריבוע 3×3. שורה, טור או אלכסון מלא הוא חץ של כוח, וריק הוא חץ של חולשה.</dd>
+   <dt>מחזור תשע השנים</dt><dd>החיים נעים במחזורים של תשע שנים, מהתחלה (שנה 1) ועד סיום (שנה 9).</dd>
+   <dt>משפחות המספרים</dt><dd>1-5-7, 2-4-8, 3-6-9. מספרים מאותה משפחה מבינים זה את זה בקלות, ומשמשים לבדיקת התאמה.</dd>
+  </dl></details></details></section>`;
+  const EYE={overview:"סיכום",core:"שכבה 1 · הליבה",name:"שכבה 1 · הליבה, ושכבה 2 · הכלים והשיעורים",grid:"שכבה 2 · הכלים והשיעורים",cycles:"שכבה 3 · הזמן",year:"שכבה 3 · הזמן",change:"שכבה 4 · קשרים ומיקוד",love:"שכבה 4 · קשרים ומיקוד",focus:"שכבה 4 · קשרים ומיקוד"};
+  const TOP=[["love","אהבה וזוגיות"],["career","קריירה ושליחות"],["money","כסף ושפע"],["growth","צמיחה רוחנית"],["none","בלי נושא"]];
+  S.overview=S.overview.replace('<div class="core">',`<div class="sentence">${sentence}</div><div class="core">`)
+    .replace(/<\/section>$/,`<label class="theory-tg"><input type="checkbox" id="theoryTg"${showTheory?" checked":""}> הצגת הסברים על השיטה ודרך החישוב</label></section>`);
+  S.overview=S.overview.replace("<h2>תמונה כוללת</h2>",`<h2>הסיכום שלך${P?`, ${esc(P.raw.trim().split(/\s+/)[0])}`:""}</h2>`);
+  S.topics=`<section class="topics" id="topics"><h2>${inp.focus==="none"?"מה תרצו לבדוק לעומק?":"לבדוק תחום אחר?"}</h2><div class="chips">${TOP.filter(t=>t[0]!=="none"||inp.focus!=="none").map(t=>`<button type="button" data-focus="${t[0]}" aria-pressed="${inp.focus===t[0]}">${t[1]}</button>`).join("")}</div></section>`;
+  for(const k of ["overview","topics","focus","year","core","name","love","cycles","grid","change"]){if(S[k])h+=EYE[k]?S[k].replace("<h2>",`<div class="eyebrow">${EYE[k]}</div><h2>`):S[k];}
+  h+=guide;
+  h+=`<div class="fabs"><a href="#shareBar">שיתוף</a><a href="#overview">למעלה ↑</a><button type="button" data-reset>↺ חדש</button></div>`;
+  return h;
+}
+
+
+/* ---------- זווית נוספת (ALT), מתוך המארג ---------- */
+const ALT={
+1:{essence:"אפשר לראות את 1 גם כשיעור בלעמוד לבד: לא תמיד יש מי שיגיד לך 'קדימה', והכוח שלך נבנה דווקא ברגעים שבהם החלטת בעצמך. כשזה לא מאוזן זה נראה כמו התגוננות או צורך להיות צודק/ת. מה שעוזר: להתחיל דברים, ולהזמין אחרים להמשיך איתך.",
+ expr:"ייתכן שהכישרון לא נראה לך כמו 'הובלה'. לעיתים קרובות הוא מופיע כיכולת לקבל החלטה כשכולם מהססים, או לעשות משהו בדרך שעוד לא נוסתה.",
+ soul:"אולי זה לא רצון להוביל אחרים, אלא צורך פנימי לא להיות תלוי/ה באף אחד ולהרגיש שהחיים שלך בידיים שלך.",
+ persona:"גם אם בפנים יש היסוס, מבחוץ משדרים ממך ישירות וביטחון. יש מי שחווים את זה כנחישות, ויש מי שחווים את זה כמרחק.",
+ year:"זווית אחרת: שנה 1 היא שנת זריעה. לא הכול חייב להתחיל בבת אחת, אבל מה שתחליט/י עכשיו ייתן את הטון לתשע השנים הבאות. כדאי לבחור דבר אחד חדש ולהתחייב אליו."},
+2:{essence:"אפשר לראות את 2 גם כשיעור בגבולות: היכולת להרגיש את כולם היא מתנה, אבל קל ללכת לאיבוד בתוכה. הכוח של 2 הוא השפעה שקטה מאחורי הקלעים, וההתפתחות היא לבחור מתי לומר 'אני' בקול.",
+ expr:"הכישרון יכול להופיע פחות כ'גישור' ויותר כדיוק: לשים לב לפרטים הקטנים שאחרים מפספסים, ולעבוד מצוין בצוות או בזוג.",
+ soul:"ייתכן שבפנים זה פחות צורך בזוגיות ויותר צורך בשקט ובהרמוניה סביבך. מריבות ורעש מתישים אותך יותר מאחרים.",
+ persona:"מבחוץ את/ה עשוי/ה להיראות צנוע/ה ונגיש/ה, ולכן לפעמים לא מעריכים מיד כמה עומק וחוזק יש מאחור.",
+ year:"זווית אחרת: שנה 2 היא שנה של סבלנות. דברים שהתחלת מבשילים לאט, ומה שמתקדם השנה נעשה דרך שיתופי פעולה. מי שממהר/ת לתוצאות עלול/ה להרגיש תקוע/ה."},
+3:{essence:"אפשר לראות את 3 גם כשיעור במיקוד: יש הרבה רעיונות וקלות בביטוי, והאתגר הוא להתמיד ולא לברוח מדברים כשהם נעשים קשים. כשהשמחה באה מבפנים ולא כמסכה, היא מדבקת באמת.",
+ expr:"הכישרון לא חייב להיות במה או אמנות. הוא יכול להופיע ככתיבה, כהוראה, כהומור ברגע הנכון, או כיכולת להסביר דברים מסובכים בפשטות.",
+ soul:"ייתכן שבפנים זה צורך להיות מובן/ת ולהשמיע את הקול שלך, יותר מאשר צורך להיות במרכז.",
+ persona:"מבחוץ את/ה נראה/ית קליל/ה וחברותי/ת. יש מי שלא שמים לב לרגישות ולמחשבה שנמצאות מתחת לחיוך.",
+ year:"זווית אחרת: שנה 3 מזמינה ביטוי. זמן טוב לכתוב, ליצור, לחגוג ולהיפגש. הסכנה היא פיזור, ולכן כדאי לבחור פרויקט יצירתי אחד ולהביא אותו לסיום."},
+4:{essence:"אפשר לראות את 4 גם כשיעור בגמישות: את/ה בונה בסבלנות, צעד אחרי צעד, וזו מתנה נדירה. אבל קשיחות או ביקורת עצמית יכולות להכביד. מה שעוזר: לשלב מנוחה ומשחק בתוך הסדר.",
+ expr:"הכישרון יכול להופיע כאמינות פשוטה: מי שאפשר להשאיר אצלו/ה משימה ולדעת שהיא תיעשה, ונכון.",
+ soul:"ייתכן שבפנים זה פחות צורך בסדר ויותר צורך בביטחון: לדעת שיש קרקע יציבה מתחת לרגליים, בבית, בעבודה ובקשרים.",
+ persona:"מבחוץ את/ה עשוי/ה להיראות רציני/ת או שמור/ה, אבל מי שמכיר/ה אותך יודע/ת שיש בך חום ונאמנות עמוקים.",
+ year:"זווית אחרת: שנה 4 היא שנה של יסודות. העבודה הקשה עכשיו פחות מרגשת, אבל היא שתחזיק את מה שיבוא. כדאי לסדר כסף, בריאות והרגלים."},
+5:{essence:"אפשר לראות את 5 גם כשיעור במחויבות: הסקרנות פותחת דלתות, אבל רק מה שבוחרים להישאר איתו מעמיק. כשאין חופש עולה חוסר מנוחה, וכשיש יותר מדי חופש עולה פיזור.",
+ expr:"הכישרון יכול להופיע כיכולת להסתגל מהר ולמכור רעיון. אנשים עם 5 טובים במצבים חדשים, בתקשורת ובשינוי.",
+ soul:"ייתכן שבפנים זה פחות צורך לטייל ויותר צורך לא להרגיש כלוא/ה: בשגרה, ברעיון אחד או בציפיות של אחרים.",
+ persona:"מבחוץ את/ה נראה/ית צעיר/ה ברוחך ומעניין/ת. יש מי שחווים את זה כחוסר יציבות לפני שמכירים אותך.",
+ year:"זווית אחרת: שנה 5 היא נקודת המפנה של המחזור. מה שהיה יציב מתחיל לזוז, ולכן כדאי לומר כן להזדמנויות, אבל לא לכל אחת."},
+6:{essence:"אפשר לראות את 6 גם כשיעור בלקבל: את/ה יודע/ת לדאוג, לתקן ולתת, ולפעמים לוקח/ת על עצמך יותר מדי. ההתפתחות היא לעזור בלי לשלוט, ולהרשות לאחרים לדאוג גם לך.",
+ expr:"הכישרון יכול להופיע כחוש צדק וכאחריות: מי שמרגיש/ה כשמשהו לא הוגן, ופועל/ת כדי לאזן. מתאים להוראה, לריפוי, לייעוץ ולעבודה עם קהילה.",
+ soul:"ייתכן שבפנים זה צורך שהבית והקשרים הקרובים יהיו הרמוניים. כשמשהו לא בסדר אצל מישהו קרוב, קשה לך להיות רגוע/ה.",
+ persona:"מבחוץ את/ה נראה/ית אדם שאפשר לסמוך עליו ולפנות אליו. לפעמים זה מושך אנשים שרק מבקשים, ולכן חשוב לשים גבולות.",
+ year:"זווית אחרת: שנה 6 שמה את המשפחה והאחריות במרכז. ייתכנו מחויבויות חדשות, ומה שמשתלם השנה הוא לתת מתוך בחירה ולא מתוך אשמה."},
+7:{essence:"אפשר לראות את 7 גם כשיעור באמון: את/ה שואל/ת, בודק/ת ולא מסתפק/ת בתשובות שטחיות. אבל יותר מדי ניתוח יכול להפוך לבדידות או לחשדנות. מה שעוזר: זמן שקט קבוע, ושיתוף של מה שקורה בפנים.",
+ expr:"הכישרון יכול להופיע כמומחיות: להעמיק בתחום אחד עד שמבינים אותו באמת. מחקר, כתיבה, טכנולוגיה, ריפוי או רוחניות.",
+ soul:"ייתכן שבפנים זה צורך בפרטיות ובזמן לבד, כדי לעבד ולהבין. זה לא ריחוק, אלא דרך לטעון את עצמך.",
+ persona:"מבחוץ את/ה עשוי/ה להיראות מסתורי/ת או מרוחק/ת. מי שמתקרב/ת מגלה הומור יבש ועומק רב.",
+ year:"זווית אחרת: שנה 7 היא שנה של עצירה ולמידה. ייתכן שפחות יקרה בחוץ, ויותר יתבהר בפנים. זמן טוב ללמוד, לנוח ולשאול מה באמת חשוב."},
+8:{essence:"אפשר לראות את 8 גם כשיעור באיזון בין חומר לרוח: יש בך יכולת לנהל, להחליט ולהצליח, והשאלה היא בשביל מה. כשההצלחה משרתת משהו גדול ממך, היא נעשית יציבה.",
+ expr:"הכישרון יכול להופיע כשיקול דעת טוב לגבי אנשים: לדעת למי לתת אחריות ואיך לארגן משאבים כדי שדברים יקרו.",
+ soul:"ייתכן שבפנים זה פחות צורך בכסף ויותר צורך להרגיש מסוגל/ת ומשפיע/ה, ולא להיות תלוי/ה בחסדי אחרים.",
+ persona:"מבחוץ את/ה משדר/ת סמכות וכוח, לפעמים גם כשאת/ה לא מתכוון/ת. אנשים מצפים ממך להוביל.",
+ year:"זווית אחרת: שנה 8 היא שנת קציר. מה שהשקעת בשנים הקודמות יכול להניב תוצאות, בכסף, בקריירה או במעמד. כדאי לפעול באומץ וביושר."},
+9:{essence:"אפשר לראות את 9 גם כשיעור בשחרור: את/ה רואה את התמונה הגדולה ומרגיש/ה את כאב העולם, ולפעמים זה בא על חשבון הקרובים או על חשבונך. ההתפתחות היא לתת בלי להיעלם, ולסיים פרקים בחסד.",
+ expr:"הכישרון יכול להופיע כיצירה או כשליחות: אמנות, הוראה, טיפול או פעילות שמשרתת קהל רחב.",
+ soul:"ייתכן שבפנים זה צורך שלחיים תהיה משמעות, ולהרגיש שמה שאת/ה עושה משפיע מעבר לעצמך.",
+ persona:"מבחוץ את/ה נראה/ית אצילי/ה, פתוח/ה ומקבל/ת. יש מי שמרגישים בזה גם מרחק מסוים.",
+ year:"זווית אחרת: שנה 9 סוגרת מחזור. זמן לסיים, לפנות מקום ולסלוח, כדי שההתחלה הבאה תהיה נקייה. מה שעוזב עכשיו מפנה מקום לחדש."},
+11:{essence:"אפשר לראות את 11 גם כשיעור ברגישות: הקליטה החדה של אנשים ורעיונות היא מתנה, אבל היא גם יכולה לייצר מתח ועצבנות. מה שעוזר: סביבה רגועה, קרקוע בגוף, ואמון בתחושות הבטן.",
+ expr:"הכישרון יכול להופיע כיכולת להשפיע דרך השראה, לא דרך כוח: מורה, מדריך/ה, אמן/ית או מי שאומר/ת את המשפט שכולם היו צריכים לשמוע.",
+ soul:"ייתכן שבפנים זה צורך במשמעות רוחנית ובחיבור, יותר מאשר בהישגים. גם ספק עצמי יכול להיות חלק מהדרך.",
+ persona:"מבחוץ את/ה עשוי/ה להיראות עדין/ה ומיוחד/ת, ולפעמים מושך/ת תשומת לב גם בלי לרצות בה."},
+22:{essence:"אפשר לראות את 22 גם כשיעור בצעדים קטנים: החזון גדול, והלחץ להגשים אותו יכול להביא לספק עצמי או לקיפאון. מה שעוזר: לפרק את החלום לשלבים מעשיים ולהתחיל.",
+ expr:"הכישרון יכול להופיע כשילוב נדיר של רעיון גדול ויכולת ביצוע: לנהל אנשים ומשאבים לקראת מטרה שתחזיק שנים.",
+ soul:"ייתכן שבפנים זה צורך לבנות משהו שיועיל לאחרים, ולא רק להצליח באופן אישי.",
+ persona:"מבחוץ את/ה נראה/ית מעשי/ת ובטוח/ה. רק מעטים רואים את הלחץ והאחריות שאת/ה סוחב/ת."},
+33:{essence:"אפשר לראות את 33 גם כשיעור בגבולות של נתינה: יש בך כוח לרפא, ללמד ולהכיל, אבל קל להישחק. המורה הגדול/ה מלמד/ת קודם כול בדוגמה אישית, כולל בדאגה לעצמו/ה.",
+ expr:"הכישרון יכול להופיע כיכולת להרים אחרים: להוראה, להורות, לטיפול ולכל מקום שבו נוכחות חמה משנה אנשים.",
+ soul:"ייתכן שבפנים זה צורך שכולם יהיו בסדר, עד כדי שכחה של הצרכים שלך. הלמידה היא שגם את/ה חלק מה'כולם'.",
+ persona:"מבחוץ את/ה משדר/ת חום ואכפתיות, ואנשים פונים אליך בקלות לעזרה ולעצה."}
+};
+
+/* =====================================================================
+   ממשק חדש: מסכים, קלפים, העמקה בלחיצה, סימני שאלה, ניווט.
+   המנוע (analyze וכל הנתונים) לא שונה: התוכן נשמר כמו שהוא, ורק מסודר מחדש.
+   ===================================================================== */
+let showTheory=true;
+const $=id=>document.getElementById(id);
+const smooth=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
+const ICON={
+  prev:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>',
+  next:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>'};
+
+/* ---------- מילון למונחים: סימני שאלה ---------- */
+const GLOSS={};
+DEFS.forEach(d=>GLOSS[d[0]]=d[2]);
+Object.assign(GLOSS,{
+  "מספרי הליבה":"ארבעת המספרים המרכזיים במפה: שביל החיים (מתאריך הלידה), ומהשם: מספר הביטוי, דחף הנשמה ומספר האישיות.",
+  "בגרות":GLOSS["הבגרות"],
+  "פסגה":"הנושא וההזדמנות של אחת מארבע תקופות החיים. מחושבת מרכיבי תאריך הלידה.",
+  "אתגר":"המכשול שכל תקופה מבקשת ללמוד לעבור. אתגר 0 פירושו שאין מכשול אחד מוגדר, והמשימה היא לבחור.",
+  "מחזורי החיים":"החיים מתחלקים לארבע תקופות. לכל תקופה פסגה (ההזדמנות) ואתגר (המכשול). התקופה הראשונה מסתיימת בגיל 36 פחות שביל החיים, וכל תקופה אחריה נמשכת תשע שנים, חוץ מהאחרונה.",
+  "מספרי השם":"כל אות בשם מקבלת ערך מ-1 עד 9. מסכום כל האותיות, התנועות והעיצורים נגזרים מספרים שונים.",
+  "גימטריה":"שיטה עברית שבה כל אות מקבלת ערך מ-1 עד 9: א=1 עד ט=9, י=1 עד צ=9, ק=1 עד ת=4.",
+  "תנועות ועיצורים":"בעברית האותיות א, ה, ו, י נחשבות תנועות, ומהן מחושב דחף הנשמה. שאר האותיות הן עיצורים, ומהם מחושב מספר האישיות.",
+  "טבלת הלידה":"ספרות תאריך הלידה מסודרות בריבוע 3×3. שורה, טור או אלכסון מלאים יוצרים חץ של כוח, וריקים יוצרים חץ של חולשה.",
+  "חץ":"שורה, טור או אלכסון בטבלת הלידה. חץ מלא מסמן חוזקה, וחץ ריק מסמן נקודה לפיתוח.",
+  "מחזור תשע השנים":"החיים נעים במחזורים של תשע שנים, מהתחלה (שנה 1) ועד סיום (שנה 9). השנה האישית אומרת באיזה שלב של המחזור את/ה עכשיו.",
+  "משפחות המספרים":"המספרים מתחלקים לשלוש משפחות: 1-5-7 (עצמאות ומחשבה), 2-4-8 (חומר ועשייה), 3-6-9 (רגש ויצירה). מספרים מאותה משפחה זורמים יחד בקלות.",
+  "מספר מורכב":"הסכום לפני הצמצום, למשל 29 ב-29/11. הוא מוסיף גוון למספר הסופי.",
+  "מספר מאסטר":"11, 22 ו-33 אינם מצומצמים לספרה אחת. הם מסמנים פוטנציאל גבוה ומתח פנימי מוגבר.",
+  "השם הנוכחי":"השם שבו את/ה משתמש/ת היום. שם הלידה מתאר את מי שנולדת להיות, והשם הנוכחי מוסיף שכבה: את האנרגיה שאת/ה מקרין/ה בפועל.",
+  "זווית נוספת":"ניסוח אחר לאותו מספר. אם הטקסט הראשי לא קולע, ייתכן שהזווית הזו תתאר אותך טוב יותר."
+});
+const termFor=title=>{const t=String(title).replace(/<[^>]+>/g,"");const d=DEFS.find(x=>t.includes(x[0]));return d?d[0]:null;};
+const qm=term=>GLOSS[term]?`<button type="button" class="qm" data-term="${esc(term)}" aria-expanded="false" aria-label="מה זה ${esc(term)}?">?</button>`:"";
+document.addEventListener("click",e=>{
+  const b=e.target.closest(".qm");if(!b)return;
+  e.preventDefault();e.stopPropagation();
+  const open=b.getAttribute("aria-expanded")==="true";
+  const host=b.closest("[data-qmhost]")||b.closest("h2,h3,h4,dt,summary,.shead")||b.parentElement;
+  host.parentElement.querySelectorAll(":scope > .qmbox").forEach(x=>{if(x.qmFor&&x.qmFor!==b)x.qmFor.setAttribute("aria-expanded","false");});
+  if(b.qmBox&&b.qmBox.isConnected){b.qmBox.remove();b.qmBox=null;b.setAttribute("aria-expanded","false");return;}
+  [...host.parentElement.children].filter(x=>x.classList.contains("qmbox")).forEach(x=>x.remove());
+  if(open){b.setAttribute("aria-expanded","false");return;}
+  const t=b.dataset.term,box=document.createElement("span");
+  box.className="qmbox";box.setAttribute("role","note");box.qmFor=b;
+  box.innerHTML=`<b>${esc(t)}</b>${esc(GLOSS[t]||"")}`;
+  host.insertAdjacentElement("afterend",box);b.qmBox=box;b.setAttribute("aria-expanded","true");
+  try{box.scrollIntoView({block:"nearest",behavior:smooth()});}catch(e){}
+},true);
+
+/* ---------- זווית נוספת + משוב (נשמר רק במכשיר) ---------- */
+const FBF={"r-lp":["LP","essence"],"r-expr":["expr","expr"],"r-soul":["soul","soul"],"r-pers":["pers","persona"],"r-py":["py","year"]};
+function altText(id,n){const f=FBF[id];if(!f)return "";n=parseInt(n,10);if(!n)return "";
+  return (ALT[n]&&ALT[n][f[1]])||(ALT[single(n)]&&ALT[single(n)][f[1]])||"";}
+let FB={};try{FB=JSON.parse(localStorage.getItem("nm-fb")||"{}");}catch(e){}
+const fbSave=()=>{try{localStorage.setItem("nm-fb",JSON.stringify(FB));}catch(e){}};
+function fbHTML(id,n){
+  const alt=altText(id,n);if(!FBF[id])return "";
+  const key=FBF[id][0]+n,v=FB[key]||"";
+  const b=(val,t)=>`<button type="button" data-fb="${key}" data-v="${val}" aria-pressed="${v===val}">${t}</button>`;
+  return `<div class="fbk" data-alt="${esc(alt)}"><span>קולע לך?</span>${b("yes","קולע")}${b("part","חלקית")}${b("no","לא קולע")}${v==="no"&&alt?altBox(alt,FB[key+"alt"]):""}</div>`;}
+const altBox=(alt,ok)=>`<div class="fbalt"><b>זווית נוספת ${qm("זווית נוספת")}</b><span>${alt}</span>${ok?`<span class="mono" style="font-size:.8rem;color:var(--teal);margin-top:6px">סימנת שהזווית הזו קולעת יותר</span>`:`<button type="button" class="btn ghost small" data-altok style="margin-top:8px">הזווית הזו קולעת יותר</button>`}</div>`;
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-fb]");
+  if(b){const box=b.closest(".fbk"),key=b.dataset.fb,v=b.dataset.v;
+    FB[key]=FB[key]===v?"":v;fbSave();
+    box.querySelectorAll("[data-fb]").forEach(x=>x.setAttribute("aria-pressed",String(FB[key]===x.dataset.v)));
+    box.querySelectorAll(".fbalt").forEach(x=>x.remove());
+    const alt=box.dataset.alt;
+    if(FB[key]==="no"){if(alt)box.insertAdjacentHTML("beforeend",altBox(alt,FB[key+"alt"]));
+      else box.insertAdjacentHTML("beforeend",`<div class="fbalt"><span>תודה. לא לכל מספר יש כאן ניסוח חלופי, אבל כדאי לקרוא גם את שאר הקלפים: לעתים מספר אחר במפה מאזן את התמונה.</span></div>`);}
+    return;}
+  const a=e.target.closest("[data-altok]");
+  if(a){const box=a.closest(".fbk"),key=box.querySelector("[data-fb]").dataset.fb;FB[key+"alt"]=1;fbSave();
+    a.outerHTML=`<span class="mono" style="font-size:.8rem;color:var(--teal);margin-top:6px;display:block">תודה. סימנת שהזווית הזו קולעת יותר</span>`;}
+});
+
+/* ---------- בניית קלפים ---------- */
+function kardFromReading(r){
+  const id=r.id||"",med=r.querySelector(".med"),body=r.querySelector(".rbody");
+  const n=med?(med.querySelector(".n")||{}).textContent||"":"";
+  const c=med&&med.querySelector(".c")?med.querySelector(".c").textContent:"";
+  const h3=body.querySelector("h3"),title=h3?h3.innerHTML:"";
+  const sub=body.querySelector(":scope > .sub");
+  const rest=[...body.children].filter(x=>x!==sub&&!x.matches("h3,.def"));
+  const firstP=rest.find(x=>x.tagName==="P");
+  const restHTML=rest.filter(x=>x!==firstP).map(x=>x.outerHTML).join("");
+  const term=termFor(title);
+  const fb=fbHTML(id,n);
+  const deep=(restHTML||fb)?`<details class="deep"><summary>להעמיק</summary><div class="dbody">${restHTML}${fb}</div></details>`:"";
+  return `<article class="kard${med&&med.classList.contains("rose")?" rose":""}"${id?` id="${id}"`:""}>
+    <p class="k">${sub?sub.innerHTML:""}</p>
+    <div class="big">${n}${c?`<small>${c}</small>`:""}</div>
+    <h3>${title}${term?qm(term):""}</h3>
+    ${firstP?`<p class="x">${firstP.innerHTML}</p>`:""}${deep}</article>`;
+}
+const deckHTML=kards=>kards.length?`<div class="deck" data-deck>${kards.join("")}</div>
+  <div class="deck-ctl"><button type="button" data-dk="-1" aria-label="הקלף הקודם">${ICON.prev}</button><div><div class="dots" aria-hidden="true"></div><div class="deck-count" aria-live="polite"></div></div><button type="button" data-dk="1" aria-label="הקלף הבא">${ICON.next}</button></div>`:"";
+function deckIndex(dk){const ks=[...dk.querySelectorAll(".kard")];const r=dk.getBoundingClientRect(),mid=r.left+r.width/2;
+  let best=0,bd=1e9;ks.forEach((k,i)=>{const b=k.getBoundingClientRect(),d=Math.abs(b.left+b.width/2-mid);if(d<bd){bd=d;best=i;}});return best;}
+function deckUpdate(dk){const ks=[...dk.querySelectorAll(".kard")],i=deckIndex(dk),ctl=dk.nextElementSibling;
+  ks.forEach((k,j)=>k.classList.toggle("on",j===i));
+  if(!ctl)return;ctl.querySelector(".dots").innerHTML=ks.length>1&&ks.length<=12?ks.map((_,j)=>`<i class="${j===i?"on":""}"></i>`).join(""):"";
+  ctl.querySelector(".deck-count").textContent=ks.length>1?`${i+1} / ${ks.length}`:"";
+  ctl.querySelector('[data-dk="-1"]').disabled=i===0;ctl.querySelector('[data-dk="1"]').disabled=i===ks.length-1;}
+function deckGo(dk,i,inst){const ks=dk.querySelectorAll(".kard");if(!ks[i])return;
+  const k=ks[i],dr=dk.getBoundingClientRect(),kr=k.getBoundingClientRect();
+  dk.scrollBy({left:(kr.left+kr.width/2)-(dr.left+dr.width/2),behavior:inst?"auto":smooth()});}
+function setupDecks(root){root.querySelectorAll("[data-deck]").forEach(dk=>{
+  if(dk.ready)return;dk.ready=true;let t;
+  dk.addEventListener("scroll",()=>{clearTimeout(t);t=setTimeout(()=>deckUpdate(dk),60);},{passive:true});
+  deckUpdate(dk);});}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-dk]");if(!b)return;
+  const dk=b.closest(".deck-ctl").previousElementSibling;deckGo(dk,deckIndex(dk)+(+b.dataset.dk));});
+
+/* ---------- מסכים ---------- */
+let SC=[],cur=null,seen=new Set();
+const shead=(title,term,kick)=>`<div class="shead"><h2>${title}${term?qm(term):""}</h2>${kick?`<p class="kick">${kick}</p>`:""}</div>`;
+const item=(sum,body,open)=>`<details class="item"${open?" open":""}><summary>${sum}</summary><div class="ib">${body}</div></details>`;
+const leadOf=sec=>{const l=sec&&sec.querySelector(":scope > .lead");return l?l.innerHTML:"";};
+function buildScreens(raw,inp){
+  SC=[];const add=(id,label,count,html)=>SC.push({id,label,count,html});
+  const g=id=>raw.querySelector("#"+id);
+  /* map */
+  {const s=g("overview");const nm=(inp.heName||"").trim().split(/\s+/)[0]||"";
+    const sentence=s.querySelector(".sentence");
+    const MAPID={"שביל החיים":"r-lp","ביטוי / גורל":"r-expr","דחף הנשמה":"r-soul","אישיות":"r-pers","יום הלידה":"r-bday","בגרות":"r-mat"};
+    const TERM={"ביטוי / גורל":"מספר הביטוי","אישיות":"מספר האישיות","בגרות":"הבגרות"};
+    const tiles=[...s.querySelectorAll(".core .tile")].map(t=>{const l=t.querySelector(".l").textContent,id=MAPID[l]||(l.startsWith("שנה אישית")?"r-py":"");
+      const term=TERM[l]||(l.startsWith("שנה אישית")?"שנה אישית":l);
+      return `<div class="tilewrap"><button type="button" class="tilebtn" data-goto="${id}"><span class="n">${t.querySelector(".n").textContent}</span><span class="c">${t.querySelector(".c").innerHTML}</span><span class="l">${l}</span></button>${qm(term)}</div>`;});
+    const syn=[...s.querySelectorAll(".synth p")].map(p=>p.outerHTML);
+    add("overview","המפה","",`${shead(`המפה של ${esc(nm)}`,"מספרי הליבה",`${inp.bdate.split("-").reverse().join(".")} · לחיצה על מספר פותחת את הקלף שלו`)}
+      ${sentence?`<div class="sentence">${sentence.innerHTML}</div>`:""}
+      <div class="tiles" data-qmhost>${tiles.join("")}</div>
+      ${syn.slice(0,2).join("")}${syn.length>2?item("עוד מהסיכום",syn.slice(2).join("")):""}
+      <h3 class="sub3">המסע במפה</h3><ol class="journey" id="journey"></ol>`);}
+  /* focus / topics */
+  const F=g("focus"),T=g("topics");
+  if(F){const h=F.querySelector("h2").textContent;const fac=[...F.querySelectorAll(".facet")].map((f,i)=>item(f.querySelector("b").textContent,`<p style="margin:0">${f.querySelector("p").innerHTML}</p>`,i===0));
+    add("focus",h.replace("מיקוד: ",""),`${fac.length} נושאים`,`${shead(h,"",leadOf(F))}${fac.join("")}${T?`<h3 class="sub3">${T.querySelector("h2").textContent}</h3>${T.querySelector(".chips").outerHTML}`:""}`);}
+  /* core */
+  {const s=g("core");const ks=[...s.querySelectorAll(".reading")].map(kardFromReading);const note=s.querySelector(":scope > p.sub");
+    add("core","הליבה",`${ks.length} קלפים`,`${shead("הליבה: שביל החיים ומספרי התאריך","שביל החיים","הדרך שלך, מתאריך הלידה")}${deckHTML(ks)}${note?`<p class="muted" style="font-size:.92rem">${note.innerHTML}</p>`:""}`);}
+  /* name */
+  {const s=g("name");if(s){const ks=[...s.querySelectorAll(".reading")].map(kardFromReading);
+    const letters=s.querySelector(".letters"),legend=s.querySelector(".legend");
+    add("name","השם",`${ks.length} קלפים`,`${shead("מספרי השם","מספרי השם",esc(inp.heName))}
+      ${letters?`<div data-qmhost><p class="mono" style="margin:0 0 6px;font-size:.88rem;color:var(--muted)">האותיות והערכים שלהן ${qm("תנועות ועיצורים")}</p></div>${letters.outerHTML}${legend?`<p class="legend">${legend.innerHTML}</p>`:""}`:""}
+      ${deckHTML(ks)}`);}}
+  /* cycles */
+  {const s=g("cycles");const rows=[...s.querySelectorAll("tbody tr")];let curI=0;
+    const ks=rows.map((tr,i)=>{const td=tr.querySelectorAll("td");const now=tr.classList.contains("now");if(now)curI=i;
+      const ages=td[0].cloneNode(true);ages.querySelectorAll(".pill").forEach(p=>p.remove());const yrs=ages.querySelector("small");const yt=yrs?yrs.textContent:"";if(yrs)yrs.remove();ages.querySelectorAll("br").forEach(b=>b.remove());
+      const ptxt=td[2].cloneNode(true),ptr=ptxt.querySelector(".trace");if(ptr)ptr.remove();
+      const ctxt=td[4].cloneNode(true),ctr=ctxt.querySelector(".trace");if(ctr)ctr.remove();
+      const pn=td[1].textContent.trim(),cn=td[3].textContent.trim();
+      return `<article class="kard" id="cy-${i}"><p class="k">תקופה ${i+1} מתוך 4 · גיל ${ages.textContent.trim()} · ${yt}</p>${now?`<span class="here">את/ה כאן</span>`:""}
+        <div class="big">${pn}</div><h3>פסגה ${pn}${qm("פסגה")}</h3><p class="x">${ptxt.innerHTML}</p>
+        <details class="deep"${now?" open":""}><summary>להעמיק: האתגר</summary><div class="dbody"><h4>אתגר ${cn}${qm("אתגר")}</h4><p>${ctxt.innerHTML}</p>${ptr?`<div class="trace">פסגה ${ptr.textContent}</div>`:""}${ctr?`<div class="trace">אתגר ${ctr.textContent}</div>`:""}</div></details></article>`;});
+    const curF=s.querySelector(".facets .facet p");
+    add("cycles","מחזורי החיים","4 תקופות",`${shead("מחזורי החיים","מחזורי החיים","ארבע תקופות · לכל אחת פסגה ואתגר")}
+      ${curF?`<p class="para">${curF.innerHTML}</p>`:""}${deckHTML(ks)}${item("איך מחשבים את התקופות",`<p style="margin:0">${leadOf(s)}</p>`)}`);
+    SC[SC.length-1].start=curI;}
+  /* year */
+  {const s=g("year");const ks=[...s.querySelectorAll(".reading")].map(kardFromReading);const yrs=s.querySelector(".years");
+    add("year","השנה שלך",`${ks.length} קלפים`,`${shead("השנה האישית","שנה אישית","היכן את/ה במחזור תשע השנים")}
+      <div data-qmhost><p class="mono" style="margin:0 0 6px;font-size:.88rem;color:var(--muted)">המחזור שלך לאורך השנים ${qm("מחזור תשע השנים")}</p></div>${yrs?yrs.outerHTML:""}${deckHTML(ks)}`);}
+  /* grid */
+  {const s=g("grid");const svg=s.querySelector("svg");
+    const arrows=[...s.querySelectorAll(".arrow")].map(a=>{const c=a.cloneNode(true);const b=c.querySelector("b"),pill=c.querySelector(".pill");
+      const sum=`<span>${b?b.textContent:""} ${pill?pill.outerHTML:""}</span>`;if(b)b.remove();if(pill)pill.remove();c.querySelectorAll("br").forEach(x=>x.remove());
+      return item(sum,`<p style="margin:0">${c.innerHTML.trim()}</p>`);});
+    add("grid","טבלת הלידה",`${arrows.length} ממצאים`,`${shead("טבלת הלידה","טבלת הלידה","ספרות תאריך הלידה בריבוע 3×3")}
+      <div class="gridbox">${svg?svg.outerHTML:""}</div><div data-qmhost><p class="mono" style="margin:0 0 8px;font-size:.88rem;color:var(--muted)">מה עולה מהטבלה ${qm("חץ")}</p></div>${arrows.join("")}`);}
+  /* love */
+  {const s=g("love");if(s){const cp=s.querySelector(".compat");const kids=[...s.children].filter(x=>!x.matches("h2,.def,.lead,.compat,.eyebrow"));
+    const first=kids.find(x=>x.tagName==="P");const rest=kids.filter(x=>x!==first).map(x=>x.outerHTML).join("");
+    add("love","התאמה זוגית","",`${shead("התאמה זוגית","משפחות המספרים","בעיקר דרך שבילי החיים")}${cp?cp.outerHTML:""}${first?first.outerHTML:""}${rest?item("להעמיק בהתאמה",rest):""}`);}}
+  /* change */
+  {const s=g("change");if(s){const ks=[...s.querySelectorAll(".reading")].map(kardFromReading);
+    const kids=[...s.children].filter(x=>!x.matches("h2,.def,.lead,.reading,.eyebrow")).map(x=>x.outerHTML).join("");
+    add("change","השם הנוכחי","",`${shead("השם הנוכחי","השם הנוכחי",esc(inp.curName))}${kids}${deckHTML(ks)}`);}}
+  /* topics, when no focus was chosen */
+  if(!F&&T)add("topics","בחירת נושא","",`${shead(T.querySelector("h2").textContent,"","אהבה, קריירה, כסף או צמיחה")}${T.querySelector(".chips").outerHTML}`);
+  /* guide */
+  {const s=g("map");if(s){const layers=[...s.querySelectorAll(".layer")].map(x=>x.outerHTML).join("");
+    const steps=s.querySelector("ol.steps"),tips=s.querySelector("ul.tips");const dl=s.querySelector("details.gloss dl");
+    if(dl)[...dl.querySelectorAll("dt")].forEach(dt=>{const dd=dt.nextElementSibling;if(dd&&!GLOSS[dt.textContent])GLOSS[dt.textContent]=dd.textContent;});
+    add("guide","מדריך ומילון","",`${shead("מדריך ומילון","","כל המספרים במקום אחד, וכל המונחים")}
+      ${item("איך לקרוא את המפה",(steps?steps.outerHTML:"")+(tips?tips.outerHTML:""))}
+      <h3 class="sub3">כל המספרים שלך</h3>${layers}
+      <h3 class="sub3" id="glossTitle">מילון מונחים</h3>
+      <input type="search" class="gsearch" id="glossQ" placeholder="חיפוש מושג… (למשל: פסגה, נשמה)" aria-labelledby="glossTitle" autocomplete="off">
+      <dl class="gloss" id="glossList">${Object.entries(GLOSS).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>`);}}
+  /* render */
+  const host=$("screens");
+  host.innerHTML=SC.map((x,i)=>{const pv=SC[i-1],nx=SC[i+1];
+    return `<section class="screen" data-s="${x.id}" id="s-${x.id}" hidden>${x.html}
+      <div class="pager">${pv?`<button type="button" class="btn ghost" data-go="${pv.id}">→ ${pv.label}</button>`:""}${nx?`<button type="button" class="btn" data-go="${nx.id}">${nx.label} ←</button>`:`<button type="button" class="btn" data-go="share">שיתוף ושמירה ←</button>`}</div></section>`;}).join("");
+  host.querySelectorAll(".mi").forEach(a=>{const h=(a.getAttribute("href")||"").slice(1);a.setAttribute("data-goto",h);});
+  $("journey").innerHTML=SC.filter(x=>x.id!=="overview").map(x=>`<li><button type="button" data-go="${x.id}">${x.label}<span>${x.count||""}</span></button></li>`).join("");
+  $("moreList").innerHTML=SC.map(x=>`<li><button type="button" data-go="${x.id}">${x.label}<span>${x.count||""}</span></button></li>`).join("")+
+    `<li><button type="button" data-go="share">שיתוף ושמירה<span>קישור · מסמך</span></button></li><li><button type="button" data-go="edit">שינוי הפרטים<span>חזרה לטופס</span></button></li>`;
+  const gq=$("glossQ");if(gq)gq.addEventListener("input",()=>{const q=gq.value.trim();
+    $("glossList").querySelectorAll("dt").forEach(dt=>{const dd=dt.nextElementSibling,hit=!q||dt.textContent.includes(q)||dd.textContent.includes(q);dt.hidden=dd.hidden=!hit;});});
+}
+function screenEl(id){return id==="share"?$("shareScreen"):$("s-"+id);}
+function show(id,push=true){
+  if(id==="more"){openMore();return;}
+  if(id==="edit"){editForm();return;}
+  const el=screenEl(id);if(!el)return;
+  closeMore();
+  $("entry").hidden=true;document.querySelectorAll("#screens .screen").forEach(s=>s.hidden=true);$("shareScreen").hidden=true;
+  el.hidden=false;cur=id;seen.add(id);
+  const NAVK={overview:"overview",core:"core",name:"name",cycles:"cycles"};
+  document.querySelectorAll(".bnav button").forEach(b=>{const on=b.dataset.go===(NAVK[id]||"more");if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
+  document.querySelectorAll("#moreList button").forEach(b=>{if(b.dataset.go===id)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
+  document.querySelectorAll("#journey button").forEach(b=>b.classList.toggle("seen",seen.has(b.dataset.go)));
+  setupDecks(el);
+  const sc=SC.find(x=>x.id===id);
+  if(sc&&sc.start!=null&&!sc.started){sc.started=true;const dk=el.querySelector("[data-deck]");if(dk)requestAnimationFrame(()=>{deckGo(dk,sc.start,true);deckUpdate(dk);});}
+  window.scrollTo({top:0,behavior:"auto"});
+  const h=el.querySelector("h2");if(h){h.setAttribute("tabindex","-1");h.focus({preventScroll:true});}
+  if(push){try{history.pushState({s:id},"",location.pathname+location.search+"#s="+id);}catch(e){}}
+}
+function goTo(target){
+  if(!target)return;
+  if(target==="frm"){editForm();return;}
+  if(screenEl(target)){show(target);return;}
+  const el=document.getElementById(target);if(!el)return;
+  const sc=el.closest(".screen");if(!sc)return;show(sc.dataset.s);
+  const dk=el.closest("[data-deck]");
+  requestAnimationFrame(()=>{if(dk){const ks=[...dk.querySelectorAll(".kard")];deckGo(dk,ks.indexOf(el));setTimeout(()=>deckUpdate(dk),350);}
+    el.scrollIntoView({behavior:smooth(),block:"nearest"});});
+}
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-go]");if(g){e.preventDefault();show(g.dataset.go);return;}
+  const t=e.target.closest("[data-goto]");if(t){e.preventDefault();goTo(t.dataset.goto);}
+});
+addEventListener("popstate",e=>{const s=(e.state&&e.state.s)||(location.hash.match(/^#s=(\w+)/)||[])[1];
+  if(s&&lastData)show(s,false);else if(!s&&lastData)show("overview",false);});
+const moreDlg=$("moreDlg");
+function openMore(){if(typeof moreDlg.showModal==="function"){if(!moreDlg.open)moreDlg.showModal();}else moreDlg.setAttribute("open","");}
+function closeMore(){if(moreDlg.open){try{moreDlg.close();}catch(e){moreDlg.removeAttribute("open");}}}
+$("moreClose").addEventListener("click",closeMore);
+moreDlg.addEventListener("click",e=>{if(e.target===moreDlg)closeMore();});
+function editForm(){closeMore();document.querySelectorAll("#screens .screen").forEach(s=>s.hidden=true);$("shareScreen").hidden=true;
+  $("entry").hidden=false;$("backToMap").hidden=!lastData;$("bnav").hidden=true;window.scrollTo({top:0});setTimeout(()=>$("heName").focus({preventScroll:true}),200);}
+$("backToMap").addEventListener("click",()=>{$("bnav").hidden=false;show(cur||"overview");});
+$("editBtn").addEventListener("click",editForm);
+
+/* ---------- טופס ---------- */
+function read(){return{heName:$("heName").value,laName:"",curName:$("curName").value,bdate:$("bdate").value,sys:"he",focus:$("focus").value,tdate:"",partnerOn:$("partnerOn").checked,pName:$("pName").value,pDate:$("pDate").value};}
+function fill(d){$("heName").value=d.heName||"";$("curName").value=d.curName||"";$("bdate").value=d.bdate||"";$("focus").value=d.focus||"none";$("partnerOn").checked=!!d.partnerOn;$("pName").value=d.pName||"";$("pDate").value=d.pDate||"";dsSyncAll();sync();}
+const MONTHS=["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
+const opt=(v,t)=>`<option value="${v}">${t}</option>`;
+function dsBuild(box){
+  const cy=new Date().getFullYear(),years=[];for(let y=cy;y>=1900;y--)years.push(y);
+  const lab=box.closest(".f").getAttribute("aria-label");
+  box.innerHTML=`<select data-p="d" aria-label="${lab}: יום">${opt("","יום")}${Array.from({length:31},(_,i)=>opt(i+1,i+1)).join("")}</select>`+
+    `<select data-p="m" aria-label="${lab}: חודש">${opt("","חודש")}${MONTHS.map((m,i)=>opt(i+1,m)).join("")}</select>`+
+    `<select data-p="y" aria-label="${lab}: שנה">${opt("","שנה")}${years.map(y=>opt(y,y)).join("")}</select>`;
+  box.addEventListener("change",()=>dsWrite(box));}
+function dsParts(box){const g=p=>box.querySelector(`[data-p="${p}"]`);return{d:g("d"),m:g("m"),y:g("y")};}
+function dsWrite(box){const {d,m,y}=dsParts(box);
+  if(m.value){const max=new Date(+(y.value||2000),+m.value,0).getDate();[...d.options].forEach(o=>{if(o.value)o.disabled=+o.value>max;});if(+d.value>max)d.value=String(max);}
+  $(box.dataset.for).value=(d.value&&m.value&&y.value)?`${y.value}-${String(m.value).padStart(2,"0")}-${String(d.value).padStart(2,"0")}`:"";}
+function dsRead(box){const {d,m,y}=dsParts(box);const v=$(box.dataset.for).value;const mt=v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(mt&&!y.querySelector(`option[value="${+mt[1]}"]`))y.insertAdjacentHTML("beforeend",opt(+mt[1],+mt[1]));
+  y.value=mt?String(+mt[1]):"";m.value=mt?String(+mt[2]):"";d.value=mt?String(+mt[3]):"";[...d.options].forEach(o=>o.disabled=false);if(mt)dsWrite(box);}
+function dsSyncAll(){document.querySelectorAll(".dsel").forEach(b=>{if(!b.firstChild)dsBuild(b);dsRead(b);});}
+function sync(){$("partnerBox").hidden=!$("partnerOn").checked;}
+$("partnerOn").addEventListener("change",sync);
+let lastData=null;
+function run(goFirst){
+  const d=read();$("err").textContent="";
+  if(!d.heName.trim()||!/[א-ת]/.test(d.heName)){$("err").textContent="חסר שם מלא בעברית.";return false;}
+  if(!d.bdate){$("err").textContent="חסר תאריך לידה.";return false;}
+  if(d.partnerOn&&!d.pDate){$("err").textContent="חסר תאריך הלידה של בן/בת הזוג.";$("moreBox").open=true;return false;}
+  $("raw").innerHTML=analyze(d);lastData=d;
+  buildScreens($("raw"),d);
+  $("who").textContent=`${d.heName.trim()} · ${d.bdate.split("-").reverse().join(".")}`;
+  $("note").hidden=false;$("bnav").hidden=false;updateLink();seen=new Set();
+  if(goFirst)show(goFirst);
+  return true;
+}
+$("frm").addEventListener("submit",e=>{e.preventDefault();$("sharedNote").hidden=true;run(lastData&&lastData.focus!==$("focus").value&&$("focus").value!=="none"?"focus":"overview");});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-focus]");if(!b||!lastData)return;
+  $("focus").value=b.dataset.focus;run(b.dataset.focus==="none"?"overview":"focus");});
+
+/* ---------- מפה חדשה ---------- */
+function doReset(msg){
+  lastData=null;$("err").textContent="";$("sharedNote").hidden=true;
+  fill({focus:"none"});$("raw").innerHTML="";$("screens").innerHTML="";$("moreBox").open=false;$("who").textContent="";$("note").hidden=true;
+  try{if(location.search||location.hash)history.replaceState(null,"",location.pathname);}catch(e){}
+  editForm();
+  const st=$("frmStatus");st.textContent=msg||"הטופס נוקה. אפשר להזין פרטים חדשים.";clearTimeout(st.t);st.t=setTimeout(()=>st.textContent="",6000);
+}
+function closeDlg(){const d=$("resetDlg");if(d.open){try{d.close();}catch(e){d.removeAttribute("open");}}}
+function askReset(){
+  if(!lastData){doReset();return;}closeMore();
+  const nm=personName();$("resetWho").textContent=nm?` של ${nm}`:"";$("rsWa").href=$("waLink").href;
+  const d=$("resetDlg");if(typeof d.showModal==="function")d.showModal();else doReset();
+}
+document.addEventListener("click",e=>{if(e.target.closest("[data-reset]")){e.preventDefault();askReset();}});
+$("rsCancel").addEventListener("click",closeDlg);
+$("rsSkip").addEventListener("click",()=>{closeDlg();doReset();});
+$("rsWa").addEventListener("click",()=>{closeDlg();setTimeout(()=>doReset("המפה נשלחה לוואטסאפ, והטופס מוכן למפה חדשה."),300);});
+$("rsSend").addEventListener("click",async()=>{
+  const url=shareURL(),nm=personName();
+  if(navigator.share){try{await navigator.share({title:"מפת המספרים",text:`מפת המספרים${nm?" של "+nm:""}`,url});closeDlg();doReset("המפה נשלחה, והטופס מוכן למפה חדשה.");return;}catch(e){if(e&&e.name==="AbortError")return;}}
+  try{await navigator.clipboard.writeText(url);closeDlg();doReset("הקישור למפה הקודמת הועתק, והטופס מוכן למפה חדשה.");}
+  catch(e){closeDlg();show("share");$("linkBox").focus();$("linkBox").select();status("לא הצלחתי לשלוח אוטומטית. הקישור מסומן: העתיקו אותו, ואז בחרו שוב \"מפה חדשה\".");}
+});
+
+/* ---------- שיתוף ---------- */
+const KEYS=["heName","laName","curName","bdate","sys","focus","tdate","partnerOn","pName","pDate"];
+const BASE=/github\.io$/.test(location.hostname)?location.origin+location.pathname:"https://boazbareket1.github.io/numerology-map/new/";
+const todayISO=()=>{const x=new Date();return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;};
+function encodeData(d){const arr=KEYS.map(k=>k==="partnerOn"?(d[k]?1:0):(k==="tdate"?"":(d[k]||"")));
+  const b=btoa(unescape(encodeURIComponent(JSON.stringify(arr))));return b.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+function decodeData(t){try{let b=t.replace(/-/g,"+").replace(/_/g,"/");while(b.length%4)b+="=";
+  const arr=JSON.parse(decodeURIComponent(escape(atob(b))));if(!Array.isArray(arr))return null;
+  const d={};KEYS.forEach((k,i)=>d[k]=k==="partnerOn"?!!arr[i]:String(arr[i]||""));
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d.bdate))return null;d.sys="he";d.laName="";d.tdate="";
+  if(!["none","love","career","money","growth"].includes(d.focus))d.focus="none";return d;}catch(e){return null;}}
+function readShared(){let t=null;try{t=new URLSearchParams(location.search).get("d");}catch(e){}
+  if(!t){const m=location.hash.match(/^#d=(.+)$/);if(m)t=m[1];}return t?decodeData(t):null;}
+const shareURL=()=>lastData?BASE+"?d="+encodeData(lastData):BASE;
+const personName=()=>((lastData||{}).heName||"").trim();
+const status=msg=>{$("shStatus").textContent=msg;clearTimeout(status.t);status.t=setTimeout(()=>$("shStatus").textContent="",5000);};
+function updateLink(){const u=shareURL();$("linkBox").value=u;
+  $("waLink").href="https://wa.me/?text="+encodeURIComponent(`מפת המספרים${personName()?" של "+personName():""}\n${u}`);}
+async function copyText(t,okMsg,box){
+  try{await navigator.clipboard.writeText(t);status(okMsg);}
+  catch(e){if(box){box.focus();box.select();status("לא הצלחתי להעתיק אוטומטית. הקישור מסומן, אפשר להעתיק אותו ידנית.");}else status("ההעתקה נחסמה בדפדפן הזה. נסו את ההורדה כקובץ.");}}
+$("shLink").addEventListener("click",async()=>{const url=shareURL();
+  if(navigator.share){try{await navigator.share({title:"מפת המספרים",text:`מפת המספרים${personName()?" של "+personName():""}`,url});status("הקישור שותף.");return;}catch(e){if(e&&e.name==="AbortError")return;}}
+  copyText(url,"הקישור הועתק. אפשר להדביק אותו בכל מקום.",$("linkBox"));});
+$("cpLink").addEventListener("click",()=>copyText(shareURL(),"הקישור הועתק.",$("linkBox")));
+$("linkBox").addEventListener("focus",e=>e.target.select());
+function allOpen(fn){
+  const hid=[...document.querySelectorAll("#screens .screen[hidden]")],closed=[...$("screens").querySelectorAll("details:not([open])")];
+  document.body.classList.add("doc");hid.forEach(s=>s.hidden=false);closed.forEach(d=>d.open=true);
+  try{return fn($("screens"));}finally{document.body.classList.remove("doc");hid.forEach(s=>s.hidden=true);closed.forEach(d=>d.open=false);}}
+function buildDoc(){
+  const css=document.querySelector("style").textContent;
+  const html=allOpen(sc=>{const c=sc.cloneNode(true);c.querySelectorAll(".pager,.deck-ctl,.fbk,.qm,.qmbox,.gsearch").forEach(n=>n.remove());
+    c.querySelectorAll("[hidden]").forEach(n=>n.removeAttribute("hidden"));c.querySelectorAll("details").forEach(d=>d.setAttribute("open",""));return c.innerHTML;});
+  const nm=personName(),url=shareURL(),today=todayISO().split("-").reverse().join(".");
+  return `<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מפת המספרים${nm?" · "+esc(nm):""}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Secular+One&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>${css}
+body{padding-bottom:30px}.screen{margin-bottom:36px;border-top:3px solid var(--acc);padding-top:16px}</style></head>
+<body class="doc"><div class="wrap">
+<header class="top"><h1>מפת המספרים${nm?" של "+esc(nm):""}</h1><span class="who">נוצר ב-${today}</span></header>
+<p><a href="${esc(url)}">לפתיחת המפה בכלי האינטראקטיבי</a></p>
+${html}
+<p class="fine">${$("note").innerHTML}</p>
+</div></body></html>`;}
+const docName=()=>`מפת-המספרים${personName()?"-"+personName().replace(/\s+/g,"-"):""}.html`;
+function downloadDoc(){
+  const blob=new Blob([buildDoc()],{type:"text/html;charset=utf-8"});const u=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=u;a.download=docName();document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),4000);status("המסמך ירד למכשיר. אפשר לפתוח אותו בכל דפדפן ולשלוח אותו הלאה.");}
+$("dlDoc").addEventListener("click",downloadDoc);
+$("shDoc").addEventListener("click",async()=>{
+  try{const file=new File([buildDoc()],docName(),{type:"text/html"});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"מפת המספרים"});status("המסמך שותף.");return;}}
+  catch(e){if(e&&e.name==="AbortError")return;}
+  downloadDoc();});
+$("prDoc").addEventListener("click",()=>{const closed=[...$("screens").querySelectorAll("details:not([open])")];
+  closed.forEach(d=>d.open=true);const restore=()=>{closed.forEach(d=>d.open=false);removeEventListener("afterprint",restore);};
+  addEventListener("afterprint",restore);window.print();});
+$("cpText").addEventListener("click",()=>{
+  const body=allOpen(sc=>sc.innerText).replace(/\n{3,}/g,"\n\n").trim();
+  copyText(`מפת המספרים${personName()?" של "+personName():""}\n${shareURL()}\n\n${body}`,"כל הטקסט של המפה הועתק.");});
+
+(function init(){
+  try{const back=new URLSearchParams(location.search).get("back");
+    if(back&&/^https:\/\/boazbareket1\.github\.io\//.test(back)){
+      const bar=document.createElement("a");bar.href=back;bar.id="backBar";bar.textContent="← חזרה למעגל";document.body.appendChild(bar);}}catch(e){}
+  const shared=readShared();
+  if(shared){fill(shared);$("sharedNote").hidden=false;
+    const s=(location.hash.match(/^#s=(\w+)/)||[])[1];
+    if(run(null)){const t=s&&screenEl(s)?s:"overview";show(t,false);try{history.replaceState({s:t},"",location.pathname+location.search+"#s="+t);}catch(e){}}
+    return;}
+  fill({focus:"none"});
+})();
+</script>
+<script src="https://boazbareket1.github.io/access-gate/dev-note.js" data-tool="numerology" defer></script>
+</body>
+</html>
