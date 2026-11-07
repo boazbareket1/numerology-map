@@ -5,348 +5,363 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מפת המספרים</title>
 <meta property="og:title" content="מפת המספרים">
-<meta property="og:description" content="ניתוח אישיות לפי תאריך הלידה והשם, בגימטריה עברית ובשיטה הפיתגוראית, כולל התאמה זוגית ותחזית.">
+<meta property="og:description" content="מפה נומרולוגית אישית מהשם ומתאריך הלידה, בגימטריה עברית: שביל החיים, מספרי השם, מחזורי חיים ושנה אישית.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://boazbareket1.github.io/numerology-map/">
 <meta property="og:image" content="https://boazbareket1.github.io/numerology-map/og.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
 <meta property="og:locale" content="he_IL">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="description" content="ניתוח נומרולוגי מלא בעברית: שביל החיים, מספרי השם בגימטריה ובשיטה הפיתגוראית, מחזורי חיים, טבלת לידה, שנה אישית והתאמה זוגית.">
+<meta name="theme-color" content="#0f6b66">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Cormorant+Garamond:wght@500;600&family=Frank+Ruhl+Libre:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Secular+One&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
-/* Layout: a single reading column; input panel, then a strip of core numerals, then chapters with a brass medallion beside each reading. */
+/* עיצוב 03 של המארג, בגוון הכלי האישי (לבנדר בהיר). טורקיז = אני/מספרים, כחול בטון = זמן ומחזורים. */
 :root{
-  --bg:#eef1ee; --panel:#ffffff; --panel2:#f6f8f6; --line:#d3dbd6;
-  --fg:#16262a; --muted:#566763; --brass:#946a1a; --brass-soft:rgba(148,106,26,.12);
-  --rose:#a2513c; --rose-soft:rgba(162,81,60,.1); --teal:#2f6f6a;
-  --f-display:"Frank Ruhl Libre","David","Times New Roman",serif;
-  --f-body:"Assistant","Arial Hebrew","Segoe UI",Arial,sans-serif;
-  --f-num:"Cormorant Garamond","Georgia",serif;
+  --bg:#f3f1f8; --panel:#fff; --panel2:#ece9f3; --line2:#d6d1e0; --ink:#1f2d3a; --fg:#1f2d3a; --muted:#565f6b;
+  --teal:#0f6b66; --teal-soft:rgba(15,107,102,.10); --concrete:#4a86a3; --slate:#4a5f72; --lav:#8c7bb0;
+  --acc:var(--teal); --acc-soft:var(--teal-soft); --line:#d6d1e0; --brass:#0f6b66; --rose:#8c7bb0;
+  --f-display:"Secular One","Heebo",sans-serif;
+  --f-body:"Heebo","Arial Hebrew","Segoe UI",Arial,sans-serif;
+  --f-num:"Secular One","Heebo",sans-serif;
+  --f-mono:"IBM Plex Mono",Heebo,ui-monospace,Menlo,monospace;
+  color-scheme:light;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0e191b; --panel:#152427; --panel2:#11201f; --line:#26393c;
-  --fg:#e3e7dd; --muted:#97a8a2; --brass:#d4a853; --brass-soft:rgba(212,168,83,.13);
-  --rose:#d98a72; --rose-soft:rgba(217,138,114,.12); --teal:#7cc2b8; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0e191b; --panel:#152427; --panel2:#11201f; --line:#26393c;
-  --fg:#e3e7dd; --muted:#97a8a2; --brass:#d4a853; --brass-soft:rgba(212,168,83,.13);
-  --rose:#d98a72; --rose-soft:rgba(217,138,114,.12); --teal:#7cc2b8; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.7;direction:rtl;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
-.wrap{max-width:900px;margin:0 auto}
-h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;font-weight:700;line-height:1.25}
-header.top{padding-block:40px 20px;display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap;justify-content:space-between}
-header.top h1{font-size:clamp(2rem,6vw,3.1rem)}
-header.top p{margin:6px 0 0;color:var(--muted);max-width:52ch}
-.sigil{font-family:var(--f-num);font-size:1.05rem;color:var(--brass);letter-spacing:.35em;direction:ltr}
-
-/* form */
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
-.form h2{font-size:1.25rem;margin-bottom:4px}
-.form .hint{color:var(--muted);font-size:.92rem;margin:0 0 16px}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px 18px}
-.dsel{display:grid;grid-template-columns:.8fr 1.4fr 1fr;gap:6px}
-.dsel select{font-weight:400;padding:9px 6px}
-label.f,div.f{display:flex;flex-direction:column;gap:5px;font-weight:600;font-size:.92rem;min-width:0}
-label.f small,div.f small{font-weight:400;color:var(--muted)}
-input[type=text],input[type=date],select{font:inherit;color:var(--fg);background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;width:100%}
-input:focus-visible,select:focus-visible,button:focus-visible,.seg label:focus-within{outline:2px solid var(--brass);outline-offset:2px}
-.seg{display:flex;flex-wrap:wrap;gap:6px}
-.seg label{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer;font-size:.93rem;background:var(--panel2)}
-.seg input{accent-color:var(--brass)}
-.seg label:has(input:checked){border-color:var(--brass);background:var(--brass-soft)}
-fieldset{border:0;padding:0;margin:0;min-width:0}
-legend{font-weight:600;font-size:.92rem;margin-bottom:6px}
-.sep{border-top:1px dashed var(--line);margin:18px 0}
-.row-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px}
-button.go{font:inherit;font-weight:700;background:var(--brass);color:var(--bg);border:0;border-radius:10px;padding:11px 26px;cursor:pointer}
-button.ghost{font:inherit;background:none;border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:10px 16px;cursor:pointer}
-.err{color:var(--rose);font-weight:600}
-.example{background:var(--brass-soft);border-radius:10px;padding:10px 14px;font-size:.93rem;margin-bottom:16px}
-.toggle{display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer}
-.toggle input{accent-color:var(--brass);width:18px;height:18px}
-
-/* nav */
-nav.chapters{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);margin-top:28px;padding-block:10px;border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap}
-nav.chapters a{display:inline-block;color:var(--muted);text-decoration:none;font-size:.92rem;padding:4px 11px;border-radius:999px}
-nav.chapters a:hover{color:var(--fg);background:var(--brass-soft)}
-
-/* core strip */
-.core{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;margin-top:22px}
-.tile{border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center;background:var(--panel)}
-.tile .n{font-family:var(--f-num);font-size:2.6rem;line-height:1;color:var(--brass);font-weight:600}
-.tile .c{display:block;font-size:.78rem;color:var(--muted);direction:ltr;font-variant-numeric:tabular-nums;min-height:1.2em}
-.tile .l{font-size:.85rem;font-weight:600;margin-top:4px}
-
-section.ch{margin-top:46px;scroll-margin-top:70px}
-section.ch > h2{font-size:clamp(1.5rem,4vw,2rem);display:flex;align-items:baseline;gap:12px}
-section.ch > h2 .k{font-family:var(--f-num);color:var(--brass);font-size:.9em}
-section.ch > .lead{color:var(--muted);margin:6px 0 18px;max-width:65ch}
-
-.reading{display:grid;grid-template-columns:auto 1fr;gap:18px;padding:20px 0;border-top:1px solid var(--line)}
-.reading:first-of-type{border-top:0}
-.med{width:78px;height:78px;border-radius:50%;border:1.5px solid var(--brass);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;background:var(--brass-soft)}
-.med::after{content:"";position:absolute;inset:5px;border-radius:50%;border:1px solid var(--brass);opacity:.35}
-.med .n{font-family:var(--f-num);font-size:2.3rem;line-height:1;font-weight:600;color:var(--brass)}
-.med .c{font-size:.7rem;color:var(--muted);direction:ltr}
-.med.rose{border-color:var(--rose);background:var(--rose-soft)}
-.med.rose .n{color:var(--rose)}.med.rose::after{border-color:var(--rose)}
-.rbody{min-width:0}
-.rbody h3{font-size:1.25rem}
-.rbody .sub{color:var(--muted);font-size:.9rem;margin-bottom:6px}
-.rbody p{margin:6px 0;max-width:68ch}
-.trace{display:inline-block;direction:ltr;font-variant-numeric:tabular-nums;font-size:.82rem;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 8px;margin-top:6px;max-width:100%;overflow-x:auto;white-space:nowrap}
-.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:10px}
-.two > div{min-width:0}
-.two h4{margin:0 0 4px;font-size:.88rem;letter-spacing:.02em;color:var(--teal)}
-.two h4.neg{color:var(--rose)}
-ul.plain{margin:0;padding-inline-start:18px}
-ul.plain li{margin:2px 0}
-.facets{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:12px}
-.facet{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
-.facet b{display:block;font-family:var(--f-display);font-size:1.02rem;margin-bottom:2px}
-.facet p{margin:0;font-size:.95rem}
-
-.letters{display:flex;flex-wrap:wrap;gap:14px;margin:8px 0 4px}
-.word{display:flex;gap:3px}
-.lt{display:flex;flex-direction:column;align-items:center;min-width:24px;border-radius:6px;padding:3px 2px;background:var(--panel2);border:1px solid var(--line)}
-.lt .ch{font-weight:700;font-size:1.05rem}
-.lt .v{font-family:var(--f-num);font-size:1rem;color:var(--muted);font-weight:600}
-.lt.vow{background:var(--brass-soft);border-color:var(--brass)}
-.lt.vow .v{color:var(--brass)}
-.legend{font-size:.82rem;color:var(--muted)}
-
-.tablewrap{overflow-x:auto;margin-top:10px}
-table{border-collapse:collapse;width:100%;min-width:520px;font-size:.95rem}
-th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
-th{font-size:.82rem;color:var(--muted);font-weight:600}
-td.num{font-family:var(--f-num);font-size:1.5rem;color:var(--brass);font-weight:600;white-space:nowrap}
-td.num.rose{color:var(--rose)}
-tr.now td{background:var(--brass-soft)}
-.pill{display:inline-block;font-size:.75rem;font-weight:700;padding:1px 9px;border-radius:999px;background:var(--brass);color:var(--bg);margin-inline-start:6px;vertical-align:middle}
-.pill.r{background:var(--rose)}
-.pill.t{background:var(--teal)}
-
-.gridbox{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
-.gridbox svg{width:230px;max-width:100%;flex:none}
-.arrows{flex:1;min-width:240px}
-.arrow{padding:8px 0;border-bottom:1px solid var(--line)}
-.arrow b{font-family:var(--f-display)}
-
-.years{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-top:10px}
-.yr{flex:1 0 76px;text-align:center;border:1px solid var(--line);border-radius:10px;padding:8px 4px;background:var(--panel)}
-.yr .y{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.yr .n{font-family:var(--f-num);font-size:1.8rem;color:var(--brass);line-height:1.1;font-weight:600}
-.yr .w{font-size:.78rem}
-.yr.now{border-color:var(--brass);background:var(--brass-soft)}
-
-.compat{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;text-align:center;margin:12px 0}
-.compat .who{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel);min-width:0}
-.compat .who .n{font-family:var(--f-num);font-size:2.4rem;color:var(--brass);line-height:1;font-weight:600}
-.compat .mid{font-family:var(--f-display);font-size:.95rem}
-.meter{display:flex;gap:4px;justify-content:center;margin-top:4px}
-.meter i{width:16px;height:6px;border-radius:3px;background:var(--line)}
-.meter i.on{background:var(--brass)}
-
-.synth{font-size:1.08rem;line-height:1.85}
-.synth p{max-width:68ch;margin:0 0 12px}
-.note{font-size:.85rem;color:var(--muted);margin-top:40px;border-top:1px solid var(--line);padding-top:14px;max-width:70ch}
-.def{font-size:.9rem;color:var(--teal);margin:2px 0 6px;max-width:68ch}
-.def span{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;border:1px solid var(--teal);border-radius:999px;padding:0 8px;margin-inline-end:7px;vertical-align:1px}
-.eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.06em;color:var(--teal);margin-bottom:4px}
-.guide{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:24px}
-.guide h2{font-size:clamp(1.4rem,4vw,1.8rem)}
-.sentence{font-family:var(--f-display);font-size:clamp(1.1rem,3vw,1.3rem);line-height:1.7;margin:14px 0 18px;padding:14px 18px;border-radius:12px;background:var(--brass-soft);max-width:72ch}
-.sentence b{color:var(--brass)}
-ol.steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;counter-reset:st}
-ol.steps li{counter-increment:st;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel2);min-width:0}
-ol.steps li::before{content:counter(st);display:block;font-family:var(--f-num);font-size:1.7rem;line-height:1;color:var(--brass);font-weight:600;margin-bottom:4px}
-ol.steps b{display:block;font-family:var(--f-display)}
-.tips{margin:16px 0 0;padding-inline-start:18px;max-width:72ch}
-.tips li{margin:4px 0}
-.layer{margin-top:22px}
-.layer h3{font-size:1.1rem;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.layer h3 .ln{font-family:var(--f-num);color:var(--brass);font-size:1.4rem}
-.layer h3 small{font-family:var(--f-body);font-weight:400;color:var(--muted);font-size:.88rem}
-.mi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:8px}
-a.mi{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center;text-decoration:none;color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--panel2);min-width:0}
-a.mi:hover,a.mi:focus-visible{border-color:var(--brass);background:var(--brass-soft)}
-a.mi .v{grid-row:span 2;font-family:var(--f-num);font-size:1.6rem;font-weight:600;color:var(--brass);min-width:1.6em;text-align:center;line-height:1}
-a.mi .t{font-weight:700;font-size:.92rem}
-a.mi .d{font-size:.8rem;color:var(--muted);line-height:1.35}
-a.mi.off{opacity:.55}
-a.mi.off .v{color:var(--muted)}
-details.gloss{margin-top:22px;border-top:1px solid var(--line);padding-top:12px}
-details.gloss summary{cursor:pointer;font-family:var(--f-display);font-weight:700;font-size:1.1rem}
-details.gloss dl{display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:8px 16px;margin:12px 0 0}
-details.gloss dt{font-weight:700}
-details.gloss dd{margin:0;color:var(--muted);min-width:0}
-.fabs a{font:inherit;font-weight:700;background:var(--fg);color:var(--bg);border-radius:999px;padding:9px 16px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.18)}
-.fabs{position:fixed;display:flex;gap:8px;left:calc(max(16px,env(safe-area-inset-left,0px)) + 0px);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:8}
-.share{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:24px;scroll-margin-top:16px}
-.share h2{font-size:clamp(1.3rem,4vw,1.6rem)}
-.share-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
-.share-card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--panel2);min-width:0;display:flex;flex-direction:column;gap:8px}
-.share-card b{font-family:var(--f-display);font-size:1.1rem}
-.share-card p{margin:0;font-size:.92rem;color:var(--muted)}
-.btns{display:flex;flex-wrap:wrap;gap:8px}
-.btns .go,.btns .ghost{padding:8px 14px;font-size:.92rem}
-a.ghost{font:inherit;display:inline-flex;align-items:center;border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:8px 14px;font-size:.92rem;text-decoration:none}
-a.ghost:hover,button.ghost:hover{border-color:var(--brass)}
-#linkBox{font:inherit;font-size:.82rem;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;width:100%;min-width:0}
-.status{min-height:1.4em;margin:10px 0 0;font-weight:600;color:var(--teal)}
-.shared{background:var(--brass-soft);border:1px solid var(--brass);border-radius:10px;padding:10px 14px;font-size:.95rem;margin-bottom:16px}
-/* opening screen */
-.hero{--hb:#2f5450;--ht:#f4f1e8;background:var(--hb);color:var(--ht);border-radius:22px;padding:30px 22px 26px;text-align:center}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero{--hb:#1f3b38}}
-:root[data-theme="dark"] .hero{--hb:#1f3b38}
-.hero-q{margin:0 0 6px;font-size:1.1rem;opacity:.9}
-.hero h2{font-size:clamp(1.7rem,6.5vw,2.4rem);margin:0 auto 12px;max-width:20ch}
-.sigil{white-space:nowrap;letter-spacing:.22em}
-.hero-meta{margin:0 0 20px;opacity:.85}
-.hero-btn{font:inherit;font-weight:700;font-size:1.2rem;width:100%;max-width:420px;padding:16px 20px;border:0;border-radius:999px;background:#fffdf7;color:#5c4210;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.2)}
-.hero-btn:focus-visible{outline:3px solid #f0d290;outline-offset:3px}
-.hero-list{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:6px;font-size:.98rem}
-.hero-list li::before{content:"✓ ";font-weight:700}
-.form h2{font-size:1.4rem}
-.form .go{font-size:1.05rem;padding:13px 30px}
-details.more{margin-top:18px;border-top:1px dashed var(--line);padding-top:12px}
-details.more summary{cursor:pointer;font-weight:700;color:var(--teal)}
-details.more summary small{font-weight:400;color:var(--muted)}
-/* results: topic switcher, theory toggle */
-.topics{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-top:28px;scroll-margin-top:70px}
-.topics h2{font-size:1.25rem;margin-bottom:10px}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chips button{font:inherit;font-size:.95rem;border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:999px;padding:8px 15px;cursor:pointer}
-.chips button[aria-pressed="true"]{border-color:var(--brass);background:var(--brass);color:var(--bg);font-weight:700}
-.theory-tg{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted);margin-top:14px;cursor:pointer}
-.theory-tg input{accent-color:var(--brass)}
-#out.simple .def,#out.simple .trace,#out.simple .lead,#out.simple .legend,#out.simple .eyebrow{display:none}
-dialog#resetDlg{border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--fg);padding:22px;width:min(420px,calc(100vw - 32px));direction:rtl;font-family:var(--f-body)}
-dialog#resetDlg::backdrop{background:rgba(10,20,22,.45)}
-dialog#resetDlg h2{font-size:1.35rem}
-dialog#resetDlg p{margin:8px 0 16px;color:var(--muted)}
-.dlg-btns{display:flex;flex-direction:column;gap:8px}
-.dlg-btns .go,.dlg-btns .ghost{justify-content:center;text-align:center;padding:11px 16px}
-button.link{font:inherit;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:6px}
-.fabs button{font:inherit;font-weight:700;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:9px 16px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}
-@media print{
- :root,:root[data-theme="dark"],:root:not([data-theme="light"]){--bg:#fff;--panel:#fff;--panel2:#f6f8f6;--line:#d3dbd6;--fg:#16262a;--muted:#566763;--brass:#946a1a;--brass-soft:rgba(148,106,26,.1);--rose:#a2513c;--rose-soft:rgba(162,81,60,.08);--teal:#2f6f6a;color-scheme:light}
- #frm,#hero,#shareBar,nav.chapters,.fabs,.example,.shared,.topics,.theory-tg{display:none!important}
- section.ch,.reading,.facet,.layer{break-inside:avoid-page}
- body{padding-block:0}
-}
-@media (max-width:520px){details.gloss dl{grid-template-columns:1fr}details.gloss dd{margin-bottom:6px}}
-@media (max-width:520px){.reading{grid-template-columns:1fr}.med{width:66px;height:66px}.compat{grid-template-columns:1fr}}
-@media (prefers-reduced-motion:no-preference){.tile,.med{transition:transform .2s}.tile:hover{transform:translateY(-2px)}}
-
-:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-body{margin:0}
-img{max-width:100%}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.65;
+  padding:env(safe-area-inset-top,0) max(16px,env(safe-area-inset-right,0)) calc(96px + env(safe-area-inset-bottom,0)) max(16px,env(safe-area-inset-left,0))}
 [hidden]{display:none!important}
-html{scroll-behavior:smooth}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:400;margin:0;line-height:1.25;text-wrap:balance}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:var(--teal);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+::selection{background:rgba(15,107,102,.2)}
+input,textarea{caret-color:var(--teal)}
+input[type=checkbox]{accent-color:var(--teal);width:20px;height:20px}
+.wrap{max-width:760px;margin:0 auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border:2px solid var(--acc);border-radius:6px;padding:10px 20px;font-weight:700;background:var(--acc);color:#fff;text-decoration:none}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--ink)}
+.btn.small{min-height:40px;padding:6px 14px;font-size:.95rem}
+.btn.wide{width:100%}
+.link{background:none;border:0;color:var(--teal);text-decoration:underline;padding:6px;font-weight:700}
+.mono{font-family:var(--f-mono)}
+.muted{color:var(--muted)}
+.status{color:var(--teal);font-weight:600;min-height:1.4em;margin:6px 0 0}
+.err{color:#8a2f3c;font-weight:700;min-height:1.4em}
+
+/* top line */
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:3px solid var(--acc);padding:22px 0 10px;margin-bottom:18px}
+.top h1{font-size:clamp(1.7rem,6vw,2.3rem);color:var(--teal)}
+.top .who{font-family:var(--f-mono);font-size:.9rem;color:var(--muted)}
+
+/* entry form */
+.entry .lead{font-size:1.08rem;color:#333;margin:0 0 18px}
+.f{display:flex;flex-direction:column;gap:6px;font-weight:700;margin:0 0 16px}
+.f small{font-family:var(--f-mono);font-weight:500;font-size:.85rem;color:var(--muted)}
+.f input[type=text],.f select{height:50px;border:2px solid var(--ink);border-radius:6px;padding:0 12px;background:#fff;color:var(--ink);font-weight:400;width:100%}
+.dsel{display:grid;grid-template-columns:1fr 1.6fr 1.2fr;gap:8px}
+.dsel select{height:50px;border:2px solid var(--ink);border-radius:6px;padding:0 8px;background:#fff;font-family:var(--f-mono);font-weight:600;color:var(--ink);width:100%}
+details.more{border:2px dashed var(--lav);border-radius:6px;padding:12px 14px;background:#fff;margin:4px 0 18px}
+details.more>summary{cursor:pointer;font-weight:700;color:#5d4d86;list-style:none;min-height:30px;display:flex;align-items:center;gap:8px}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::before{content:"+";font-family:var(--f-mono);font-weight:600;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--lav);border-radius:4px}
+details.more[open]>summary::before{content:"−"}
+details.more .inner{margin-top:14px}
+.toggle{display:flex;align-items:center;gap:10px;font-weight:700;margin:4px 0 12px}
+.note-box{padding:10px 12px;border-radius:6px;background:var(--acc-soft);font-size:.95rem;margin:0 0 14px}
+.fine{font-family:var(--f-mono);font-size:.85rem;color:var(--muted);text-align:center;margin:14px 0 0}
+
+/* screen */
+.screen{animation:in .28s ease-out}
+@keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.screen{animation:none}}
+.shead{display:flex;flex-direction:column;gap:2px;margin:0 0 14px}
+.shead h2{font-size:clamp(1.7rem,6vw,2.2rem)}
+.shead .kick{margin:2px 0 0;font-family:var(--f-mono);font-size:.92rem;color:var(--muted)}
+.screen>p,.screen .para{margin:0 0 12px}
+.sentence{font-size:1.12rem;line-height:1.65;padding:14px 16px;background:#fff;border:2px solid var(--acc);border-radius:8px;margin:0 0 16px}
+.sentence b{color:var(--teal);font-weight:700}
+
+/* question marks */
+.qm{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--acc);color:var(--acc);background:#fff;font:700 .8rem var(--f-body);margin-inline-start:6px;vertical-align:middle;padding:0;line-height:1;position:relative}
+.qm::after{content:"";position:absolute;inset:-10px}
+.qm[aria-expanded="true"]{background:var(--acc);color:#fff}
+.qmbox{display:block;margin:6px 0 10px;padding:10px 12px;border:1.5px dashed var(--acc);border-radius:6px;background:#fff;font-family:var(--f-body);font-size:.95rem;line-height:1.55;color:#333;font-weight:400;text-align:start}
+.qmbox b{font-family:var(--f-mono);font-weight:600;color:var(--acc);display:block;font-size:.85rem}
+
+/* overview tiles */
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 16px}
+.tilebtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px;background:#fff;border:2px solid var(--line2);border-radius:8px;text-align:start;color:var(--ink);min-height:118px;position:relative}
+.tilebtn:first-child{border-color:var(--teal)}
+.tilebtn .n{font-family:var(--f-num);font-size:3rem;line-height:1;color:var(--teal)}
+.tilebtn .c{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);min-height:1em}
+.tilebtn .l{font-weight:700;font-size:1rem}
+.tilewrap{position:relative;display:flex}.tilewrap>.tilebtn{width:100%}
+.tilewrap .qm{position:absolute;top:10px;left:10px}
+@media (min-width:600px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* journey list */
+.journey{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.journey button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;min-height:52px;background:#fff;border:2px solid var(--line2);border-radius:6px;color:var(--ink);font-weight:700;text-align:start}
+.journey button span{font-family:var(--f-mono);font-weight:600;font-size:.82rem;color:var(--muted);white-space:nowrap}
+.journey button.seen{border-color:var(--teal)}
+.journey button.seen span{color:var(--teal)}
+h3.sub3{font-size:1.35rem;margin:22px 0 10px}
+
+/* deck of cards (as in המארג) */
+.deck{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 16px 8px;margin:0 -16px;scrollbar-width:none;-webkit-overflow-scrolling:touch;align-items:flex-start}
+.deck::-webkit-scrollbar{display:none}
+.kard{flex:0 0 min(86vw,340px);scroll-snap-align:center;border:2px solid var(--line2);border-radius:8px;padding:20px 18px 18px;background:#fff;display:flex;flex-direction:column;align-items:flex-start;min-height:420px;scroll-margin:16px}
+.kard.on{border-color:var(--acc)}
+.kard.rose{border-style:dashed}
+.kard .k{margin:0;font-family:var(--f-mono);font-size:.9rem;color:var(--muted)}
+.kard .big{display:flex;align-items:baseline;gap:8px;margin:6px 0 0;font-family:var(--f-num);font-size:5.4rem;line-height:.95;color:var(--acc)}
+.kard .big small{font-family:var(--f-mono);font-size:.85rem;color:var(--muted)}
+.kard h3{margin:6px 0 0;font-size:1.55rem}
+.kard .x{margin:10px 0 0;font-size:1.05rem;line-height:1.6;color:#333}
+.kard .here{display:inline-block;margin-top:6px;padding:2px 10px;border-radius:4px;background:var(--acc);color:#fff;font-family:var(--f-mono);font-size:.82rem;font-weight:600}
+.kard details.deep{margin-top:auto;padding-top:14px;width:100%}
+.kard details.deep>summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;min-height:44px;padding:8px 18px;background:var(--acc);color:#fff;border-radius:6px;font-weight:700}
+.kard details.deep>summary::-webkit-details-marker{display:none}
+.kard details.deep[open]>summary{background:#fff;color:var(--acc);border:2px solid var(--acc);padding:6px 16px}
+.dbody{padding-top:12px;font-size:1rem;line-height:1.6;color:#333}
+.dbody p{margin:0 0 10px}
+.dbody h4{font-family:var(--f-body);font-weight:700;font-size:1rem;margin:12px 0 4px;color:var(--teal)}
+.dbody h4.neg{color:var(--slate)}
+.dbody ul{margin:0 0 8px;padding-inline-start:20px}
+.dbody .two{display:block}
+.dbody .facets{display:grid;gap:8px;margin:8px 0}
+.dbody .facet{padding:10px 12px;border:1.5px solid var(--line2);border-radius:6px}
+.dbody .facet b{display:block;font-size:.95rem}
+.dbody .facet p{margin:2px 0 0;font-size:.95rem}
+.trace{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line2);font-family:var(--f-mono);font-size:.78rem;color:var(--muted);direction:rtl;unicode-bidi:plaintext}
+.trace::before{content:"דרך החישוב: ";font-weight:600}
+.deck-ctl{display:flex;align-items:center;justify-content:space-between;margin:8px 0 6px}
+.deck-ctl button{width:46px;height:46px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);border-radius:6px;background:#fff;color:var(--ink)}
+.deck-ctl button:last-child{background:var(--ink);color:#fff}
+.deck-ctl button:disabled{opacity:.35}
+.dots{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line2)}
+.dots i.on{background:var(--acc)}
+.deck-count{font-family:var(--f-mono);font-size:.85rem;color:var(--muted)}
+@media (min-width:760px){.deck{margin:0;padding-inline:0;flex-wrap:wrap;overflow:visible}.kard{flex:0 0 calc(50% - 6px)}.deck-ctl{display:none}}
+
+/* feedback + other angle */
+.fbk{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:12px;font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.fbk button{border:1.5px solid var(--line2);border-radius:4px;background:#fff;padding:6px 10px;min-height:36px;font:600 .8rem var(--f-mono);color:var(--ink)}
+.fbk button[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-soft)}
+.fbalt{flex-basis:100%;margin:6px 0 2px;padding:10px 12px;border:1.5px dashed var(--teal);border-radius:6px;background:#fff;font-family:var(--f-body);color:#333}
+.fbalt b{display:block;font-family:var(--f-mono);font-weight:600;font-size:.85rem;color:var(--teal)}
+.fbalt span{display:block;font-size:1rem;line-height:1.6}
+
+/* letters */
+.letters{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 6px}
+.word{display:flex;gap:4px}
+.lt{display:flex;flex-direction:column;align-items:center;min-width:34px;padding:6px 4px;border:1.5px solid var(--line2);border-radius:6px;background:#fff}
+.lt .ch{font-size:1.25rem;font-weight:700}
+.lt .v{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.lt.vow{border-color:var(--teal);background:var(--teal-soft)}
+.lt.vow .v{color:var(--teal)}
+.legend{font-family:var(--f-mono);font-size:.82rem;color:var(--muted);margin:0 0 16px}
+
+/* years strip */
+.years{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;margin:0 0 14px;scrollbar-width:none}
+.years::-webkit-scrollbar{display:none}
+.yr{flex:0 0 64px;text-align:center;padding:8px 4px;border:1.5px solid var(--line2);border-radius:6px;background:#fff}
+.yr .y{font-family:var(--f-mono);font-size:.75rem;color:var(--muted)}
+.yr .n{font-family:var(--f-num);font-size:1.6rem;line-height:1.1;color:var(--acc)}
+.yr .w{font-size:.75rem}
+.yr.now{border:2px solid var(--acc);background:var(--acc-soft)}
+
+/* grid */
+.gridbox svg{width:100%;max-width:300px;display:block;margin:0 auto 14px}
+.gridbox svg text{font-family:var(--f-mono)}
+details.item{border:2px solid var(--line2);border-radius:6px;background:#fff;margin:0 0 8px}
+details.item>summary{cursor:pointer;list-style:none;padding:12px 14px;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700}
+details.item>summary::-webkit-details-marker{display:none}
+details.item>summary::after{content:"+";font-family:var(--f-mono);color:var(--acc)}
+details.item[open]>summary::after{content:"−"}
+details.item[open]{border-color:var(--acc)}
+details.item .ib{padding:0 14px 12px;color:#333}
+.pill{display:inline-block;padding:1px 8px;border-radius:4px;font:600 .75rem var(--f-mono);background:var(--teal-soft);color:var(--teal)}
+.pill.r{background:#efe9f5;color:#5d4d86}
+.pill.t{background:var(--teal);color:#fff}
+
+/* love */
+.compat{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:16px;background:#fff;border:2px solid var(--acc);border-radius:8px;margin:0 0 14px;text-align:center}
+.compat .n{font-family:var(--f-num);font-size:3rem;line-height:1;color:var(--acc)}
+.compat .mid{font-weight:700;font-size:.95rem}
+.meter{display:flex;gap:3px;justify-content:center;margin-top:6px}
+.meter i{width:14px;height:6px;border-radius:2px;background:var(--line2)}
+.meter i.on{background:var(--acc)}
+.tablewrap{overflow-x:auto;margin:10px 0;border:2px solid var(--line2);border-radius:6px;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line2);text-align:start;vertical-align:top}
+th{font-family:var(--f-mono);font-weight:600;font-size:.8rem;color:var(--muted)}
+td.num{font-family:var(--f-num);font-size:1.3rem;color:var(--acc)}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{border:2px solid var(--line2);border-radius:6px;background:#fff;padding:8px 14px;min-height:44px;font-weight:700;color:var(--ink)}
+.chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+/* guide */
+.mi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 14px}
+.mi{display:flex;flex-direction:column;padding:10px 12px;border:1.5px solid var(--line2);border-radius:6px;background:#fff;text-decoration:none;color:var(--ink)}
+.mi .v{font-family:var(--f-num);font-size:1.4rem;color:var(--teal);line-height:1.1}
+.mi .t{font-weight:700;font-size:.95rem}
+.mi .d{font-size:.82rem;color:var(--muted)}
+.mi.off{opacity:.55}
+.layer h3{font-size:1.2rem;margin:16px 0 8px}
+.layer h3 small{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);margin-inline-start:6px}
+.layer .ln{display:inline-flex;width:26px;height:26px;align-items:center;justify-content:center;background:var(--acc);color:#fff;border-radius:4px;font-family:var(--f-mono);font-size:.85rem;margin-inline-end:8px}
+dl.gloss{margin:0}
+dl.gloss dt{font-weight:700;margin-top:10px}
+dl.gloss dd{margin:2px 0 0;color:#333}
+.gsearch{width:100%;height:48px;border:2px solid var(--ink);border-radius:6px;padding:0 12px;margin:0 0 6px;background:#fff}
+ol.steps,ul.tips{padding-inline-start:20px;margin:0 0 14px}
+ol.steps li,ul.tips li{margin:0 0 6px}
+ol.steps b{display:block}
+
+/* prev/next */
+.pager{display:flex;gap:10px;justify-content:space-between;margin:22px 0 0}
+.pager .btn{flex:1}
+
+/* share */
+.share-card{padding:16px;background:#fff;border:2px solid var(--line2);border-radius:8px;margin:0 0 12px}
+.share-card b{font-size:1.1rem}
+.share-card p{margin:4px 0 10px;color:#333;font-size:.95rem}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+#linkBox{width:100%;height:44px;margin-top:10px;border:1.5px solid var(--line2);border-radius:6px;padding:0 10px;font-family:var(--f-mono);font-size:.8rem;background:var(--panel2)}
+
+/* bottom nav */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:20;background:var(--teal);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 4px calc(8px + env(safe-area-inset-bottom,0))}
+.bnav button{border:0;background:none;color:rgba(255,255,255,.74);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:54px;font-size:.78rem;font-weight:700}
+.bnav button[aria-current="page"]{color:#fff}
+.bnav button[aria-current="page"] svg{stroke-width:2.4}
+@media (min-width:760px){.bnav{left:50%;right:auto;transform:translateX(-50%);width:600px;bottom:12px;border-radius:10px}}
+
+/* more sheet */
+dialog{border:2px solid var(--ink);border-radius:8px;padding:20px;max-width:min(92vw,460px);width:100%;color:var(--ink)}
+dialog::backdrop{background:rgba(31,45,58,.45)}
+dialog h2{font-size:1.5rem;margin-bottom:10px}
+.sheet-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sheet-list button{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:8px 14px;border:2px solid var(--line2);border-radius:6px;background:#fff;color:var(--ink);font-weight:700;text-align:start}
+.sheet-list button span{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);font-weight:600}
+.sheet-list button[aria-current="page"]{border-color:var(--acc)}
+.dlg-btns{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+
+/* screens that use the "time" hue */
+.screen[data-s="cycles"],.screen[data-s="year"]{--acc:var(--concrete);--acc-soft:rgba(74,134,163,.12)}
+.screen[data-s="love"],.screen[data-s="change"]{--acc:#6b5a91;--acc-soft:rgba(107,90,145,.10)}
+
+#backBar{position:fixed;top:10px;left:10px;z-index:30;background:var(--ink);color:#fff;padding:10px 16px;border-radius:6px;font-weight:700;text-decoration:none;font-size:15px}
+
+/* print & document: every screen, every card open */
+body.doc .screen[hidden]{display:block!important}
+body.doc .bnav,body.doc .pager,body.doc .deck-ctl,body.doc .dots,body.doc .fbk,body.doc #shareScreen{display:none!important}
+body.doc .deck{flex-direction:column;overflow:visible;margin:0;padding:0}
+body.doc .kard{flex:none;width:100%;min-height:0}
+@media print{
+  body{background:#fff;padding:0}
+  .screen[hidden]{display:block!important}
+  .bnav,.pager,.deck-ctl,.dots,.fbk,#shareScreen,#entry,#backBar{display:none!important}
+  .deck{flex-direction:column;overflow:visible;margin:0;padding:0}
+  .kard{flex:none;width:100%;min-height:0;break-inside:avoid}
+}
 </style>
 </head>
 <body>
-
 <div class="wrap">
-<header class="top">
-  <div>
-    <div class="sigil">1 · 2 · 3 · 4 · 5 · 6 · 7 · 8 · 9</div>
-    <h1>מפת המספרים</h1>
-  </div>
-</header>
+<header class="top"><h1>מפת המספרים</h1><span class="who" id="who"></span></header>
 
-<section class="hero" id="hero">
-  <p class="hero-q">מה המספרים שלך מספרים עליך?</p>
-  <h2>גלו את מפת המספרים האישית שלכם</h2>
-  <p class="hero-meta">2 פרטים · כ־2 דקות · בלי הרשמה</p>
-  <button type="button" class="hero-btn" id="startBtn">להתחלת הניתוח ←</button>
-  <ul class="hero-list">
-    <li>ניתוח אישי לפי השם ותאריך הלידה שלך</li>
-    <li>אהבה, קריירה, כסף או צמיחה: בוחרים מה לבדוק</li>
-    <li>הפרטים לא נשמרים ולא נשלחים לשום מקום</li>
-  </ul>
+<section id="entry" class="entry screen" aria-labelledby="entryTitle">
+  <h2 id="entryTitle" class="mono" style="font-family:var(--f-mono);font-size:1rem;color:var(--muted);margin:-8px 0 12px">שם ותאריך לידה. זה כל מה שצריך.</h2>
+  <div class="note-box" id="sharedNote" hidden>זו מפה ששותפה איתך. כדי לקבל מפה משלך, הזינו את הפרטים שלכם.</div>
+  <div id="exampleNote" hidden></div>
+  <p class="lead">מהשם ומתאריך הלידה נבנית מפה אישית: מי את/ה, מה מניע אותך ובאיזו תקופה את/ה נמצא/ת. נפתח אותה יחד, קלף אחר קלף.</p>
+  <form id="frm" novalidate>
+    <input type="radio" name="sys" value="he" checked hidden>
+    <input type="hidden" id="laName"><input type="hidden" id="tdate">
+    <label class="f">השם המלא מהלידה, בעברית <small>כולל שם המשפחה מהלידה</small><input type="text" id="heName" autocomplete="off" placeholder="למשל: נועה כהן"></label>
+    <div class="f" role="group" aria-label="תאריך לידה">תאריך לידה<input type="hidden" id="bdate"><div class="dsel" data-for="bdate" data-range="birth"></div></div>
+    <details class="more" id="moreBox">
+      <summary>עוד אפשרויות (לא חובה)</summary>
+      <div class="inner">
+        <label class="f">השם שבו את/ה משתמש/ת היום <small>כינוי, שם אחרי נישואין או שם שהוחלף</small><input type="text" id="curName" autocomplete="off"></label>
+        <label class="f">נושא לחקירה הפעם <small>אפשר להחליף בכל רגע: בתפריט "עוד" ← "הנושא", או בתחתית מסך המפה</small><select id="focus">
+          <option value="none">בלי נושא מיוחד</option>
+          <option value="love">אהבה וזוגיות</option>
+          <option value="career">קריירה ושליחות</option>
+          <option value="money">כסף ושפע</option>
+          <option value="growth">צמיחה רוחנית</option>
+        </select></label>
+        <label class="toggle"><input type="checkbox" id="partnerOn"> הוספת בן/בת זוג להתאמה זוגית</label>
+        <div id="partnerBox">
+          <label class="f">שם מלא של בן/בת הזוג<input type="text" id="pName" autocomplete="off"></label>
+          <div class="f" role="group" aria-label="תאריך הלידה של בן/בת הזוג">תאריך הלידה של בן/בת הזוג<input type="hidden" id="pDate"><div class="dsel" data-for="pDate" data-range="birth"></div></div>
+        </div>
+      </div>
+    </details>
+    <button class="btn wide" type="submit">לפתוח את המפה שלי</button>
+    <p class="err" id="err" role="alert"></p>
+    <p class="status" id="frmStatus" aria-live="polite"></p>
+    <button class="link" type="button" id="backToMap" hidden>← חזרה למפה בלי לשנות</button>
+  </form>
+  <p class="fine">הפרטים לא נשמרים ולא נשלחים לשום מקום · כלי להתבוננות ולשיחה, לא אבחון</p>
 </section>
 
-<form class="panel form" id="frm" novalidate hidden>
-  <div class="shared" id="sharedNote" hidden>זה ניתוח ששותף איתך. כדי לקבל ניתוח משלך, הזינו את הפרטים שלכם ולחצו על הכפתור.</div>
-  <div class="example" id="exampleNote" hidden></div>
-  <h2>הפרטים שלך</h2>
-  <p class="hint">השם המלא כפי שניתן בלידה, כולל שם המשפחה מהלידה.</p>
-  <input type="radio" name="sys" value="he" checked hidden>
-  <input type="hidden" id="laName"><input type="hidden" id="tdate">
+<main id="screens" aria-live="polite"></main>
 
-  <div class="grid2">
-    <label class="f" id="heWrap">שם מלא מהלידה, בעברית<input type="text" id="heName" autocomplete="off" placeholder="למשל: נועה כהן"></label>
-    <div class="f" role="group" aria-label="תאריך לידה">תאריך לידה<input type="hidden" id="bdate"><div class="dsel" data-for="bdate" data-range="birth"></div></div>
+<section id="shareScreen" class="screen" data-s="share" hidden aria-labelledby="shareTitle">
+  <div class="shead"><h2 id="shareTitle">שיתוף ושמירה</h2><p class="kick">קישור, מסמך או הדפסה</p></div>
+  <div class="share-card">
+    <b>קישור למפה</b>
+    <p>קישור שפותח את הכלי עם המפה הזו בדיוק. הקישור כולל את השמות ותאריכי הלידה שהוזנו.</p>
+    <div class="btns"><button type="button" class="btn small" id="shLink">שיתוף קישור</button><button type="button" class="btn ghost small" id="cpLink">העתקה</button><a class="btn ghost small" id="waLink" href="#" target="_blank" rel="noopener">וואטסאפ</a></div>
+    <input type="text" id="linkBox" readonly dir="ltr" aria-label="קישור למפה">
   </div>
-
-  <details class="more" id="moreBox">
-    <summary>פרטים נוספים <small>(לא חובה)</small></summary>
-    <div class="grid2" style="margin-top:14px">
-      <label class="f">מה תרצו לבדוק קודם?<select id="focus">
-        <option value="none">תמונה כללית</option>
-        <option value="love">אהבה וזוגיות</option>
-        <option value="career">קריירה ושליחות</option>
-        <option value="money">כסף ושפע</option>
-        <option value="growth">צמיחה רוחנית</option>
-      </select></label>
-      <label class="f">השם שבו את/ה משתמש/ת היום <small>כינוי, שם אחרי נישואין או שם שהוחלף</small><input type="text" id="curName" autocomplete="off"></label>
-    </div>
-    <label class="toggle" style="margin-top:16px"><input type="checkbox" id="partnerOn"> הוספת בן/בת זוג להתאמה זוגית</label>
-    <div class="grid2" id="partnerBox" style="margin-top:12px">
-      <label class="f">שם מלא של בן/בת הזוג<input type="text" id="pName" autocomplete="off"></label>
-      <div class="f" role="group" aria-label="תאריך הלידה של בן/בת הזוג">תאריך הלידה של בן/בת הזוג<input type="hidden" id="pDate"><div class="dsel" data-for="pDate" data-range="birth"></div></div>
-    </div>
-  </details>
-
-  <div class="row-actions">
-    <button class="go" type="submit">לניתוח שלי ←</button>
-    <button class="ghost" type="button" id="clearBtn" hidden>↺ ניתוח חדש</button>
-    <span class="err" id="err" role="alert"></span>
+  <div class="share-card">
+    <b>מסמך מלא</b>
+    <p>כל המפה במסמך אחד, עם כל הקלפים פתוחים, החישובים ומילון המונחים. נפתח בכל דפדפן.</p>
+    <div class="btns"><button type="button" class="btn small" id="shDoc">שיתוף המסמך</button><button type="button" class="btn ghost small" id="dlDoc">הורדה כקובץ</button><button type="button" class="btn ghost small" id="prDoc">הדפסה / PDF</button><button type="button" class="btn ghost small" id="cpText">העתקת הטקסט</button></div>
   </div>
-  <p class="status" id="frmStatus" aria-live="polite"></p>
-</form>
-
-<section class="share" id="shareBar" hidden aria-labelledby="shareTitle">
-  <div class="eyebrow">שיתוף</div>
-  <h2 id="shareTitle">שיתוף הניתוח</h2>
-  <div class="share-grid">
-    <div class="share-card">
-      <b>קישור לניתוח</b>
-      <p>קישור שפותח את הכלי עם הניתוח הזה בדיוק. מי שמקבל אותו יכול גם לשנות את הפרטים ולנתח את עצמו. הקישור כולל את השמות ותאריכי הלידה שהוזנו.</p>
-      <div class="btns"><button type="button" class="go" id="shLink">שיתוף קישור</button><button type="button" class="ghost" id="cpLink">העתקה</button><a class="ghost" id="waLink" href="#" target="_blank" rel="noopener">וואטסאפ</a></div>
-      <input type="text" id="linkBox" readonly dir="ltr" aria-label="קישור לניתוח">
-    </div>
-    <div class="share-card">
-      <b>מסמך מפורט</b>
-      <p>כל התוכן של הניתוח הנוכחי במסמך אחד: הפרטים שהוזנו, המפה, כל הפרקים, החישובים ומילון המונחים. המסמך נפתח בכל דפדפן גם בלי חיבור לכלי.</p>
-      <div class="btns"><button type="button" class="go" id="shDoc">שיתוף המסמך</button><button type="button" class="ghost" id="dlDoc">הורדה כקובץ</button><button type="button" class="ghost" id="prDoc">הדפסה / PDF</button><button type="button" class="ghost" id="cpText">העתקת הטקסט</button></div>
-    </div>
+  <div class="share-card">
+    <b>מפה חדשה</b>
+    <p>לשנות פרטים או לפתוח מפה לאדם אחר.</p>
+    <div class="btns"><button type="button" class="btn ghost small" id="editBtn">שינוי הפרטים</button><button type="button" class="btn ghost small" data-reset>מפה חדשה</button></div>
   </div>
   <p class="status" id="shStatus" aria-live="polite"></p>
 </section>
 
+<p class="fine" id="note" hidden>המפה מבוססת על גימטריה עברית בשיטת המספר הקטן (א=1 … ט=9, י=1 … צ=9, ק=1 … ת=4) ועל מסגרת המספרים של הנומרולוגיה הפיתגוראית המודרנית. האותיות א, ה, ו, י משמשות כתנועות לחישוב דחף הנשמה. כלי להתבוננות ולשיחה, לא אבחון.</p>
+</div>
+
+<nav class="bnav" id="bnav" aria-label="ניווט במפה" hidden>
+  <button type="button" data-go="overview"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg>המפה</button>
+  <button type="button" data-go="core"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M9.5 9h5M9.5 13h5"/></svg>הליבה</button>
+  <button type="button" data-go="name"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 19h14M7 15l5-10 5 10M9 11h6"/></svg>השם</button>
+  <button type="button" data-go="cycles"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 17c3-8 6-8 8-4s5 4 8-4"/><circle cx="12" cy="13" r="1.6" fill="currentColor"/></svg>מחזורים</button>
+  <button type="button" data-go="more" aria-haspopup="dialog"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg>עוד</button>
+</nav>
+
+<dialog id="moreDlg" aria-labelledby="moreTitle">
+  <h2 id="moreTitle">כל חלקי המפה</h2>
+  <ul class="sheet-list" id="moreList"></ul>
+  <div class="dlg-btns"><button type="button" class="btn ghost" id="moreClose">סגירה</button></div>
+</dialog>
+
 <dialog id="resetDlg" aria-labelledby="resetTitle">
-  <h2 id="resetTitle">ניתוח חדש</h2>
-  <p>לפני שמנקים את הטופס: לשלוח את הניתוח הנוכחי<span id="resetWho"></span>? אחרי הניקוי הוא לא יופיע יותר במסך.</p>
+  <h2 id="resetTitle">מפה חדשה</h2>
+  <p>לפני שמנקים: לשלוח את המפה הנוכחית<span id="resetWho"></span>? אחרי הניקוי היא לא תופיע יותר במסך.</p>
   <div class="dlg-btns">
-    <button type="button" class="go" id="rsSend">שליחה, ואז ניתוח חדש</button>
-    <a class="ghost" id="rsWa" href="#" target="_blank" rel="noopener">שליחה בוואטסאפ, ואז ניתוח חדש</a>
-    <button type="button" class="ghost" id="rsSkip">ניתוח חדש בלי לשלוח</button>
+    <button type="button" class="btn" id="rsSend">שליחה, ואז מפה חדשה</button>
+    <a class="btn ghost" id="rsWa" href="#" target="_blank" rel="noopener">שליחה בוואטסאפ, ואז מפה חדשה</a>
+    <button type="button" class="btn ghost" id="rsSkip">מפה חדשה בלי לשלוח</button>
     <button type="button" class="link" id="rsCancel">ביטול</button>
   </div>
 </dialog>
-<div id="out"></div>
-<p class="note" id="note" hidden>הניתוח מבוסס על הנומרולוגיה הפיתגוראית המודרנית ועל גימטריה עברית בשיטת המספר הקטן (א=1 … ט=9, י=1 … צ=9, ק=1 … ת=4). בגימטריה העברית האותיות א, ה, ו, י משמשות כתנועות לחישוב מספר דחף הנשמה. זהו כלי להתבוננות עצמית ולשיחה, לא אבחון.</p>
-</div>
 
+<div id="raw" hidden></div>
 <script>
 /* ---------- data ---------- */
 const N={
@@ -895,159 +910,430 @@ function analyze(inp){
 }
 
 
-/* ---------- form ---------- */
+/* ---------- זווית נוספת (ALT), מתוך המארג ---------- */
+const ALT={
+1:{essence:"אפשר לראות את 1 גם כשיעור בלעמוד לבד: לא תמיד יש מי שיגיד לך 'קדימה', והכוח שלך נבנה דווקא ברגעים שבהם החלטת בעצמך. כשזה לא מאוזן זה נראה כמו התגוננות או צורך להיות צודק/ת. מה שעוזר: להתחיל דברים, ולהזמין אחרים להמשיך איתך.",
+ expr:"ייתכן שהכישרון לא נראה לך כמו 'הובלה'. לעיתים קרובות הוא מופיע כיכולת לקבל החלטה כשכולם מהססים, או לעשות משהו בדרך שעוד לא נוסתה.",
+ soul:"אולי זה לא רצון להוביל אחרים, אלא צורך פנימי לא להיות תלוי/ה באף אחד ולהרגיש שהחיים שלך בידיים שלך.",
+ persona:"גם אם בפנים יש היסוס, מבחוץ משדרים ממך ישירות וביטחון. יש מי שחווים את זה כנחישות, ויש מי שחווים את זה כמרחק.",
+ year:"זווית אחרת: שנה 1 היא שנת זריעה. לא הכול חייב להתחיל בבת אחת, אבל מה שתחליט/י עכשיו ייתן את הטון לתשע השנים הבאות. כדאי לבחור דבר אחד חדש ולהתחייב אליו."},
+2:{essence:"אפשר לראות את 2 גם כשיעור בגבולות: היכולת להרגיש את כולם היא מתנה, אבל קל ללכת לאיבוד בתוכה. הכוח של 2 הוא השפעה שקטה מאחורי הקלעים, וההתפתחות היא לבחור מתי לומר 'אני' בקול.",
+ expr:"הכישרון יכול להופיע פחות כ'גישור' ויותר כדיוק: לשים לב לפרטים הקטנים שאחרים מפספסים, ולעבוד מצוין בצוות או בזוג.",
+ soul:"ייתכן שבפנים זה פחות צורך בזוגיות ויותר צורך בשקט ובהרמוניה סביבך. מריבות ורעש מתישים אותך יותר מאחרים.",
+ persona:"מבחוץ את/ה עשוי/ה להיראות צנוע/ה ונגיש/ה, ולכן לפעמים לא מעריכים מיד כמה עומק וחוזק יש מאחור.",
+ year:"זווית אחרת: שנה 2 היא שנה של סבלנות. דברים שהתחלת מבשילים לאט, ומה שמתקדם השנה נעשה דרך שיתופי פעולה. מי שממהר/ת לתוצאות עלול/ה להרגיש תקוע/ה."},
+3:{essence:"אפשר לראות את 3 גם כשיעור במיקוד: יש הרבה רעיונות וקלות בביטוי, והאתגר הוא להתמיד ולא לברוח מדברים כשהם נעשים קשים. כשהשמחה באה מבפנים ולא כמסכה, היא מדבקת באמת.",
+ expr:"הכישרון לא חייב להיות במה או אמנות. הוא יכול להופיע ככתיבה, כהוראה, כהומור ברגע הנכון, או כיכולת להסביר דברים מסובכים בפשטות.",
+ soul:"ייתכן שבפנים זה צורך להיות מובן/ת ולהשמיע את הקול שלך, יותר מאשר צורך להיות במרכז.",
+ persona:"מבחוץ את/ה נראה/ית קליל/ה וחברותי/ת. יש מי שלא שמים לב לרגישות ולמחשבה שנמצאות מתחת לחיוך.",
+ year:"זווית אחרת: שנה 3 מזמינה ביטוי. זמן טוב לכתוב, ליצור, לחגוג ולהיפגש. הסכנה היא פיזור, ולכן כדאי לבחור פרויקט יצירתי אחד ולהביא אותו לסיום."},
+4:{essence:"אפשר לראות את 4 גם כשיעור בגמישות: את/ה בונה בסבלנות, צעד אחרי צעד, וזו מתנה נדירה. אבל קשיחות או ביקורת עצמית יכולות להכביד. מה שעוזר: לשלב מנוחה ומשחק בתוך הסדר.",
+ expr:"הכישרון יכול להופיע כאמינות פשוטה: מי שאפשר להשאיר אצלו/ה משימה ולדעת שהיא תיעשה, ונכון.",
+ soul:"ייתכן שבפנים זה פחות צורך בסדר ויותר צורך בביטחון: לדעת שיש קרקע יציבה מתחת לרגליים, בבית, בעבודה ובקשרים.",
+ persona:"מבחוץ את/ה עשוי/ה להיראות רציני/ת או שמור/ה, אבל מי שמכיר/ה אותך יודע/ת שיש בך חום ונאמנות עמוקים.",
+ year:"זווית אחרת: שנה 4 היא שנה של יסודות. העבודה הקשה עכשיו פחות מרגשת, אבל היא שתחזיק את מה שיבוא. כדאי לסדר כסף, בריאות והרגלים."},
+5:{essence:"אפשר לראות את 5 גם כשיעור במחויבות: הסקרנות פותחת דלתות, אבל רק מה שבוחרים להישאר איתו מעמיק. כשאין חופש עולה חוסר מנוחה, וכשיש יותר מדי חופש עולה פיזור.",
+ expr:"הכישרון יכול להופיע כיכולת להסתגל מהר ולמכור רעיון. אנשים עם 5 טובים במצבים חדשים, בתקשורת ובשינוי.",
+ soul:"ייתכן שבפנים זה פחות צורך לטייל ויותר צורך לא להרגיש כלוא/ה: בשגרה, ברעיון אחד או בציפיות של אחרים.",
+ persona:"מבחוץ את/ה נראה/ית צעיר/ה ברוחך ומעניין/ת. יש מי שחווים את זה כחוסר יציבות לפני שמכירים אותך.",
+ year:"זווית אחרת: שנה 5 היא נקודת המפנה של המחזור. מה שהיה יציב מתחיל לזוז, ולכן כדאי לומר כן להזדמנויות, אבל לא לכל אחת."},
+6:{essence:"אפשר לראות את 6 גם כשיעור בלקבל: את/ה יודע/ת לדאוג, לתקן ולתת, ולפעמים לוקח/ת על עצמך יותר מדי. ההתפתחות היא לעזור בלי לשלוט, ולהרשות לאחרים לדאוג גם לך.",
+ expr:"הכישרון יכול להופיע כחוש צדק וכאחריות: מי שמרגיש/ה כשמשהו לא הוגן, ופועל/ת כדי לאזן. מתאים להוראה, לריפוי, לייעוץ ולעבודה עם קהילה.",
+ soul:"ייתכן שבפנים זה צורך שהבית והקשרים הקרובים יהיו הרמוניים. כשמשהו לא בסדר אצל מישהו קרוב, קשה לך להיות רגוע/ה.",
+ persona:"מבחוץ את/ה נראה/ית אדם שאפשר לסמוך עליו ולפנות אליו. לפעמים זה מושך אנשים שרק מבקשים, ולכן חשוב לשים גבולות.",
+ year:"זווית אחרת: שנה 6 שמה את המשפחה והאחריות במרכז. ייתכנו מחויבויות חדשות, ומה שמשתלם השנה הוא לתת מתוך בחירה ולא מתוך אשמה."},
+7:{essence:"אפשר לראות את 7 גם כשיעור באמון: את/ה שואל/ת, בודק/ת ולא מסתפק/ת בתשובות שטחיות. אבל יותר מדי ניתוח יכול להפוך לבדידות או לחשדנות. מה שעוזר: זמן שקט קבוע, ושיתוף של מה שקורה בפנים.",
+ expr:"הכישרון יכול להופיע כמומחיות: להעמיק בתחום אחד עד שמבינים אותו באמת. מחקר, כתיבה, טכנולוגיה, ריפוי או רוחניות.",
+ soul:"ייתכן שבפנים זה צורך בפרטיות ובזמן לבד, כדי לעבד ולהבין. זה לא ריחוק, אלא דרך לטעון את עצמך.",
+ persona:"מבחוץ את/ה עשוי/ה להיראות מסתורי/ת או מרוחק/ת. מי שמתקרב/ת מגלה הומור יבש ועומק רב.",
+ year:"זווית אחרת: שנה 7 היא שנה של עצירה ולמידה. ייתכן שפחות יקרה בחוץ, ויותר יתבהר בפנים. זמן טוב ללמוד, לנוח ולשאול מה באמת חשוב."},
+8:{essence:"אפשר לראות את 8 גם כשיעור באיזון בין חומר לרוח: יש בך יכולת לנהל, להחליט ולהצליח, והשאלה היא בשביל מה. כשההצלחה משרתת משהו גדול ממך, היא נעשית יציבה.",
+ expr:"הכישרון יכול להופיע כשיקול דעת טוב לגבי אנשים: לדעת למי לתת אחריות ואיך לארגן משאבים כדי שדברים יקרו.",
+ soul:"ייתכן שבפנים זה פחות צורך בכסף ויותר צורך להרגיש מסוגל/ת ומשפיע/ה, ולא להיות תלוי/ה בחסדי אחרים.",
+ persona:"מבחוץ את/ה משדר/ת סמכות וכוח, לפעמים גם כשאת/ה לא מתכוון/ת. אנשים מצפים ממך להוביל.",
+ year:"זווית אחרת: שנה 8 היא שנת קציר. מה שהשקעת בשנים הקודמות יכול להניב תוצאות, בכסף, בקריירה או במעמד. כדאי לפעול באומץ וביושר."},
+9:{essence:"אפשר לראות את 9 גם כשיעור בשחרור: את/ה רואה את התמונה הגדולה ומרגיש/ה את כאב העולם, ולפעמים זה בא על חשבון הקרובים או על חשבונך. ההתפתחות היא לתת בלי להיעלם, ולסיים פרקים בחסד.",
+ expr:"הכישרון יכול להופיע כיצירה או כשליחות: אמנות, הוראה, טיפול או פעילות שמשרתת קהל רחב.",
+ soul:"ייתכן שבפנים זה צורך שלחיים תהיה משמעות, ולהרגיש שמה שאת/ה עושה משפיע מעבר לעצמך.",
+ persona:"מבחוץ את/ה נראה/ית אצילי/ה, פתוח/ה ומקבל/ת. יש מי שמרגישים בזה גם מרחק מסוים.",
+ year:"זווית אחרת: שנה 9 סוגרת מחזור. זמן לסיים, לפנות מקום ולסלוח, כדי שההתחלה הבאה תהיה נקייה. מה שעוזב עכשיו מפנה מקום לחדש."},
+11:{essence:"אפשר לראות את 11 גם כשיעור ברגישות: הקליטה החדה של אנשים ורעיונות היא מתנה, אבל היא גם יכולה לייצר מתח ועצבנות. מה שעוזר: סביבה רגועה, קרקוע בגוף, ואמון בתחושות הבטן.",
+ expr:"הכישרון יכול להופיע כיכולת להשפיע דרך השראה, לא דרך כוח: מורה, מדריך/ה, אמן/ית או מי שאומר/ת את המשפט שכולם היו צריכים לשמוע.",
+ soul:"ייתכן שבפנים זה צורך במשמעות רוחנית ובחיבור, יותר מאשר בהישגים. גם ספק עצמי יכול להיות חלק מהדרך.",
+ persona:"מבחוץ את/ה עשוי/ה להיראות עדין/ה ומיוחד/ת, ולפעמים מושך/ת תשומת לב גם בלי לרצות בה."},
+22:{essence:"אפשר לראות את 22 גם כשיעור בצעדים קטנים: החזון גדול, והלחץ להגשים אותו יכול להביא לספק עצמי או לקיפאון. מה שעוזר: לפרק את החלום לשלבים מעשיים ולהתחיל.",
+ expr:"הכישרון יכול להופיע כשילוב נדיר של רעיון גדול ויכולת ביצוע: לנהל אנשים ומשאבים לקראת מטרה שתחזיק שנים.",
+ soul:"ייתכן שבפנים זה צורך לבנות משהו שיועיל לאחרים, ולא רק להצליח באופן אישי.",
+ persona:"מבחוץ את/ה נראה/ית מעשי/ת ובטוח/ה. רק מעטים רואים את הלחץ והאחריות שאת/ה סוחב/ת."},
+33:{essence:"אפשר לראות את 33 גם כשיעור בגבולות של נתינה: יש בך כוח לרפא, ללמד ולהכיל, אבל קל להישחק. המורה הגדול/ה מלמד/ת קודם כול בדוגמה אישית, כולל בדאגה לעצמו/ה.",
+ expr:"הכישרון יכול להופיע כיכולת להרים אחרים: להוראה, להורות, לטיפול ולכל מקום שבו נוכחות חמה משנה אנשים.",
+ soul:"ייתכן שבפנים זה צורך שכולם יהיו בסדר, עד כדי שכחה של הצרכים שלך. הלמידה היא שגם את/ה חלק מה'כולם'.",
+ persona:"מבחוץ את/ה משדר/ת חום ואכפתיות, ואנשים פונים אליך בקלות לעזרה ולעצה."}
+};
+
+/* =====================================================================
+   ממשק חדש: מסכים, קלפים, העמקה בלחיצה, סימני שאלה, ניווט.
+   המנוע (analyze וכל הנתונים) לא שונה: התוכן נשמר כמו שהוא, ורק מסודר מחדש.
+   ===================================================================== */
+let showTheory=true;
 const $=id=>document.getElementById(id);
-const EXAMPLE={heName:"נועה כהן",laName:"Noa Cohen",curName:"נועה לוי",bdate:"1984-03-17",sys:"both",focus:"love",tdate:"",partnerOn:true,pName:"יואב לוי",pDate:"1981-11-02"};
+const smooth=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
+const ICON={
+  prev:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>',
+  next:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>'};
+
+/* ---------- מילון למונחים: סימני שאלה ---------- */
+const GLOSS={};
+DEFS.forEach(d=>GLOSS[d[0]]=d[2]);
+Object.assign(GLOSS,{
+  "מספרי הליבה":"ארבעת המספרים המרכזיים במפה: שביל החיים (מתאריך הלידה), ומהשם: מספר הביטוי, דחף הנשמה ומספר האישיות.",
+  "בגרות":GLOSS["הבגרות"],
+  "פסגה":"הנושא וההזדמנות של אחת מארבע תקופות החיים. מחושבת מרכיבי תאריך הלידה.",
+  "אתגר":"המכשול שכל תקופה מבקשת ללמוד לעבור. אתגר 0 פירושו שאין מכשול אחד מוגדר, והמשימה היא לבחור.",
+  "מחזורי החיים":"החיים מתחלקים לארבע תקופות. לכל תקופה פסגה (ההזדמנות) ואתגר (המכשול). התקופה הראשונה מסתיימת בגיל 36 פחות שביל החיים, וכל תקופה אחריה נמשכת תשע שנים, חוץ מהאחרונה.",
+  "מספרי השם":"כל אות בשם מקבלת ערך מ-1 עד 9. מסכום כל האותיות, התנועות והעיצורים נגזרים מספרים שונים.",
+  "גימטריה":"שיטה עברית שבה כל אות מקבלת ערך מ-1 עד 9: א=1 עד ט=9, י=1 עד צ=9, ק=1 עד ת=4.",
+  "תנועות ועיצורים":"בעברית האותיות א, ה, ו, י נחשבות תנועות, ומהן מחושב דחף הנשמה. שאר האותיות הן עיצורים, ומהם מחושב מספר האישיות.",
+  "טבלת הלידה":"ספרות תאריך הלידה מסודרות בריבוע 3×3. שורה, טור או אלכסון מלאים יוצרים חץ של כוח, וריקים יוצרים חץ של חולשה.",
+  "חץ":"שורה, טור או אלכסון בטבלת הלידה. חץ מלא מסמן חוזקה, וחץ ריק מסמן נקודה לפיתוח.",
+  "מחזור תשע השנים":"החיים נעים במחזורים של תשע שנים, מהתחלה (שנה 1) ועד סיום (שנה 9). השנה האישית אומרת באיזה שלב של המחזור את/ה עכשיו.",
+  "משפחות המספרים":"המספרים מתחלקים לשלוש משפחות: 1-5-7 (עצמאות ומחשבה), 2-4-8 (חומר ועשייה), 3-6-9 (רגש ויצירה). מספרים מאותה משפחה זורמים יחד בקלות.",
+  "מספר מורכב":"הסכום לפני הצמצום, למשל 29 ב-29/11. הוא מוסיף גוון למספר הסופי.",
+  "מספר מאסטר":"11, 22 ו-33 אינם מצומצמים לספרה אחת. הם מסמנים פוטנציאל גבוה ומתח פנימי מוגבר.",
+  "השם הנוכחי":"השם שבו את/ה משתמש/ת היום. שם הלידה מתאר את מי שנולדת להיות, והשם הנוכחי מוסיף שכבה: את האנרגיה שאת/ה מקרין/ה בפועל.",
+  "זווית נוספת":"ניסוח אחר לאותו מספר. אם הטקסט הראשי לא קולע, ייתכן שהזווית הזו תתאר אותך טוב יותר."
+});
+const termFor=title=>{const t=String(title).replace(/<[^>]+>/g,"");const d=DEFS.find(x=>t.includes(x[0]));return d?d[0]:null;};
+const qm=term=>GLOSS[term]?`<button type="button" class="qm" data-term="${esc(term)}" aria-expanded="false" aria-label="מה זה ${esc(term)}?">?</button>`:"";
+document.addEventListener("click",e=>{
+  const b=e.target.closest(".qm");if(!b)return;
+  e.preventDefault();e.stopPropagation();
+  const open=b.getAttribute("aria-expanded")==="true";
+  const host=b.closest("[data-qmhost]")||b.closest("h2,h3,h4,dt,summary,.shead")||b.parentElement;
+  host.parentElement.querySelectorAll(":scope > .qmbox").forEach(x=>{if(x.qmFor&&x.qmFor!==b)x.qmFor.setAttribute("aria-expanded","false");});
+  if(b.qmBox&&b.qmBox.isConnected){b.qmBox.remove();b.qmBox=null;b.setAttribute("aria-expanded","false");return;}
+  [...host.parentElement.children].filter(x=>x.classList.contains("qmbox")).forEach(x=>x.remove());
+  if(open){b.setAttribute("aria-expanded","false");return;}
+  const t=b.dataset.term,box=document.createElement("span");
+  box.className="qmbox";box.setAttribute("role","note");box.qmFor=b;
+  box.innerHTML=`<b>${esc(t)}</b>${esc(GLOSS[t]||"")}`;
+  host.insertAdjacentElement("afterend",box);b.qmBox=box;b.setAttribute("aria-expanded","true");
+  try{box.scrollIntoView({block:"nearest",behavior:smooth()});}catch(e){}
+},true);
+
+/* ---------- זווית נוספת + משוב (נשמר רק במכשיר) ---------- */
+const FBF={"r-lp":["LP","essence"],"r-expr":["expr","expr"],"r-soul":["soul","soul"],"r-pers":["pers","persona"],"r-py":["py","year"]};
+function altText(id,n){const f=FBF[id];if(!f)return "";n=parseInt(n,10);if(!n)return "";
+  return (ALT[n]&&ALT[n][f[1]])||(ALT[single(n)]&&ALT[single(n)][f[1]])||"";}
+let FB={};try{FB=JSON.parse(localStorage.getItem("nm-fb")||"{}");}catch(e){}
+const fbSave=()=>{try{localStorage.setItem("nm-fb",JSON.stringify(FB));}catch(e){}};
+function fbHTML(id,n){
+  const alt=altText(id,n);if(!FBF[id])return "";
+  const key=FBF[id][0]+n,v=FB[key]||"";
+  const b=(val,t)=>`<button type="button" data-fb="${key}" data-v="${val}" aria-pressed="${v===val}">${t}</button>`;
+  return `<div class="fbk" data-alt="${esc(alt)}"><span>קולע לך?</span>${b("yes","קולע")}${b("part","חלקית")}${b("no","לא קולע")}${v==="no"&&alt?altBox(alt,FB[key+"alt"]):""}</div>`;}
+const altBox=(alt,ok)=>`<div class="fbalt"><b>זווית נוספת ${qm("זווית נוספת")}</b><span>${alt}</span>${ok?`<span class="mono" style="font-size:.8rem;color:var(--teal);margin-top:6px">סימנת שהזווית הזו קולעת יותר</span>`:`<button type="button" class="btn ghost small" data-altok style="margin-top:8px">הזווית הזו קולעת יותר</button>`}</div>`;
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-fb]");
+  if(b){const box=b.closest(".fbk"),key=b.dataset.fb,v=b.dataset.v;
+    FB[key]=FB[key]===v?"":v;fbSave();
+    box.querySelectorAll("[data-fb]").forEach(x=>x.setAttribute("aria-pressed",String(FB[key]===x.dataset.v)));
+    box.querySelectorAll(".fbalt").forEach(x=>x.remove());
+    const alt=box.dataset.alt;
+    if(FB[key]==="no"){if(alt)box.insertAdjacentHTML("beforeend",altBox(alt,FB[key+"alt"]));
+      else box.insertAdjacentHTML("beforeend",`<div class="fbalt"><span>תודה. לא לכל מספר יש כאן ניסוח חלופי, אבל כדאי לקרוא גם את שאר הקלפים: לעתים מספר אחר במפה מאזן את התמונה.</span></div>`);}
+    return;}
+  const a=e.target.closest("[data-altok]");
+  if(a){const box=a.closest(".fbk"),key=box.querySelector("[data-fb]").dataset.fb;FB[key+"alt"]=1;fbSave();
+    a.outerHTML=`<span class="mono" style="font-size:.8rem;color:var(--teal);margin-top:6px;display:block">תודה. סימנת שהזווית הזו קולעת יותר</span>`;}
+});
+
+/* ---------- בניית קלפים ---------- */
+function kardFromReading(r){
+  const id=r.id||"",med=r.querySelector(".med"),body=r.querySelector(".rbody");
+  const n=med?(med.querySelector(".n")||{}).textContent||"":"";
+  const c=med&&med.querySelector(".c")?med.querySelector(".c").textContent:"";
+  const h3=body.querySelector("h3"),title=h3?h3.innerHTML:"";
+  const sub=body.querySelector(":scope > .sub");
+  const rest=[...body.children].filter(x=>x!==sub&&!x.matches("h3,.def"));
+  const firstP=rest.find(x=>x.tagName==="P");
+  const restHTML=rest.filter(x=>x!==firstP).map(x=>x.outerHTML).join("");
+  const term=termFor(title);
+  const fb=fbHTML(id,n);
+  const deep=(restHTML||fb)?`<details class="deep"><summary>להעמיק</summary><div class="dbody">${restHTML}${fb}</div></details>`:"";
+  return `<article class="kard${med&&med.classList.contains("rose")?" rose":""}"${id?` id="${id}"`:""}>
+    <p class="k">${sub?sub.innerHTML:""}</p>
+    <div class="big">${n}${c?`<small>${c}</small>`:""}</div>
+    <h3>${title}${term?qm(term):""}</h3>
+    ${firstP?`<p class="x">${firstP.innerHTML}</p>`:""}${deep}</article>`;
+}
+const deckHTML=kards=>kards.length?`<div class="deck" data-deck>${kards.join("")}</div>
+  <div class="deck-ctl"><button type="button" data-dk="-1" aria-label="הקלף הקודם">${ICON.prev}</button><div><div class="dots" aria-hidden="true"></div><div class="deck-count" aria-live="polite"></div></div><button type="button" data-dk="1" aria-label="הקלף הבא">${ICON.next}</button></div>`:"";
+function deckIndex(dk){const ks=[...dk.querySelectorAll(".kard")];const r=dk.getBoundingClientRect(),mid=r.left+r.width/2;
+  let best=0,bd=1e9;ks.forEach((k,i)=>{const b=k.getBoundingClientRect(),d=Math.abs(b.left+b.width/2-mid);if(d<bd){bd=d;best=i;}});return best;}
+function deckUpdate(dk){const ks=[...dk.querySelectorAll(".kard")],i=deckIndex(dk),ctl=dk.nextElementSibling;
+  ks.forEach((k,j)=>k.classList.toggle("on",j===i));
+  if(!ctl)return;ctl.querySelector(".dots").innerHTML=ks.length>1&&ks.length<=12?ks.map((_,j)=>`<i class="${j===i?"on":""}"></i>`).join(""):"";
+  ctl.querySelector(".deck-count").textContent=ks.length>1?`${i+1} / ${ks.length}`:"";
+  ctl.querySelector('[data-dk="-1"]').disabled=i===0;ctl.querySelector('[data-dk="1"]').disabled=i===ks.length-1;}
+function deckGo(dk,i,inst){const ks=dk.querySelectorAll(".kard");if(!ks[i])return;
+  const k=ks[i],dr=dk.getBoundingClientRect(),kr=k.getBoundingClientRect();
+  dk.scrollBy({left:(kr.left+kr.width/2)-(dr.left+dr.width/2),behavior:inst?"auto":smooth()});}
+function setupDecks(root){root.querySelectorAll("[data-deck]").forEach(dk=>{
+  if(dk.ready)return;dk.ready=true;let t;
+  dk.addEventListener("scroll",()=>{clearTimeout(t);t=setTimeout(()=>deckUpdate(dk),60);},{passive:true});
+  deckUpdate(dk);});}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-dk]");if(!b)return;
+  const dk=b.closest(".deck-ctl").previousElementSibling;deckGo(dk,deckIndex(dk)+(+b.dataset.dk));});
+
+/* ---------- מסכים ---------- */
+let SC=[],cur=null,seen=new Set();
+const shead=(title,term,kick)=>`<div class="shead"><h2>${title}${term?qm(term):""}</h2>${kick?`<p class="kick">${kick}</p>`:""}</div>`;
+const item=(sum,body,open)=>`<details class="item"${open?" open":""}><summary>${sum}</summary><div class="ib">${body}</div></details>`;
+const leadOf=sec=>{const l=sec&&sec.querySelector(":scope > .lead");return l?l.innerHTML:"";};
+function buildScreens(raw,inp){
+  SC=[];const add=(id,label,count,html)=>SC.push({id,label,count,html});
+  const g=id=>raw.querySelector("#"+id);
+  const F=g("focus"),T=g("topics");
+  /* map */
+  {const s=g("overview");const nm=(inp.heName||"").trim().split(/\s+/)[0]||"";
+    const sentence=s.querySelector(".sentence");
+    const MAPID={"שביל החיים":"r-lp","ביטוי / גורל":"r-expr","דחף הנשמה":"r-soul","אישיות":"r-pers","יום הלידה":"r-bday","בגרות":"r-mat"};
+    const TERM={"ביטוי / גורל":"מספר הביטוי","אישיות":"מספר האישיות","בגרות":"הבגרות"};
+    const tiles=[...s.querySelectorAll(".core .tile")].map(t=>{const l=t.querySelector(".l").textContent,id=MAPID[l]||(l.startsWith("שנה אישית")?"r-py":"");
+      const term=TERM[l]||(l.startsWith("שנה אישית")?"שנה אישית":l);
+      return `<div class="tilewrap"><button type="button" class="tilebtn" data-goto="${id}"><span class="n">${t.querySelector(".n").textContent}</span><span class="c">${t.querySelector(".c").innerHTML}</span><span class="l">${l}</span></button>${qm(term)}</div>`;});
+    const syn=[...s.querySelectorAll(".synth p")].map(p=>p.outerHTML);
+    add("overview","המפה","",`${shead(`המפה של ${esc(nm)}`,"מספרי הליבה",`${inp.bdate.split("-").reverse().join(".")} · לחיצה על מספר פותחת את הקלף שלו`)}
+      ${sentence?`<div class="sentence">${sentence.innerHTML}</div>`:""}
+      <div class="tiles" data-qmhost>${tiles.join("")}</div>
+      ${syn.slice(0,2).join("")}${syn.length>2?item("עוד מהסיכום",syn.slice(2).join("")):""}
+      <h3 class="sub3">המסע במפה</h3><ol class="journey" id="journey"></ol>${T?`<h3 class="sub3">${F?"להחליף את הנושא לחקירה":"נושא לחקירה הפעם"}</h3>${T.querySelector(".chips").outerHTML}`:""}`);}
+  /* focus / topics */
+  
+  if(F){const h=F.querySelector("h2").textContent;const fac=[...F.querySelectorAll(".facet")].map((f,i)=>item(f.querySelector("b").textContent,`<p style="margin:0">${f.querySelector("p").innerHTML}</p>`,i===0));
+    add("focus","הנושא: "+h.replace("מיקוד: ",""),`${fac.length} היבטים`,`${shead(h,"",leadOf(F))}${fac.join("")}${T?`<h3 class="sub3">${T.querySelector("h2").textContent}</h3>${T.querySelector(".chips").outerHTML}`:""}`);}
+  /* core */
+  {const s=g("core");const ks=[...s.querySelectorAll(".reading")].map(kardFromReading);const note=s.querySelector(":scope > p.sub");
+    add("core","הליבה",`${ks.length} קלפים`,`${shead("הליבה: שביל החיים ומספרי התאריך","שביל החיים","הדרך שלך, מתאריך הלידה")}${deckHTML(ks)}${note?`<p class="muted" style="font-size:.92rem">${note.innerHTML}</p>`:""}`);}
+  /* name */
+  {const s=g("name");if(s){const ks=[...s.querySelectorAll(".reading")].map(kardFromReading);
+    const letters=s.querySelector(".letters"),legend=s.querySelector(".legend");
+    add("name","השם",`${ks.length} קלפים`,`${shead("מספרי השם","מספרי השם",esc(inp.heName))}
+      ${letters?`<div data-qmhost><p class="mono" style="margin:0 0 6px;font-size:.88rem;color:var(--muted)">האותיות והערכים שלהן ${qm("תנועות ועיצורים")}</p></div>${letters.outerHTML}${legend?`<p class="legend">${legend.innerHTML}</p>`:""}`:""}
+      ${deckHTML(ks)}`);}}
+  /* cycles */
+  {const s=g("cycles");const rows=[...s.querySelectorAll("tbody tr")];let curI=0;
+    const ks=rows.map((tr,i)=>{const td=tr.querySelectorAll("td");const now=tr.classList.contains("now");if(now)curI=i;
+      const ages=td[0].cloneNode(true);ages.querySelectorAll(".pill").forEach(p=>p.remove());const yrs=ages.querySelector("small");const yt=yrs?yrs.textContent:"";if(yrs)yrs.remove();ages.querySelectorAll("br").forEach(b=>b.remove());
+      const ptxt=td[2].cloneNode(true),ptr=ptxt.querySelector(".trace");if(ptr)ptr.remove();
+      const ctxt=td[4].cloneNode(true),ctr=ctxt.querySelector(".trace");if(ctr)ctr.remove();
+      const pn=td[1].textContent.trim(),cn=td[3].textContent.trim();
+      return `<article class="kard" id="cy-${i}"><p class="k">תקופה ${i+1} מתוך 4 · גיל ${ages.textContent.trim()} · ${yt}</p>${now?`<span class="here">את/ה כאן</span>`:""}
+        <div class="big">${pn}</div><h3>פסגה ${pn}${qm("פסגה")}</h3><p class="x">${ptxt.innerHTML}</p>
+        <details class="deep"${now?" open":""}><summary>להעמיק: האתגר</summary><div class="dbody"><h4>אתגר ${cn}${qm("אתגר")}</h4><p>${ctxt.innerHTML}</p>${ptr?`<div class="trace">פסגה ${ptr.textContent}</div>`:""}${ctr?`<div class="trace">אתגר ${ctr.textContent}</div>`:""}</div></details></article>`;});
+    const curF=s.querySelector(".facets .facet p");
+    add("cycles","מחזורי החיים","4 תקופות",`${shead("מחזורי החיים","מחזורי החיים","ארבע תקופות · לכל אחת פסגה ואתגר")}
+      ${curF?`<p class="para">${curF.innerHTML}</p>`:""}${deckHTML(ks)}${item("איך מחשבים את התקופות",`<p style="margin:0">${leadOf(s)}</p>`)}`);
+    SC[SC.length-1].start=curI;}
+  /* year */
+  {const s=g("year");const ks=[...s.querySelectorAll(".reading")].map(kardFromReading);const yrs=s.querySelector(".years");
+    add("year","השנה שלך",`${ks.length} קלפים`,`${shead("השנה האישית","שנה אישית","היכן את/ה במחזור תשע השנים")}
+      <div data-qmhost><p class="mono" style="margin:0 0 6px;font-size:.88rem;color:var(--muted)">המחזור שלך לאורך השנים ${qm("מחזור תשע השנים")}</p></div>${yrs?yrs.outerHTML:""}${deckHTML(ks)}`);}
+  /* grid */
+  {const s=g("grid");const svg=s.querySelector("svg");
+    const arrows=[...s.querySelectorAll(".arrow")].map(a=>{const c=a.cloneNode(true);const b=c.querySelector("b"),pill=c.querySelector(".pill");
+      const sum=`<span>${b?b.textContent:""} ${pill?pill.outerHTML:""}</span>`;if(b)b.remove();if(pill)pill.remove();c.querySelectorAll("br").forEach(x=>x.remove());
+      return item(sum,`<p style="margin:0">${c.innerHTML.trim()}</p>`);});
+    add("grid","טבלת הלידה",`${arrows.length} ממצאים`,`${shead("טבלת הלידה","טבלת הלידה","ספרות תאריך הלידה בריבוע 3×3")}
+      <div class="gridbox">${svg?svg.outerHTML:""}</div><div data-qmhost><p class="mono" style="margin:0 0 8px;font-size:.88rem;color:var(--muted)">מה עולה מהטבלה ${qm("חץ")}</p></div>${arrows.join("")}`);}
+  /* love */
+  {const s=g("love");if(s){const cp=s.querySelector(".compat");const kids=[...s.children].filter(x=>!x.matches("h2,.def,.lead,.compat,.eyebrow"));
+    const first=kids.find(x=>x.tagName==="P");const rest=kids.filter(x=>x!==first).map(x=>x.outerHTML).join("");
+    add("love","התאמה זוגית","",`${shead("התאמה זוגית","משפחות המספרים","בעיקר דרך שבילי החיים")}${cp?cp.outerHTML:""}${first?first.outerHTML:""}${rest?item("להעמיק בהתאמה",rest):""}`);}}
+  /* change */
+  {const s=g("change");if(s){const ks=[...s.querySelectorAll(".reading")].map(kardFromReading);
+    const kids=[...s.children].filter(x=>!x.matches("h2,.def,.lead,.reading,.eyebrow")).map(x=>x.outerHTML).join("");
+    add("change","השם הנוכחי","",`${shead("השם הנוכחי","השם הנוכחי",esc(inp.curName))}${kids}${deckHTML(ks)}`);}}
+  /* topics, when no focus was chosen */
+  if(!F&&T)add("topics","הנושא: בחירה","לחקירה",`${shead(T.querySelector("h2").textContent,"","אהבה, קריירה, כסף או צמיחה")}${T.querySelector(".chips").outerHTML}`);
+  /* guide */
+  {const s=g("map");if(s){const layers=[...s.querySelectorAll(".layer")].map(x=>x.outerHTML).join("");
+    const steps=s.querySelector("ol.steps"),tips=s.querySelector("ul.tips");const dl=s.querySelector("details.gloss dl");
+    if(dl)[...dl.querySelectorAll("dt")].forEach(dt=>{const dd=dt.nextElementSibling;if(dd&&!GLOSS[dt.textContent])GLOSS[dt.textContent]=dd.textContent;});
+    add("guide","מדריך ומילון","",`${shead("מדריך ומילון","","כל המספרים במקום אחד, וכל המונחים")}
+      ${item("איך לקרוא את המפה",(steps?steps.outerHTML:"")+(tips?tips.outerHTML:""))}
+      <h3 class="sub3">כל המספרים שלך</h3>${layers}
+      <h3 class="sub3" id="glossTitle">מילון מונחים</h3>
+      <input type="search" class="gsearch" id="glossQ" placeholder="חיפוש מושג… (למשל: פסגה, נשמה)" aria-labelledby="glossTitle" autocomplete="off">
+      <dl class="gloss" id="glossList">${Object.entries(GLOSS).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>`);}}
+  /* render */
+  const host=$("screens");
+  host.innerHTML=SC.map((x,i)=>{const pv=SC[i-1],nx=SC[i+1];
+    return `<section class="screen" data-s="${x.id}" id="s-${x.id}" hidden>${x.html}
+      <div class="pager">${pv?`<button type="button" class="btn ghost" data-go="${pv.id}">→ ${pv.label}</button>`:""}${nx?`<button type="button" class="btn" data-go="${nx.id}">${nx.label} ←</button>`:`<button type="button" class="btn" data-go="share">שיתוף ושמירה ←</button>`}</div></section>`;}).join("");
+  host.querySelectorAll(".mi").forEach(a=>{const h=(a.getAttribute("href")||"").slice(1);a.setAttribute("data-goto",h);});
+  $("journey").innerHTML=SC.filter(x=>x.id!=="overview").map(x=>`<li><button type="button" data-go="${x.id}">${x.label}<span>${x.count||""}</span></button></li>`).join("");
+  $("moreList").innerHTML=SC.map(x=>`<li><button type="button" data-go="${x.id}">${x.label}<span>${x.count||""}</span></button></li>`).join("")+
+    `<li><button type="button" data-go="share">שיתוף ושמירה<span>קישור · מסמך</span></button></li><li><button type="button" data-go="edit">שינוי הפרטים<span>חזרה לטופס</span></button></li>`;
+  const gq=$("glossQ");if(gq)gq.addEventListener("input",()=>{const q=gq.value.trim();
+    $("glossList").querySelectorAll("dt").forEach(dt=>{const dd=dt.nextElementSibling,hit=!q||dt.textContent.includes(q)||dd.textContent.includes(q);dt.hidden=dd.hidden=!hit;});});
+}
+function screenEl(id){return id==="share"?$("shareScreen"):$("s-"+id);}
+function show(id,push=true){
+  if(id==="more"){openMore();return;}
+  if(id==="edit"){editForm();return;}
+  const el=screenEl(id);if(!el)return;
+  closeMore();
+  $("entry").hidden=true;document.querySelectorAll("#screens .screen").forEach(s=>s.hidden=true);$("shareScreen").hidden=true;
+  el.hidden=false;cur=id;seen.add(id);
+  const NAVK={overview:"overview",core:"core",name:"name",cycles:"cycles"};
+  document.querySelectorAll(".bnav button").forEach(b=>{const on=b.dataset.go===(NAVK[id]||"more");if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
+  document.querySelectorAll("#moreList button").forEach(b=>{if(b.dataset.go===id)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
+  document.querySelectorAll("#journey button").forEach(b=>b.classList.toggle("seen",seen.has(b.dataset.go)));
+  setupDecks(el);
+  const sc=SC.find(x=>x.id===id);
+  if(sc&&sc.start!=null&&!sc.started){sc.started=true;const dk=el.querySelector("[data-deck]");if(dk)requestAnimationFrame(()=>{deckGo(dk,sc.start,true);deckUpdate(dk);});}
+  window.scrollTo({top:0,behavior:"auto"});
+  const h=el.querySelector("h2");if(h){h.setAttribute("tabindex","-1");h.focus({preventScroll:true});}
+  if(push){try{history.pushState({s:id},"",location.pathname+location.search+"#s="+id);}catch(e){}}
+}
+function goTo(target){
+  if(!target)return;
+  if(target==="frm"){editForm();return;}
+  if(screenEl(target)){show(target);return;}
+  const el=document.getElementById(target);if(!el)return;
+  const sc=el.closest(".screen");if(!sc)return;show(sc.dataset.s);
+  const dk=el.closest("[data-deck]");
+  requestAnimationFrame(()=>{if(dk){const ks=[...dk.querySelectorAll(".kard")];deckGo(dk,ks.indexOf(el));setTimeout(()=>deckUpdate(dk),350);}
+    el.scrollIntoView({behavior:smooth(),block:"nearest"});});
+}
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-go]");if(g){e.preventDefault();show(g.dataset.go);return;}
+  const t=e.target.closest("[data-goto]");if(t){e.preventDefault();goTo(t.dataset.goto);}
+});
+addEventListener("popstate",e=>{const s=(e.state&&e.state.s)||(location.hash.match(/^#s=(\w+)/)||[])[1];
+  if(s&&lastData)show(s,false);else if(!s&&lastData)show("overview",false);});
+const moreDlg=$("moreDlg");
+function openMore(){if(typeof moreDlg.showModal==="function"){if(!moreDlg.open)moreDlg.showModal();}else moreDlg.setAttribute("open","");}
+function closeMore(){if(moreDlg.open){try{moreDlg.close();}catch(e){moreDlg.removeAttribute("open");}}}
+$("moreClose").addEventListener("click",closeMore);
+moreDlg.addEventListener("click",e=>{if(e.target===moreDlg)closeMore();});
+function editForm(){closeMore();document.querySelectorAll("#screens .screen").forEach(s=>s.hidden=true);$("shareScreen").hidden=true;
+  $("entry").hidden=false;$("backToMap").hidden=!lastData;$("bnav").hidden=true;window.scrollTo({top:0});setTimeout(()=>$("heName").focus({preventScroll:true}),200);}
+$("backToMap").addEventListener("click",()=>{$("bnav").hidden=false;show(cur||"overview");});
+$("editBtn").addEventListener("click",editForm);
+
+/* ---------- טופס ---------- */
 function read(){return{heName:$("heName").value,laName:"",curName:$("curName").value,bdate:$("bdate").value,sys:"he",focus:$("focus").value,tdate:"",partnerOn:$("partnerOn").checked,pName:$("pName").value,pDate:$("pDate").value};}
-function fill(d){$("heName").value=d.heName||"";$("laName").value=d.laName||"";$("curName").value=d.curName||"";$("bdate").value=d.bdate||"";$("focus").value=d.focus||"none";$("tdate").value=d.tdate||"";$("partnerOn").checked=!!d.partnerOn;$("pName").value=d.pName||"";$("pDate").value=d.pDate||"";const r=document.querySelector(`input[name=sys][value="${d.sys||"both"}"]`);if(r)r.checked=true;dsSyncAll();sync();}
-/* ---------- date pickers: day / month / year selects ---------- */
+function fill(d){$("heName").value=d.heName||"";$("curName").value=d.curName||"";$("bdate").value=d.bdate||"";$("focus").value=d.focus||"none";$("partnerOn").checked=!!d.partnerOn;$("pName").value=d.pName||"";$("pDate").value=d.pDate||"";dsSyncAll();sync();}
 const MONTHS=["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
 const opt=(v,t)=>`<option value="${v}">${t}</option>`;
 function dsBuild(box){
-  const cy=new Date().getFullYear(),birth=box.dataset.range==="birth";
-  const years=[];if(birth){for(let y=cy;y>=1900;y--)years.push(y);}else{for(let y=cy-10;y<=cy+15;y++)years.push(y);}
+  const cy=new Date().getFullYear(),years=[];for(let y=cy;y>=1900;y--)years.push(y);
   const lab=box.closest(".f").getAttribute("aria-label");
   box.innerHTML=`<select data-p="d" aria-label="${lab}: יום">${opt("","יום")}${Array.from({length:31},(_,i)=>opt(i+1,i+1)).join("")}</select>`+
     `<select data-p="m" aria-label="${lab}: חודש">${opt("","חודש")}${MONTHS.map((m,i)=>opt(i+1,m)).join("")}</select>`+
     `<select data-p="y" aria-label="${lab}: שנה">${opt("","שנה")}${years.map(y=>opt(y,y)).join("")}</select>`;
-  box.addEventListener("change",()=>dsWrite(box));
-}
+  box.addEventListener("change",()=>dsWrite(box));}
 function dsParts(box){const g=p=>box.querySelector(`[data-p="${p}"]`);return{d:g("d"),m:g("m"),y:g("y")};}
-function dsWrite(box){
-  const {d,m,y}=dsParts(box);
-  if(m.value){const max=new Date(+(y.value||2000),+m.value,0).getDate();
-    [...d.options].forEach(o=>{if(o.value)o.disabled=+o.value>max;});
-    if(+d.value>max)d.value=String(max);}
-  const hid=$(box.dataset.for);
-  hid.value=(d.value&&m.value&&y.value)?`${y.value}-${String(m.value).padStart(2,"0")}-${String(d.value).padStart(2,"0")}`:"";
-}
-function dsRead(box){
-  const {d,m,y}=dsParts(box);const v=$(box.dataset.for).value;const mt=v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+function dsWrite(box){const {d,m,y}=dsParts(box);
+  if(m.value){const max=new Date(+(y.value||2000),+m.value,0).getDate();[...d.options].forEach(o=>{if(o.value)o.disabled=+o.value>max;});if(+d.value>max)d.value=String(max);}
+  $(box.dataset.for).value=(d.value&&m.value&&y.value)?`${y.value}-${String(m.value).padStart(2,"0")}-${String(d.value).padStart(2,"0")}`:"";}
+function dsRead(box){const {d,m,y}=dsParts(box);const v=$(box.dataset.for).value;const mt=v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if(mt&&!y.querySelector(`option[value="${+mt[1]}"]`))y.insertAdjacentHTML("beforeend",opt(+mt[1],+mt[1]));
-  y.value=mt?String(+mt[1]):"";m.value=mt?String(+mt[2]):"";d.value=mt?String(+mt[3]):"";
-  [...d.options].forEach(o=>o.disabled=false);if(mt)dsWrite(box);
-}
+  y.value=mt?String(+mt[1]):"";m.value=mt?String(+mt[2]):"";d.value=mt?String(+mt[3]):"";[...d.options].forEach(o=>o.disabled=false);if(mt)dsWrite(box);}
 function dsSyncAll(){document.querySelectorAll(".dsel").forEach(b=>{if(!b.firstChild)dsBuild(b);dsRead(b);});}
 function sync(){$("partnerBox").hidden=!$("partnerOn").checked;}
-let showTheory=false;
-function showForm(){$("hero").hidden=true;$("frm").hidden=false;}
-function run(save){
-  const d=read();$("err").textContent="";
-  if(!d.bdate){$("err").textContent="חסר תאריך לידה.";return;}
-  const needHe=d.sys!=="la",needLa=d.sys!=="he";
-  if(!d.heName.trim()||!/[א-ת]/.test(d.heName)){$("err").textContent="חסר שם מלא בעברית.";return;}
-  if(d.sys==="la"&&!d.laName.trim()){$("err").textContent="חסר שם מלא באותיות לועזיות.";return;}
-  if(d.sys==="both"&&!d.heName.trim()&&!d.laName.trim()){$("err").textContent="יש להזין לפחות שם אחד.";return;}
-  if(d.partnerOn&&!d.pDate){$("err").textContent="חסר תאריך הלידה של בן/בת הזוג.";return;}
-  showForm();$("note").hidden=false;$("clearBtn").hidden=false;$("out").classList.toggle("simple",!showTheory);
-  $("out").innerHTML=analyze(d);lastData=d;$("shareBar").hidden=false;updateLink();
-  if(d.focus!=="none"||d.curName||d.partnerOn)$("moreBox").open=true;
-  if(save){$("exampleNote").hidden=true;$("sharedNote").hidden=true;
-    document.getElementById("overview").scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
-}
-document.querySelectorAll('input[name=sys]').forEach(r=>r.addEventListener("change",sync));
 $("partnerOn").addEventListener("change",sync);
-$("frm").addEventListener("submit",e=>{e.preventDefault();run(true);});
-const smooth=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
-$("startBtn").addEventListener("click",()=>{showForm();$("frm").scrollIntoView({behavior:smooth(),block:"start"});setTimeout(()=>$("heName").focus({preventScroll:true}),300);});
+let lastData=null;
+function run(goFirst){
+  const d=read();$("err").textContent="";
+  if(!d.heName.trim()||!/[א-ת]/.test(d.heName)){$("err").textContent="חסר שם מלא בעברית.";return false;}
+  if(!d.bdate){$("err").textContent="חסר תאריך לידה.";return false;}
+  if(d.partnerOn&&!d.pDate){$("err").textContent="חסר תאריך הלידה של בן/בת הזוג.";$("moreBox").open=true;return false;}
+  $("raw").innerHTML=analyze(d);lastData=d;
+  buildScreens($("raw"),d);
+  $("who").textContent=`${d.heName.trim()} · ${d.bdate.split("-").reverse().join(".")}`;
+  $("note").hidden=false;$("bnav").hidden=false;updateLink();seen=new Set();
+  if(goFirst)show(goFirst);
+  return true;
+}
+$("frm").addEventListener("submit",e=>{e.preventDefault();$("sharedNote").hidden=true;run(lastData&&lastData.focus!==$("focus").value&&$("focus").value!=="none"?"focus":"overview");});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-focus]");if(!b||!lastData)return;
-  $("focus").value=b.dataset.focus;run(false);
-  const t=$(b.dataset.focus==="none"?"topics":"focus");if(t)t.scrollIntoView({behavior:smooth(),block:"start"});});
-document.addEventListener("change",e=>{if(e.target.id==="theoryTg"){showTheory=e.target.checked;$("out").classList.toggle("simple",!showTheory);}});
-/* ---------- reset (new analysis) ---------- */
+  $("focus").value=b.dataset.focus;run(b.dataset.focus==="none"?"overview":"focus");});
+
+/* ---------- מפה חדשה ---------- */
 function doReset(msg){
-  $("shareBar").hidden=true;$("sharedNote").hidden=true;lastData=null;$("err").textContent="";
-  fill({sys:"both",focus:"none"});$("out").innerHTML="";$("moreBox").open=false;showForm();$("clearBtn").hidden=true;
-  try{localStorage.removeItem("numMap");}catch(e){}
+  lastData=null;$("err").textContent="";$("sharedNote").hidden=true;
+  fill({focus:"none"});$("raw").innerHTML="";$("screens").innerHTML="";$("moreBox").open=false;$("who").textContent="";$("note").hidden=true;
   try{if(location.search||location.hash)history.replaceState(null,"",location.pathname);}catch(e){}
-  $("frm").scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
-  setTimeout(()=>$("heName").focus({preventScroll:true}),350);
+  editForm();
   const st=$("frmStatus");st.textContent=msg||"הטופס נוקה. אפשר להזין פרטים חדשים.";clearTimeout(st.t);st.t=setTimeout(()=>st.textContent="",6000);
 }
 function closeDlg(){const d=$("resetDlg");if(d.open){try{d.close();}catch(e){d.removeAttribute("open");}}}
 function askReset(){
-  if(!lastData){doReset();return;}
-  const nm=personName();$("resetWho").textContent=nm?` של ${nm}`:"";
-  $("rsWa").href=$("waLink").href;
-  const d=$("resetDlg");
-  if(typeof d.showModal==="function")d.showModal();
-  else if(confirm(`לשלוח את הניתוח הנוכחי${nm?" של "+nm:""} לפני הניקוי?`)){$("shLink").click();}
-  else doReset();
+  if(!lastData){doReset();return;}closeMore();
+  const nm=personName();$("resetWho").textContent=nm?` של ${nm}`:"";$("rsWa").href=$("waLink").href;
+  const d=$("resetDlg");if(typeof d.showModal==="function")d.showModal();else doReset();
 }
-$("clearBtn").addEventListener("click",askReset);
 document.addEventListener("click",e=>{if(e.target.closest("[data-reset]")){e.preventDefault();askReset();}});
 $("rsCancel").addEventListener("click",closeDlg);
 $("rsSkip").addEventListener("click",()=>{closeDlg();doReset();});
-$("rsWa").addEventListener("click",()=>{closeDlg();setTimeout(()=>doReset("הניתוח נשלח לוואטסאפ, והטופס מוכן לניתוח חדש."),300);});
+$("rsWa").addEventListener("click",()=>{closeDlg();setTimeout(()=>doReset("המפה נשלחה לוואטסאפ, והטופס מוכן למפה חדשה."),300);});
 $("rsSend").addEventListener("click",async()=>{
   const url=shareURL(),nm=personName();
-  if(navigator.share){
-    try{await navigator.share({title:"מפת המספרים",text:`ניתוח נומרולוגי${nm?" של "+nm:""}`,url});closeDlg();doReset("הניתוח נשלח, והטופס מוכן לניתוח חדש.");return;}
-    catch(e){if(e&&e.name==="AbortError")return;}
-  }
-  try{await navigator.clipboard.writeText(url);closeDlg();doReset("קישור לניתוח הקודם הועתק. אפשר להדביק ולשלוח אותו, והטופס מוכן לניתוח חדש.");}
-  catch(e){closeDlg();$("shareBar").scrollIntoView({block:"start"});$("linkBox").focus();$("linkBox").select();status("לא הצלחתי לשלוח אוטומטית. הקישור מסומן: העתיקו אותו, ואז לחצו שוב על \"ניתוח חדש\".");}
+  if(navigator.share){try{await navigator.share({title:"מפת המספרים",text:`מפת המספרים${nm?" של "+nm:""}`,url});closeDlg();doReset("המפה נשלחה, והטופס מוכן למפה חדשה.");return;}catch(e){if(e&&e.name==="AbortError")return;}}
+  try{await navigator.clipboard.writeText(url);closeDlg();doReset("הקישור למפה הקודמת הועתק, והטופס מוכן למפה חדשה.");}
+  catch(e){closeDlg();show("share");$("linkBox").focus();$("linkBox").select();status("לא הצלחתי לשלוח אוטומטית. הקישור מסומן: העתיקו אותו, ואז בחרו שוב \"מפה חדשה\".");}
 });
-/* ---------- sharing ---------- */
-let lastData=null;
+
+/* ---------- שיתוף ---------- */
 const KEYS=["heName","laName","curName","bdate","sys","focus","tdate","partnerOn","pName","pDate"];
-const BASE=/github\.io$/.test(location.hostname)?location.origin+location.pathname:"https://boazbareket1.github.io/numerology-map/";
+const BASE=/github\.io$/.test(location.hostname)?location.origin+location.pathname:"https://boazbareket1.github.io/numerology-map/new/";
 const todayISO=()=>{const x=new Date();return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;};
 function encodeData(d){const arr=KEYS.map(k=>k==="partnerOn"?(d[k]?1:0):(k==="tdate"?"":(d[k]||"")));
   const b=btoa(unescape(encodeURIComponent(JSON.stringify(arr))));return b.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
 function decodeData(t){try{let b=t.replace(/-/g,"+").replace(/_/g,"/");while(b.length%4)b+="=";
   const arr=JSON.parse(decodeURIComponent(escape(atob(b))));if(!Array.isArray(arr))return null;
   const d={};KEYS.forEach((k,i)=>d[k]=k==="partnerOn"?!!arr[i]:String(arr[i]||""));
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(d.bdate))return null;if(!["he","la","both"].includes(d.sys))d.sys="both";
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d.bdate))return null;d.sys="he";d.laName="";d.tdate="";
   if(!["none","love","career","money","growth"].includes(d.focus))d.focus="none";return d;}catch(e){return null;}}
 function readShared(){let t=null;try{t=new URLSearchParams(location.search).get("d");}catch(e){}
   if(!t){const m=location.hash.match(/^#d=(.+)$/);if(m)t=m[1];}return t?decodeData(t):null;}
 const shareURL=()=>lastData?BASE+"?d="+encodeData(lastData):BASE;
-const personName=()=>{const d=lastData||{};return (d.heName||d.laName||"").trim();};
+const personName=()=>((lastData||{}).heName||"").trim();
 const status=msg=>{$("shStatus").textContent=msg;clearTimeout(status.t);status.t=setTimeout(()=>$("shStatus").textContent="",5000);};
 function updateLink(){const u=shareURL();$("linkBox").value=u;
-  $("waLink").href="https://wa.me/?text="+encodeURIComponent(`מפת המספרים${personName()?" של "+personName():""}: ניתוח נומרולוגי אישי\n${u}`);}
+  $("waLink").href="https://wa.me/?text="+encodeURIComponent(`מפת המספרים${personName()?" של "+personName():""}\n${u}`);}
 async function copyText(t,okMsg,box){
   try{await navigator.clipboard.writeText(t);status(okMsg);}
   catch(e){if(box){box.focus();box.select();status("לא הצלחתי להעתיק אוטומטית. הקישור מסומן, אפשר להעתיק אותו ידנית.");}else status("ההעתקה נחסמה בדפדפן הזה. נסו את ההורדה כקובץ.");}}
 $("shLink").addEventListener("click",async()=>{const url=shareURL();
-  if(navigator.share){try{await navigator.share({title:"מפת המספרים",text:`ניתוח נומרולוגי${personName()?" של "+personName():""}`,url});status("הקישור שותף.");return;}catch(e){if(e&&e.name==="AbortError")return;}}
+  if(navigator.share){try{await navigator.share({title:"מפת המספרים",text:`מפת המספרים${personName()?" של "+personName():""}`,url});status("הקישור שותף.");return;}catch(e){if(e&&e.name==="AbortError")return;}}
   copyText(url,"הקישור הועתק. אפשר להדביק אותו בכל מקום.",$("linkBox"));});
 $("cpLink").addEventListener("click",()=>copyText(shareURL(),"הקישור הועתק.",$("linkBox")));
 $("linkBox").addEventListener("focus",e=>e.target.select());
-
-function withPrintable(fn){
-  const out=$("out");const nav=out.querySelector("nav.chapters"),fabs=out.querySelector(".fabs");
-  const closed=[...out.querySelectorAll("details:not([open])")];
-  if(nav)nav.hidden=true;if(fabs)fabs.hidden=true;closed.forEach(d=>d.open=true);
-  try{return fn(out);}finally{if(nav)nav.hidden=false;if(fabs)fabs.hidden=false;closed.forEach(d=>d.open=false);}}
-function inputsSummary(){const d=lastData;if(!d)return "";const rows=[];
-  const sysL={he:"גימטריה עברית",la:"פיתגוראית",both:"השוואה בין גימטריה לשיטה הפיתגוראית"}[d.sys];
-  const focL={none:"תמונה כללית",love:"אהבה וזוגיות",career:"קריירה ושליחות",money:"כסף ושפע",growth:"צמיחה רוחנית"}[d.focus];
-  const fmt=x=>x?x.split("-").reverse().join("."):"";
-  if(d.heName&&d.sys!=="la")rows.push(["שם לידה (עברית)",d.heName]);if(d.laName&&d.sys!=="he")rows.push(["שם לידה (לועזית)",d.laName]);
-  rows.push(["תאריך לידה",fmt(d.bdate)]);if(d.curName)rows.push(["שם נוכחי",d.curName]);
-  rows.push(["שיטת חישוב",sysL],["מיקוד",focL],["תאריך התחזית",fmt(d.tdate||todayISO())]);
-  if(d.partnerOn&&d.pDate)rows.push(["בן/בת זוג",[d.pName,fmt(d.pDate)].filter(Boolean).join(", ")]);
-  return `<section class="guide" style="margin-top:20px"><div class="eyebrow">הפרטים שהוזנו</div><dl style="display:grid;grid-template-columns:minmax(120px,180px) 1fr;gap:6px 16px;margin:8px 0 0">${rows.map(r=>`<dt style="font-weight:700">${esc(r[0])}</dt><dd style="margin:0">${esc(r[1])}</dd>`).join("")}</dl></section>`;}
+function allOpen(fn){
+  const hid=[...document.querySelectorAll("#screens .screen[hidden]")],closed=[...$("screens").querySelectorAll("details:not([open])")];
+  document.body.classList.add("doc");hid.forEach(s=>s.hidden=false);closed.forEach(d=>d.open=true);
+  try{return fn($("screens"));}finally{document.body.classList.remove("doc");hid.forEach(s=>s.hidden=true);closed.forEach(d=>d.open=false);}}
 function buildDoc(){
   const css=document.querySelector("style").textContent;
-  const clone=$("out").cloneNode(true);
-  clone.querySelectorAll("nav.chapters,.fabs").forEach(n=>n.remove());
-  clone.querySelectorAll("details").forEach(d=>d.setAttribute("open",""));
+  const html=allOpen(sc=>{const c=sc.cloneNode(true);c.querySelectorAll(".pager,.deck-ctl,.fbk,.qm,.qmbox,.gsearch").forEach(n=>n.remove());
+    c.querySelectorAll("[hidden]").forEach(n=>n.removeAttribute("hidden"));c.querySelectorAll("details").forEach(d=>d.setAttribute("open",""));return c.innerHTML;});
   const nm=personName(),url=shareURL(),today=todayISO().split("-").reverse().join(".");
   return `<!DOCTYPE html>
 <html lang="he" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>מפת המספרים${nm?" · "+esc(nm):""}</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Cormorant+Garamond:wght@500;600&family=Frank+Ruhl+Libre:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Secular+One&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>${css}
-body{margin:0}[hidden]{display:none!important}html{scroll-behavior:smooth}</style></head>
-<body><div class="wrap">
-<header class="top"><div><div class="sigil">1 · 2 · 3 · 4 · 5 · 6 · 7 · 8 · 9</div><h1>מפת המספרים${nm?" של "+esc(nm):""}</h1>
-<p>ניתוח נומרולוגי מפורט · נוצר ב-${today}</p><p><a href="${esc(url)}" style="color:var(--brass)">לפתיחת הניתוח בכלי האינטראקטיבי</a></p></div></header>
-${inputsSummary()}
-${clone.innerHTML}
-<p class="note">${document.querySelector(".note")?document.querySelector(".note").innerHTML:""}</p>
+body{padding-bottom:30px}.screen{margin-bottom:36px;border-top:3px solid var(--acc);padding-top:16px}</style></head>
+<body class="doc"><div class="wrap">
+<header class="top"><h1>מפת המספרים${nm?" של "+esc(nm):""}</h1><span class="who">נוצר ב-${today}</span></header>
+<p><a href="${esc(url)}">לפתיחת המפה בכלי האינטראקטיבי</a></p>
+${html}
+<p class="fine">${$("note").innerHTML}</p>
 </div></body></html>`;}
 const docName=()=>`מפת-המספרים${personName()?"-"+personName().replace(/\s+/g,"-"):""}.html`;
 function downloadDoc(){
@@ -1060,27 +1346,25 @@ $("shDoc").addEventListener("click",async()=>{
     if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"מפת המספרים"});status("המסמך שותף.");return;}}
   catch(e){if(e&&e.name==="AbortError")return;}
   downloadDoc();});
-$("prDoc").addEventListener("click",()=>{const out=$("out");const closed=[...out.querySelectorAll("details:not([open])")];
+$("prDoc").addEventListener("click",()=>{const closed=[...$("screens").querySelectorAll("details:not([open])")];
   closed.forEach(d=>d.open=true);const restore=()=>{closed.forEach(d=>d.open=false);removeEventListener("afterprint",restore);};
   addEventListener("afterprint",restore);window.print();});
 $("cpText").addEventListener("click",()=>{
-  const body=withPrintable(out=>out.innerText).replace(/\n{3,}/g,"\n\n").trim();
-  copyText(`מפת המספרים${personName()?" של "+personName():""}\n${shareURL()}\n\n${body}`,"כל הטקסט של הניתוח הועתק.");});
+  const body=allOpen(sc=>sc.innerText).replace(/\n{3,}/g,"\n\n").trim();
+  copyText(`מפת המספרים${personName()?" של "+personName():""}\n${shareURL()}\n\n${body}`,"כל הטקסט של המפה הועתק.");});
 
 (function init(){
-  /* back link to a circle (המארג הקבוצתי/המשפחתי) that opened this map */
   try{const back=new URLSearchParams(location.search).get("back");
     if(back&&/^https:\/\/boazbareket1\.github\.io\//.test(back)){
-      const bar=document.createElement("a");bar.href=back;bar.id="backBar";
-      bar.textContent="← חזרה למעגל";
-      bar.style.cssText="position:fixed;top:10px;right:10px;z-index:1000;background:#1f2d3a;color:#fff;padding:10px 16px;border-radius:999px;font-weight:700;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.25);font-size:15px";
-      document.body.appendChild(bar);}}catch(e){}
+      const bar=document.createElement("a");bar.href=back;bar.id="backBar";bar.textContent="← חזרה למעגל";document.body.appendChild(bar);}}catch(e){}
   const shared=readShared();
-  if(shared){fill(shared);$("exampleNote").hidden=true;$("sharedNote").hidden=false;run(false);return;}
-  try{localStorage.removeItem("numMap");}catch(e){}
-  fill({sys:"both",focus:"none"});})();
+  if(shared){fill(shared);$("sharedNote").hidden=false;
+    const s=(location.hash.match(/^#s=(\w+)/)||[])[1];
+    if(run(null)){const t=s&&screenEl(s)?s:"overview";show(t,false);try{history.replaceState({s:t},"",location.pathname+location.search+"#s="+t);}catch(e){}}
+    return;}
+  fill({focus:"none"});
+})();
 </script>
-
 <script src="https://boazbareket1.github.io/access-gate/dev-note.js" data-tool="numerology" defer></script>
 </body>
 </html>
