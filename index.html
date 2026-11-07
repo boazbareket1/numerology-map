@@ -326,6 +326,11 @@ body.doc .kard{flex:none;width:100%;min-height:0}
     <div class="btns"><button type="button" class="btn small" id="shDoc">שיתוף המסמך</button><button type="button" class="btn ghost small" id="dlDoc">הורדה כקובץ</button><button type="button" class="btn ghost small" id="prDoc">הדפסה / PDF</button><button type="button" class="btn ghost small" id="cpText">העתקת הטקסט</button></div>
   </div>
   <div class="share-card">
+    <b>שיחה עם מודל בינה</b>
+    <p>מסמך המפה המלאה עם הנחיות מוטמעות למודל בינה (Claude, ChatGPT, Gemini ואחרים). פתח את הקובץ בדפדפן, העתק הכל והדבק ישירות בשיחת הצ'אט.</p>
+    <div class="btns"><button type="button" class="btn small" id="dlAiDoc">✦ הורד עם הנחיות לשיחה עם מודל בינה</button></div>
+  </div>
+  <div class="share-card">
     <b>מפה חדשה</b>
     <p>לשנות פרטים או לפתוח מפה לאדם אחר.</p>
     <div class="btns"><button type="button" class="btn ghost small" id="editBtn">שינוי הפרטים</button><button type="button" class="btn ghost small" data-reset>מפה חדשה</button></div>
@@ -1341,6 +1346,66 @@ function downloadDoc(){
   const a=document.createElement("a");a.href=u;a.download=docName();document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(u),4000);status("המסמך ירד למכשיר. אפשר לפתוח אותו בכל דפדפן ולשלוח אותו הלאה.");}
 $("dlDoc").addEventListener("click",downloadDoc);
+function buildAiPrompt(){
+  if(!lastData)return "";
+  const nm=personName();
+  const B=birth(lastData.bdate);
+  const P=lastData.heName?analyzeName(lastData.heName,'he'):null;
+  const CN=lastData.curName&&lastData.curName.trim()?analyzeName(lastData.curName,'he'):null;
+  const LP=B.LP,bday=rv(B.d),att=rv(B.d+B.m);
+  const maturity=P?rv(LP+P.expr.v):null;
+  const lines=[`• שביל החיים: ${LP}`];
+  if(P){if(P.expr.v)lines.push(`• ביטוי / גורל: ${P.expr.v}`);
+    if(P.soul.v)lines.push(`• דחף הנשמה: ${P.soul.v}`);
+    if(P.pers.v)lines.push(`• אישיות: ${P.pers.v}`);
+    if(maturity)lines.push(`• בגרות: ${maturity}`);}
+  lines.push(`• יום הלידה: ${bday}`,`• מספר גישה: ${att}`);
+  if(CN&&CN.expr.v)lines.push(`• ביטוי שם נוכחי: ${CN.expr.v}`);
+  return `=== הנחיות למודל הבינה ===
+
+אתה יועץ נומרולוגיה עברית המכיר לעומק את המפה האישית${nm?" של "+nm:""}.
+עבוד על פיה בלבד — אל תחשב מחדש ואל תסתמך על מקורות אחרים.
+המפה המלאה מופיעה בהמשך המסמך.
+
+המספרים המרכזיים${nm?" של "+nm:""}:
+${lines.join('\n')}
+
+כיצד לנהל את השיחה:
+1. ענה תמיד בעברית, בגוף שני, בנימה חמה ואישית.
+2. התבסס על המפה המצורפת בלבד. אל תחשב מחדש ואל תייחס מספרים שאינם במפה.
+3. כשנשאל על נושא ספציפי (קריירה, אהבה, כסף, צמיחה), חפש תחילה בסעיף המיקוד של המפה.
+4. עמק בנקודה אחת בכל פעם — אל תציף במידע.
+5. כשהמשתמש מביא מצב מחייו, חבר אותו למספרים הרלוונטיים מהמפה.
+6. הזמן לשאלות נוספות בסיום כל תשובה.
+7. אם נשאל על משהו שהמפה לא עונה עליו — ציין זאת בכנות.
+
+=== המפה האישית ===`;}
+function buildAiDoc(){
+  const prompt=buildAiPrompt();
+  const css=document.querySelector("style").textContent;
+  const html=allOpen(sc=>{const c=sc.cloneNode(true);c.querySelectorAll(".pager,.deck-ctl,.fbk,.qm,.qmbox,.gsearch").forEach(n=>n.remove());
+    c.querySelectorAll("[hidden]").forEach(n=>n.removeAttribute("hidden"));c.querySelectorAll("details").forEach(d=>d.setAttribute("open",""));return c.innerHTML;});
+  const nm=personName(),url=shareURL(),today=todayISO().split("-").reverse().join(".");
+  const promptBox=`<div style="background:#fffbf0;border:2.5px solid #0f6b66;border-radius:8px;padding:20px 24px;margin-bottom:32px;white-space:pre-wrap;font-family:inherit;font-size:0.9em;line-height:1.7;direction:rtl;text-align:right"><strong style="display:block;margin-bottom:12px;font-size:1em;color:#0f6b66">הנחיות למודל הבינה</strong>${esc(prompt).replace(/\n/g,"<br>")}</div>`;
+  return `<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מפת המספרים${nm?" · "+esc(nm):""} · שיחה עם מודל בינה</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Secular+One&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>${css}
+body{padding-bottom:30px}.screen{margin-bottom:36px;border-top:3px solid var(--acc);padding-top:16px}</style></head>
+<body class="doc"><div class="wrap">
+<header class="top"><h1>מפת המספרים${nm?" של "+esc(nm):""}</h1><span class="who">נוצר ב-${today} · עם הנחיות לשיחה עם מודל בינה</span></header>
+<p><a href="${esc(url)}">לפתיחת המפה בכלי האינטראקטיבי</a></p>
+${promptBox}
+${html}
+<p class="fine">${$("note").innerHTML}</p>
+</div></body></html>`;}
+const aiDocName=()=>`מפת-המספרים-AI${personName()?"-"+personName().replace(/\s+/g,"-"):""}.html`;
+function downloadAiDoc(){
+  const blob=new Blob([buildAiDoc()],{type:"text/html;charset=utf-8"});const u=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=u;a.download=aiDocName();document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),4000);status("המסמך עם הנחיות לבינה ירד. פתח אותו בדפדפן, העתק הכל והדבק בשיחת הצ'אט.");}
+$("dlAiDoc").addEventListener("click",downloadAiDoc);
 $("shDoc").addEventListener("click",async()=>{
   try{const file=new File([buildDoc()],docName(),{type:"text/html"});
     if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"מפת המספרים"});status("המסמך שותף.");return;}}
